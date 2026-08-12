@@ -1,0 +1,236 @@
+<style>
+
+/* =========================================
+METAS DA CLÍNICA
+========================================= */
+
+.metas-card{
+
+    height:400px;
+
+}
+
+.metas-card .card-body{
+
+    display:flex;
+    flex-direction:column;
+
+    height:100%;
+
+    padding:22px 24px;
+
+}
+
+/* =========================================
+VALORES
+========================================= */
+
+.meta-item{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:10px;
+
+}
+
+.meta-label{
+
+    font-size:14px;
+    color:#6b7280;
+
+}
+
+.meta-valor{
+
+    font-size:17px;
+    font-weight:700;
+    color:#111827;
+
+}
+
+/* =========================================
+BARRA
+========================================= */
+
+.meta-progress{
+
+    width:100%;
+
+    height:12px;
+
+    border-radius:30px;
+
+    background:#edf2f7;
+
+    overflow:hidden;
+
+    margin:18px 0;
+
+}
+
+.meta-progress-fill{
+
+    height:100%;
+
+    border-radius:30px;
+
+    background:linear-gradient(
+        90deg,
+        #10b981,
+        #34d399
+    );
+
+}
+
+/* =========================================
+PERCENTUAL
+========================================= */
+
+.meta-percentual{
+
+    text-align:center;
+
+    margin:6px 0 12px;
+
+}
+
+.meta-percentual h2{
+
+    font-size:38px;
+
+    font-weight:700;
+
+    color:#10b981;
+
+    margin:0;
+
+}
+
+.meta-percentual small{
+
+    font-size:13px;
+
+    color:#6b7280;
+
+}
+
+/* =========================================
+CAIXA FINAL
+========================================= */
+
+.meta-restante{
+
+    margin-top:auto;
+
+    padding:14px 16px;
+
+    border-radius:14px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    font-size:14px;
+
+}
+
+.meta-restante i{
+
+    font-size:16px;
+
+    color:#2563eb;
+
+}
+
+.meta-restante strong{
+
+    color:#2563eb;
+
+}
+
+</style>
+
+
+<div class="card dashboard-card stats-card metas-card">
+
+    <div class="card-body d-flex flex-column">
+
+        <h5 class="mb-4">
+            <i class="bi bi-bullseye text-primary me-2"></i>
+            Metas da Clínica
+        </h5>
+
+        <div class="mb-4">
+
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">
+                    Meta do mês
+                </span>
+
+                <strong>
+                    R$ 80.000,00
+                </strong>
+            </div>
+
+            <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">
+                    Faturado
+                </span>
+
+                <strong class="text-primary">
+                    R$ 33.600,00
+                </strong>
+            </div>
+
+            <div class="progress"
+                 style="height:12px;border-radius:30px;">
+
+                <div class="progress-bar bg-success"
+                     style="width:42%;border-radius:30px;">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="text-center my-4">
+
+            <h2 class="text-success fw-bold mb-0">
+
+                42%
+
+            </h2>
+
+            <small class="text-muted">
+
+                da meta atingida
+
+            </small>
+
+        </div>
+
+        <div class="mt-auto">
+
+            <div class="alert alert-light border rounded-4 mb-0">
+
+                <i class="bi bi-graph-up-arrow text-primary me-2"></i>
+
+                Faltam
+
+                <strong class="text-primary">
+
+                    R$ 46.400,00
+
+                </strong>
+
+                para atingir a meta.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

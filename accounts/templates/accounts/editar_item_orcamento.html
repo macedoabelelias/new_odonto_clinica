@@ -1,0 +1,165 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- TÍTULO -->
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+
+            Editar Item do Orçamento
+
+        </h1>
+
+        <p class="text-muted mb-0">
+
+            Atualize as informações do procedimento
+
+        </p>
+
+    </div>
+
+    <!-- CARD -->
+
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="row g-3">
+
+                    <!-- PROCEDIMENTO -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Procedimento
+
+                        </label>
+
+                        <select
+                            name="procedimento"
+                            class="form-select rounded-3"
+                        >
+
+                            {% for procedimento in procedimentos %}
+
+                            <option
+                                value="{{ procedimento.id }}"
+                                {% if procedimento.id == item.procedimento.id %}
+                                selected
+                                {% endif %}
+                            >
+
+                                {{ procedimento.nome }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- DENTE -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label fw-semibold">
+
+                            Dente
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="dente"
+                            value="{{ item.dente }}"
+                            class="form-control rounded-3"
+                        >
+
+                    </div>
+
+                    <!-- FACE -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label fw-semibold">
+
+                            Face
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="face"
+                            value="{{ item.face }}"
+                            class="form-control rounded-3"
+                        >
+
+                    </div>
+
+                    <!-- QUANTIDADE -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label fw-semibold">
+
+                            Quantidade
+
+                        </label>
+
+                        <input
+                            type="number"
+                            name="quantidade"
+                            value="{{ item.quantidade }}"
+                            class="form-control rounded-3"
+                            min="1"
+                        >
+
+                    </div>
+
+                </div>
+
+                <!-- BOTÕES -->
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    <a
+                        href="{% url 'orcamento' item.orcamento.paciente.id %}"
+                        class="btn btn-light border rounded-pill px-4"
+                    >
+
+                        Cancelar
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary rounded-pill px-4"
+                    >
+
+                        <i class="fas fa-save me-2"></i>
+
+                        Salvar Alterações
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

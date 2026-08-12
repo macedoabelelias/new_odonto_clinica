@@ -1,0 +1,341 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="page-header mb-4">
+
+        <h3>
+
+            <i class="bi bi-building"></i>
+
+            Configuração da Clínica
+
+        </h3>
+
+        <p class="text-muted">
+
+            Dados utilizados em orçamentos, prontuários e documentos.
+
+        </p>
+
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="row">
+
+            <!-- DADOS DA CLÍNICA -->
+
+            <div class="col-md-6">
+
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header">
+
+                        Dados da Clínica
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Nome da Clínica
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nome_clinica"
+                                class="form-control"
+                                value="{{ config.nome_clinica }}"
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                CRO
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="cro"
+                                class="form-control"
+                                value="{{ config.cro }}"
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                CNPJ
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="cnpj"
+                                class="form-control"
+                                value="{{ config.cnpj }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CONTATO -->
+
+            <div class="col-md-6">
+
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header">
+
+                        Contato
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Telefone
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="telefone"
+                                class="form-control"
+                                value="{{ config.telefone }}"
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                WhatsApp
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="whatsapp"
+                                class="form-control"
+                                value="{{ config.whatsapp }}"
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                E-mail
+
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control"
+                                value="{{ config.email }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ENDEREÇO -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header">
+
+                Endereço
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <input
+                            type="text"
+                            name="endereco"
+                            class="form-control"
+                            placeholder="Endereço"
+                            value="{{ config.endereco }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <input
+                            type="text"
+                            name="numero"
+                            class="form-control"
+                            placeholder="Número"
+                            value="{{ config.numero }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <input
+                            type="text"
+                            name="bairro"
+                            class="form-control"
+                            placeholder="Bairro"
+                            value="{{ config.bairro }}"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-3">
+
+                    <div class="col-md-4">
+
+                        <input
+                            type="text"
+                            name="cidade"
+                            class="form-control"
+                            placeholder="Cidade"
+                            value="{{ config.cidade }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <input
+                            type="text"
+                            name="estado"
+                            class="form-control"
+                            placeholder="UF"
+                            value="{{ config.estado }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <input
+                            type="text"
+                            name="cep"
+                            class="form-control"
+                            placeholder="CEP"
+                            value="{{ config.cep }}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LOGO -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header">
+
+                Logo da Clínica
+
+            </div>
+
+            <div class="card-body">
+
+                {% if config.logo %}
+
+                    <img
+                        src="{{ config.logo.url }}"
+                        style="max-height:120px;"
+                        class="mb-3"
+                    >
+
+                {% endif %}
+
+                <input
+                    type="file"
+                    name="logo"
+                    class="form-control"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- OBSERVAÇÃO PADRÃO -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header">
+
+                Observação Padrão do Orçamento
+
+            </div>
+
+            <div class="card-body">
+
+                <textarea
+                    name="observacoes_orcamento"
+                    rows="5"
+                    class="form-control"
+                >{{ config.observacoes_orcamento }}</textarea>
+
+            </div>
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-primary btn-lg"
+        >
+
+            <i class="bi bi-check-circle"></i>
+
+            Salvar Configurações
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,404 @@
+{% load static %}
+
+<style>
+
+/* =========================================
+SEGUNDA LINHA
+========================================= */
+
+.dashboard-chart-card {
+
+    height: 440px;
+
+}
+
+.dashboard-chart-card .card-body {
+
+    padding: 24px;
+
+}
+
+
+/* =========================================
+GRÁFICO
+========================================= */
+
+.grafico-container {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 235px;
+
+}
+
+.grafico-marketing {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 280px;
+
+    margin-top: 10px;
+
+}
+
+#graficoMarketing {
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+}
+
+
+/* =========================================
+ORIGEM DOS LEADS
+========================================= */
+
+.origem-card {
+
+    height: 440px;
+
+}
+
+.origem-card .card-body {
+
+    padding: 30px;
+
+}
+
+
+/* =========================================
+ITENS DE ORIGEM
+========================================= */
+
+.origem-item {
+
+    margin-bottom: 24px;
+
+}
+
+.origem-item strong {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+}
+
+.origem-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 8px;
+
+}
+
+.origem-nome {
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+}
+
+.origem-percentual {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+}
+
+
+/* =========================================
+BARRA DE PROGRESSO
+========================================= */
+
+.origem-item .progress {
+
+    width: 78%;
+
+    height: 10px;
+
+    margin: 0 auto;
+
+    border-radius: 20px;
+
+    background: #e9edf5;
+
+}
+
+.origem-progress {
+
+    width: 78%;
+
+    height: 10px;
+
+    margin: 0 auto;
+
+    border-radius: 20px;
+
+    background: #e9edf5;
+
+}
+
+.origem-fill {
+
+    height: 100%;
+
+    border-radius: 20px;
+
+}
+
+
+/* =========================================
+CORES DAS ORIGENS
+========================================= */
+
+.instagram {
+
+    background: linear-gradient(
+        90deg,
+        #ec4899,
+        #d946ef
+    );
+
+}
+
+.whatsapp {
+
+    background: linear-gradient(
+        90deg,
+        #22c55e,
+        #16a34a
+    );
+
+}
+
+.google {
+
+    background: linear-gradient(
+        90deg,
+        #3b82f6,
+        #2563eb
+    );
+
+}
+
+.indicacao {
+
+    background: linear-gradient(
+        90deg,
+        #f97316,
+        #ea580c
+    );
+
+}
+
+</style>
+
+
+<div class="row mt-4">
+
+    <!-- ========================================= -->
+    <!-- EVOLUÇÃO DOS LEADS -->
+    <!-- ========================================= -->
+
+    <div class="col-lg-8 mb-4">
+
+        <div class="card dashboard-card stats-card dashboard-chart-card">
+
+            <div class="card-body">
+
+                <div class="mb-4">
+
+                    <h5 class="fw-semibold mb-1">
+
+                        <i class="bi bi-graph-up-arrow text-primary me-2"></i>
+
+                        Evolução dos Leads
+
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        Captação mensal de novos contatos
+
+                    </p>
+
+                </div>
+
+                <div class="grafico-marketing">
+
+                    <canvas id="graficoMarketing"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+<!-- ORIGEM DOS LEADS -->
+<!-- ========================================= -->
+
+<div class="col-lg-4 mb-4">
+
+    <div class="card dashboard-card stats-card origem-card">
+
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-4">
+
+                <i class="bi bi-bullseye text-success me-2"></i>
+
+                Origem dos Leads
+
+            </h5>
+
+
+            {% if origens_leads %}
+
+                {% for item in origens_leads %}
+
+                    <div class="origem-item {% if forloop.last %}mb-0{% endif %}">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                {% if item.origem == "INSTAGRAM" %}
+
+                                    <i class="bi bi-instagram me-2 text-danger"></i>
+
+                                    Instagram
+
+                                {% elif item.origem == "WHATSAPP" %}
+
+                                    <i class="bi bi-whatsapp me-2 text-success"></i>
+
+                                    WhatsApp
+
+                                {% elif item.origem == "GOOGLE" %}
+
+                                    <i class="bi bi-google me-2 text-primary"></i>
+
+                                    Google Ads
+
+                                {% elif item.origem == "FACEBOOK" %}
+
+                                    <i class="bi bi-facebook me-2 text-primary"></i>
+
+                                    Facebook
+
+                                {% elif item.origem == "SITE" %}
+
+                                    <i class="bi bi-globe2 me-2 text-info"></i>
+
+                                    Site
+
+                                {% elif item.origem == "INDICACAO" %}
+
+                                    <i class="bi bi-people-fill me-2 text-warning"></i>
+
+                                    Indicação
+
+                                {% else %}
+
+                                    <i class="bi bi-three-dots me-2 text-secondary"></i>
+
+                                    Outro
+
+                                {% endif %}
+
+                            </span>
+
+
+                            <strong>
+
+                                {{ item.percentual }}%
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress"
+                            style="
+                                height:6px;
+                                border-radius:10px;
+                                background:#e9eef5;
+                                overflow:hidden;
+                            ">
+
+                            <div
+                                style="
+                                    width:{{ item.percentual }}%;
+                                    height:100%;
+                                    border-radius:10px;
+
+                                    {% if item.origem == 'INSTAGRAM' %}
+                                        background:#dc3545;
+
+                                    {% elif item.origem == 'WHATSAPP' %}
+                                        background:#198754;
+
+                                    {% elif item.origem == 'GOOGLE' %}
+                                        background:#0d6efd;
+
+                                    {% elif item.origem == 'FACEBOOK' %}
+                                        background:#0d6efd;
+
+                                    {% elif item.origem == 'SITE' %}
+                                        background:#0dcaf0;
+
+                                    {% elif item.origem == 'INDICACAO' %}
+                                        background:#ffc107;
+
+                                    {% else %}
+                                        background:#6c757d;
+                                    {% endif %}
+                                "
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="text-center text-muted py-4">
+
+                    <i class="bi bi-bullseye fs-3 d-block mb-2"></i>
+
+                    <small>
+                        Nenhum Lead cadastrado neste mês.
+                    </small>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>

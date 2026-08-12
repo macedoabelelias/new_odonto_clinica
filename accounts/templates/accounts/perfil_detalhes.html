@@ -1,0 +1,297 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Detalhes do Perfil
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <!-- CABEÇALHO -->
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-shield-lock-fill text-primary me-2"></i>
+
+                {{ perfil.nome }}
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Informações completas do perfil de acesso.
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="{% url 'editar_perfil' perfil.id %}"
+               class="btn btn-primary rounded-pill">
+
+                <i class="bi bi-pencil-square me-1"></i>
+
+                Editar
+
+            </a>
+
+            <a href="{% url 'perfis' %}"
+               class="btn btn-outline-secondary rounded-pill">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Voltar
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- INDICADORES -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+
+                        Status
+
+                    </small>
+
+                    <h5 class="fw-bold mt-2">
+
+                        {% if perfil.ativo %}
+
+                            <span class="badge bg-success">
+
+                                Ativo
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                Inativo
+
+                            </span>
+
+                        {% endif %}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+
+                        Usuários
+
+                    </small>
+
+                    <h3 class="fw-bold">
+
+                        0
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+
+                        Criado em
+
+                    </small>
+
+                    <h6 class="fw-bold mt-2">
+
+                        {{ perfil.criado_em|date:"d/m/Y H:i" }}
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+
+                        Atualizado em
+
+                    </small>
+
+                    <h6 class="fw-bold mt-2">
+
+                        {{ perfil.atualizado_em|date:"d/m/Y H:i" }}
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DADOS -->
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+        <div class="card-header bg-white">
+
+            <h5 class="fw-bold mb-0">
+
+                <i class="bi bi-card-text me-2"></i>
+
+                Informações do Perfil
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-borderless mb-0">
+
+                <tr>
+
+                    <th width="180">
+
+                        Nome
+
+                    </th>
+
+                    <td>
+
+                        {{ perfil.nome }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Descrição
+
+                    </th>
+
+                    <td>
+
+                        {{ perfil.descricao|default:"Sem descrição." }}
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- PREPARAÇÃO -->
+
+    <div class="row">
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-shield-check me-2"></i>
+
+                        Permissões
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body text-center text-muted py-5">
+
+                    <i class="bi bi-tools fs-1 d-block mb-3"></i>
+
+                    Será implementado na Etapa 3.2.3.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-clock-history me-2"></i>
+
+                        Histórico
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body text-center text-muted py-5">
+
+                    <i class="bi bi-hourglass-split fs-1 d-block mb-3"></i>
+
+                    Será implementado posteriormente.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

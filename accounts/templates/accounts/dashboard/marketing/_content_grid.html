@@ -1,0 +1,558 @@
+<style>
+/* =========================================
+DASHBOARD MARKETING
+========================================= */
+
+.marketing-card{
+
+    border:none;
+
+    border-radius:20px;
+
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+
+    overflow:hidden;
+
+    height:390px;
+
+    transition:.3s;
+
+}
+
+.marketing-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 24px rgba(15,23,42,.12);
+
+}
+
+.campaign-divider{
+
+    margin:12px 0 10px;
+
+    border-top:1px solid #f1f5f9;
+
+}
+
+/* =========================================
+CAMPANHAS
+========================================= */
+
+.campaign-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+    margin-top:15px;
+
+}
+
+.campaign-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:10px 0;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.campaign-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.campaign-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+.campaign-left span{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#1e293b;
+
+}
+
+.campaign-left i{
+
+    font-size:20px;
+
+}
+
+.instagram-color{
+
+    color:#E4405F;
+
+}
+
+.campaign-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.campaign-right .badge{
+
+    font-size:11px;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+
+}
+
+.campaign-right strong{
+
+    width:32px;
+
+    text-align:right;
+
+    font-size:18px;
+
+    color:#2563eb;
+
+}
+
+/* =========================================
+DESEMPENHO
+========================================= */
+
+.performance-item{
+
+    margin-bottom:12px;
+
+}
+
+.performance-item:last-child{
+
+    margin-bottom:0;
+
+}
+
+.performance-item .progress{
+
+    height:7px;
+
+    border-radius:20px;
+
+    background:#edf2f7;
+
+    overflow:hidden;
+
+}
+
+.performance-item .progress-bar{
+
+    border-radius:20px;
+
+}
+
+.performance-item span{
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.performance-item strong{
+
+    color:#1e293b;
+
+}
+
+/* =========================================
+TÍTULO
+========================================= */
+
+.dashboard-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+}
+
+.dashboard-title i{
+
+    font-size:22px;
+
+}
+
+.dashboard-title h5{
+
+    margin:0;
+
+    font-weight:700;
+
+    font-size:22px;
+
+}
+
+.dashboard-title small{
+
+    color:#64748b;
+
+}
+
+.summary-item{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+.summary-item span{
+
+    flex:1;
+
+    margin-left:8px;
+
+}
+
+.summary-item strong{
+
+    min-width:35px;
+
+    text-align:right;
+
+    font-weight:700;
+
+}
+
+.progress{
+
+    height:6px;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+.progress-bar{
+
+    border-radius:10px;
+
+}
+
+</style>
+
+
+<!-- =========================================
+TERCEIRA LINHA
+========================================= -->
+
+<div class="row mt-4">
+
+    <!-- =========================================
+CAMPANHAS EM ANDAMENTO
+========================================= -->
+
+<div class="col-lg-6 mb-4">
+
+    <div class="card dashboard-card marketing-card">
+
+        <div class="card-body">
+
+            <div class="dashboard-title mb-4">
+
+                <i class="bi bi-megaphone-fill text-primary"></i>
+
+                <div>
+
+                    <h5>Campanhas em Andamento</h5>
+
+                    <small>Campanhas ativas no momento</small>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+            CAMPANHAS ATIVAS
+            ========================================= -->
+
+            {% if campanhas_ativas %}
+
+                {% for campanha in campanhas_ativas %}
+
+                    <div class="campaign-item">
+
+                        <div class="campaign-left">
+
+                            {% if campanha.canal == "GOOGLE" %}
+
+                                <i class="bi bi-google text-danger"></i>
+
+                            {% elif campanha.canal == "INSTAGRAM" %}
+
+                                <i class="bi bi-instagram instagram-color"></i>
+
+                            {% elif campanha.canal == "FACEBOOK" %}
+
+                                <i class="bi bi-facebook text-primary"></i>
+
+                            {% elif campanha.canal == "WHATSAPP" %}
+
+                                <i class="bi bi-whatsapp text-success"></i>
+
+                            {% elif campanha.canal == "SITE" %}
+
+                                <i class="bi bi-globe text-primary"></i>
+
+                            {% elif campanha.canal == "EMAIL" %}
+
+                                <i class="bi bi-envelope-fill text-warning"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-megaphone-fill text-secondary"></i>
+
+                            {% endif %}
+
+
+                            <span>
+
+                                {{ campanha.nome }}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="campaign-right">
+
+                            <span class="badge bg-success">
+
+                                {{ campanha.status_display }}
+
+                            </span>
+
+                            <strong>
+
+                                {{ campanha.leads }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="text-center py-4">
+
+                    <i class="bi bi-megaphone text-muted"
+                       style="font-size:32px;"></i>
+
+                    <p class="text-muted mt-2 mb-0">
+
+                        Nenhuma campanha ativa no momento.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <hr class="campaign-divider">
+
+
+            <!-- =========================================
+            RESUMO
+            ========================================= -->
+
+            <div class="campaign-summary">
+
+                <div class="summary-item">
+
+                    <i class="bi bi-check-circle-fill text-success"></i>
+
+                    <span>Campanhas Ativas</span>
+
+                    <strong>
+
+                        {{ campanhas_ativas|length }}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <i class="bi bi-pause-circle-fill text-warning"></i>
+
+                    <span>Pausadas</span>
+
+                    <strong>
+
+                        {{ campanhas_pausadas }}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <i class="bi bi-bullseye text-primary"></i>
+
+                    <span>Total de Leads</span>
+
+                    <strong>
+
+                        {{ total_leads_campanhas }}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+DESEMPENHO DAS CAMPANHAS
+========================================= -->
+
+<div class="col-lg-6 mb-4">
+
+    <div class="card dashboard-card marketing-card">
+
+        <div class="card-body">
+
+            <div class="dashboard-title mb-4">
+
+                <i class="bi bi-trophy-fill text-warning"></i>
+
+                <div>
+
+                    <h5>Desempenho das Campanhas</h5>
+
+                    <small>Ranking por geração de leads</small>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+            RANKING
+            ========================================= -->
+
+            {% if desempenho_campanhas %}
+
+                {% for campanha in desempenho_campanhas %}
+
+                    <div class="performance-item
+                        {% if not forloop.first %}mt-4{% endif %}">
+
+                        <div class="d-flex justify-content-between mb-1">
+
+                            <span>
+
+                                {{ campanha.nome }}
+
+                            </span>
+
+                            <strong>
+
+                                {{ campanha.leads }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress">
+
+                            {% widthratio campanha.leads desempenho_campanhas.0.leads 100 as percentual %}
+
+                            <div
+                                class="progress-bar
+                                {% if campanha.canal == 'GOOGLE' %}
+                                    bg-danger
+                                {% elif campanha.canal == 'INSTAGRAM' %}
+                                    instagram-bar
+                                {% elif campanha.canal == 'FACEBOOK' %}
+                                    bg-primary
+                                {% elif campanha.canal == 'WHATSAPP' %}
+                                    bg-success
+                                {% elif campanha.canal == 'SITE' %}
+                                    bg-info
+                                {% elif campanha.canal == 'EMAIL' %}
+                                    bg-warning
+                                {% else %}
+                                    bg-secondary
+                                {% endif %}"
+                                style="width:{{ percentual }}%;">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="text-center py-4">
+
+                    <i class="bi bi-bar-chart text-muted"
+                       style="font-size:32px;"></i>
+
+                    <p class="text-muted mt-2 mb-0">
+
+                        Ainda não existem campanhas cadastradas.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>

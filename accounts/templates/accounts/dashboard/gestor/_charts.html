@@ -1,0 +1,288 @@
+<style>
+/* =========================================
+SEGUNDA LINHA
+========================================= */
+
+/* Altura dos cards */
+
+.dashboard-chart-card{
+
+    height:350px;
+
+}
+
+.dashboard-agenda-card{
+
+    height:350px;
+
+}
+
+/* =========================================
+AGENDA
+========================================= */
+
+.agenda-scroll{
+
+    max-height:210px;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    padding-right:6px;
+
+}
+
+.agenda-item{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+    padding:10px 12px;
+
+    margin-bottom:8px;
+
+    border:1px solid #eef2f7;
+
+    border-radius:10px;
+
+    background:#fff;
+
+    transition:.25s;
+
+}
+
+.agenda-item:hover{
+
+    background:#f8fafc;
+
+    border-color:#dbeafe;
+
+}
+
+.agenda-hora{
+
+    min-width:54px;
+
+    font-weight:700;
+
+    font-size:14px;
+
+    color:#2563eb;
+
+}
+
+.agenda-info{
+
+    flex:1;
+
+}
+
+.agenda-info strong{
+
+    display:block;
+
+    font-size:14px;
+
+    color:#111827;
+
+}
+
+.agenda-info small{
+
+    font-size:12px;
+
+    color:#6b7280;
+
+}
+
+/* Scroll */
+
+.agenda-scroll::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.agenda-scroll::-webkit-scrollbar-track{
+
+    background:#f1f5f9;
+
+    border-radius:10px;
+
+}
+
+.agenda-scroll::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+
+    border-radius:10px;
+
+}
+
+/* =========================================
+GRÁFICO
+========================================= */
+
+.dashboard-chart-card{
+
+    height:350px;
+
+}
+
+.grafico-container{
+
+    position:relative;
+
+    width:100%;
+
+    height:220px;
+
+}
+
+
+#graficoProducaoGestor{
+
+    width:100%!important;
+
+    height:100%!important;
+
+}
+</style>
+
+<div class="row mt-4">
+
+    <!-- =========================================
+    PRODUÇÃO MENSAL
+    ========================================= -->
+
+    <div class="col-lg-7 mb-4">
+
+        <div class="card dashboard-card stats-card dashboard-chart-card">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+
+                        <h5 class="mb-1">
+
+                            <i class="bi bi-bar-chart-line-fill text-primary me-2"></i>
+
+                            Produção Mensal
+
+                        </h5>
+
+                        <small class="text-muted">
+
+                            Evolução da produção da clínica
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <div class="grafico-container">
+
+                    <canvas id="graficoProducaoGestor"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+    AGENDA DE HOJE
+    ========================================= -->
+
+    <div class="col-lg-5 mb-4">
+
+        <div class="card dashboard-card stats-card dashboard-agenda-card">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+
+                        <h5 class="mb-1">
+
+                            <i class="bi bi-calendar-check-fill text-success me-2"></i>
+
+                            Agenda de Hoje
+
+                        </h5>
+
+                        <small class="text-muted">
+
+                            Próximos atendimentos
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <div class="agenda-scroll">
+
+                    {% if proximas_consultas %}
+
+                        {% for consulta in proximas_consultas %}
+
+                            <div class="agenda-item">
+
+                                <div class="agenda-hora">
+
+                                    {{ consulta.hora_inicio|time:"H:i" }}
+
+                                </div>
+
+                                <div class="agenda-info">
+
+                                    <strong>
+
+                                        {{ consulta.paciente.nome }}
+
+                                    </strong>
+
+                                    <small>
+
+                                        {{ consulta.profissional.nome }}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="d-flex flex-column justify-content-center align-items-center h-100 text-muted">
+
+                            <i class="bi bi-calendar-x fs-1 mb-3"></i>
+
+                            <span>Nenhuma consulta agendada.</span>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

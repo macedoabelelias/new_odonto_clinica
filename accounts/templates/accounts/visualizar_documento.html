@@ -1,0 +1,113 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="ficha-form-card">
+
+        <div class="section-header-premium">
+
+            <div class="section-icon blue">
+                <i class="fa-solid fa-file-medical"></i>
+            </div>
+
+            <div>
+
+                <h5>
+                    {{ documento.titulo }}
+                </h5>
+
+                <p>
+                    Documento Clínico
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="documento-visualizacao">
+
+            <!-- CABEÇALHO -->
+
+            <div class="documento-header">
+
+                {% if config.logo %}
+                    <img
+                        src="{{ config.logo.url }}"
+                        class="documento-logo"
+                        alt="Logo da Clínica"
+                    >
+                {% endif %}
+               
+
+                {% if config.cro %}
+                    <p class="cro-clinica">
+                        CRO {{ config.cro }}
+                    </p>
+                {% endif %}
+
+            </div>
+
+            <hr class="documento-divisor">
+
+            <!-- CONTEÚDO -->
+
+            <div class="documento-corpo">
+
+                <pre class="documento-texto">{{ documento.conteudo }}</pre>
+
+            </div>
+            
+            <hr class="documento-divisor">
+
+            <div class="documento-rodape">
+
+    <div class="rodape-esquerda">
+
+        {% if config.endereco %}
+            {{ config.endereco }}
+        {% endif %}
+
+        {% if config.cidade %}
+            - {{ config.cidade }}
+        {% endif %}
+
+    </div>
+
+    <div class="rodape-direita">
+
+        {% if config.whatsapp %}
+            WhatsApp: {{ config.whatsapp }}
+        {% endif %}
+
+    </div>
+
+</div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+
+            <a
+                href="{% url 'editar_documento' documento.id %}"
+                class="btn btn-outline-primary"
+            >
+                <i class="fa-solid fa-pen"></i>
+                Editar
+            </a>
+
+            <a
+                href="javascript:history.back()"
+                class="btn btn-secondary"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Voltar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

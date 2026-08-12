@@ -1,0 +1,291 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Produção Mensal
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<!-- ========================================= -->
+<!-- RESUMO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Resumo da Produção
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="35%">
+                <strong>Ano</strong>
+            </td>
+
+            <td>
+
+                {{ ano_selecionado }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Mês</strong>
+            </td>
+
+            <td>
+
+                {% if mes_selecionado %}
+
+                    {% for numero, nome in meses_lista %}
+
+                        {% if numero|stringformat:"s" == mes_selecionado|stringformat:"s" %}
+
+                            {{ nome }}
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% else %}
+
+                    Todos
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Profissional</strong>
+            </td>
+
+            <td>
+
+                {% if profissional_id %}
+
+                    {% for profissional in profissionais %}
+
+                        {% if profissional.id|stringformat:"s" == profissional_id %}
+
+                            {{ profissional.get_full_name|default:profissional.username }}
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% else %}
+
+                    Todos
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Produção Total</strong>
+            </td>
+
+            <td>
+
+                <strong style="font-size:18px;color:#198754;">
+
+                    R$ {{ total_producao|floatformat:2 }}
+
+                </strong>
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Procedimentos</strong>
+            </td>
+
+            <td>
+
+                {{ total_procedimentos }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Pacientes</strong>
+            </td>
+
+            <td>
+
+                {{ total_pacientes }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Melhor Mês</strong>
+            </td>
+
+            <td>
+
+                {{ melhor_mes }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Ticket Médio</strong>
+            </td>
+
+            <td>
+
+                R$ {{ ticket_medio|floatformat:2 }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ========================================= -->
+<!-- EVOLUÇÃO MENSAL -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Evolução Mensal
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Mês</th>
+                <th style="text-align:center;">Procedimentos</th>
+                <th style="text-align:center;">Pacientes</th>
+                <th style="text-align:right;">Produção</th>
+                <th style="text-align:right;">Ticket Médio</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for mes in meses %}
+
+            <tr>
+
+                <td>
+
+                    {{ mes.nome }}
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    {{ mes.procedimentos }}
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    {{ mes.pacientes }}
+
+                </td>
+
+                <td style="text-align:right;">
+
+                    R$ {{ mes.producao|floatformat:2 }}
+
+                </td>
+
+                <td style="text-align:right;">
+
+                    R$ {{ mes.ticket_medio|floatformat:2 }}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="5" style="text-align:center;">
+
+                    Nenhum registro encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

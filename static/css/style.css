@@ -1,0 +1,886 @@
+/* =========================================
+RESET
+========================================= */
+
+html,
+body{
+
+    margin:0;
+
+    padding:0;
+
+    min-height:100%;
+
+    background:#f1f5f9;
+
+    font-family:'Segoe UI', sans-serif;
+
+    overflow-y:auto;
+
+}
+
+/* =========================================
+LAYOUT PRINCIPAL
+========================================= */
+
+.dashboard-wrapper{
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+/* =========================================
+SIDEBAR
+========================================= */
+
+.sidebar{
+
+    width:220px;
+
+    min-width:220px;
+
+    max-width:220px;
+
+    background:#ffffff;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    height:100vh;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    z-index:1000;
+
+    border-right:1px solid #eef2f7;
+
+    box-shadow:
+        0 2px 10px rgba(15,23,42,.05);
+
+    padding:16px 14px;
+
+}
+
+/* =========================================
+TÍTULOS DA SIDEBAR
+========================================= */
+
+.sidebar-section{
+
+    margin-top:14px;
+    margin-bottom:6px;
+
+    padding:0 14px;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    color:#94a3b8;
+
+    text-transform:uppercase;
+
+}
+
+/* =========================================
+PERFIL TOPO
+========================================= */
+
+.profile-dropdown-btn{
+
+    background:#fff !important;
+
+    border:none !important;
+
+    border-radius:16px !important;
+
+    padding:7px 10px !important;
+
+    display:flex !important;
+
+    align-items:center !important;
+
+    gap:10px;
+
+    box-shadow:
+        0 2px 10px rgba(15,23,42,.06);
+
+}
+
+.profile-dropdown-btn .fw-semibold{
+
+    font-size:13px;
+
+    font-weight:600;
+
+    line-height:1.1;
+
+    margin-bottom:1px;
+
+}
+
+.profile-dropdown-btn small{
+
+    font-size:11px;
+
+    color:#94a3b8 !important;
+
+}
+
+.profile-dropdown-btn:hover{
+
+    background:#fff !important;
+
+}
+
+.profile-avatar{
+
+    width:34px;
+
+    height:34px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:2px solid #e5e7eb;
+
+}
+
+.profile-avatar-placeholder{
+
+    width:34px;
+
+    height:34px;
+
+    border-radius:50%;
+
+    background:#e5e7eb;
+
+}
+
+.profile-user-name{
+
+    font-size:13px;
+
+    font-weight:600;
+
+    line-height:1.1;
+
+    color:#0f172a;
+
+}
+
+.profile-user-role{
+
+    font-size:11px;
+
+    color:#94a3b8;
+
+}
+
+/* =========================================
+LOGO
+========================================= */
+
+.logo-area{
+
+    padding:0;
+
+    margin:0 0 4px 0;
+
+}
+
+.logo-area img{
+
+    width:100%;
+
+    margin:auto;
+
+    display:block;
+
+    border-radius:18px;
+
+}
+
+/* =========================================
+MENU
+========================================= */
+
+.sidebar-menu{
+
+    list-style:none;
+
+    padding:0;
+
+    margin:0;
+
+}
+
+.sidebar-menu li{
+
+    margin-bottom:8px;
+
+}
+
+.sidebar-menu li a{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:12px 14px;
+
+    border-radius:14px;
+
+    color:#64748b;
+
+    text-decoration:none;
+
+    font-weight:500;
+
+    font-size:14px;
+
+    transition:.2s;
+
+    box-sizing:border-box;
+
+}
+
+.sidebar-menu li a i{
+
+    width:18px;
+
+    min-width:18px;
+
+    text-align:center;
+
+    font-size:14px;
+
+}
+
+/* HOVER */
+
+.sidebar-menu li a:hover{
+
+    background:#f4f7fb;
+
+    color:#2563eb;
+
+}
+
+/* ATIVO */
+
+.sidebar-menu li.active a,
+.sidebar-menu a.active{
+
+    background:linear-gradient(
+        135deg,
+        #4d8dff,
+        #2563eb
+    );
+
+    color:#fff;
+
+    box-shadow:none !important;
+
+    transform:none !important;
+
+}
+
+/* =========================================
+SUBMENUS
+========================================= */
+
+.menu-group{
+
+    margin-bottom:8px;
+
+}
+
+.menu-toggle{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 14px;
+
+    border:none;
+
+    background:none;
+
+    color:#64748b;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.menu-toggle:hover{
+
+    background:#f4f7fb;
+
+    color:#2563eb;
+
+}
+
+.menu-toggle i{
+
+    transition:.3s;
+
+}
+
+.menu-group.open .menu-toggle i{
+
+    transform:rotate(90deg);
+
+}
+
+.submenu{
+
+    display:none;
+
+    list-style:none;
+
+    padding-left:16px;
+
+    margin-top:6px;
+
+}
+
+.menu-group.open .submenu{
+
+    display:block;
+
+}
+
+.submenu li{
+
+    margin-bottom:4px;
+
+}
+
+.submenu li a{
+
+    padding:10px 14px;
+
+    font-size:13px;
+
+}
+
+/* =========================================
+CONTEÚDO
+========================================= */
+
+.main-content{
+
+    margin-left:190px;
+
+    width:calc(100% - 190px);
+
+    padding:30px 35px 30px 45px;
+
+    min-height:100vh;
+
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.page-header{
+
+    margin-bottom:25px;
+
+}
+
+.paciente-nome{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:6px;
+
+}
+
+.paciente-info{
+
+    color:#64748b;
+
+    font-size:15px;
+
+}
+
+/* =========================================
+ABAS PRONTUÁRIO
+========================================= */
+
+.abas-prontuario{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-bottom:30px;
+
+    border-bottom:1px solid #e5e7eb;
+
+    padding-bottom:15px;
+
+}
+
+.aba-item{
+
+    text-decoration:none;
+
+    color:#64748b;
+
+    padding:12px 20px;
+
+    border-radius:12px;
+
+    transition:.2s;
+
+    font-weight:600;
+
+}
+
+.aba-item:hover{
+
+    background:#edf4ff;
+
+    color:#2563eb;
+
+}
+
+.aba-item.active{
+
+    background:#2563eb;
+
+    color:#fff;
+
+}
+
+/* =========================================
+CARDS
+========================================= */
+
+.card-premium,
+.odontograma-card{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    padding:30px;
+
+    box-shadow:
+    0 10px 35px rgba(15,23,42,.05);
+
+    margin-bottom:25px;
+
+}
+
+/* =========================================
+ODONTOGRAMA
+========================================= */
+
+.odontograma-box{
+
+    background:#f8fbff;
+
+    border:2px solid #b9c8db;
+
+    border-radius:24px;
+
+    padding:20px;
+
+    max-width:760px;
+
+    margin:auto;
+
+}
+
+.secao-titulo{
+
+    text-align:center;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    margin-bottom:20px;
+
+    color:#0f172a;
+
+}
+
+/* =========================================
+ARCADAS
+========================================= */
+
+.arcada{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:flex-end;
+
+    gap:2px;
+
+    margin-bottom:5px;
+
+}
+
+.arcada.inferior{
+
+    margin-top:-8px;
+
+}
+
+.arcada.decidua.inferior{
+
+    margin-top:-6px;
+
+}
+
+/* =========================================
+DENTES
+========================================= */
+
+.dente-box{
+
+    width:42px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.dente-img{
+
+    width:54px;
+
+    height:92px;
+
+    object-fit:contain;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.dente-img.deciduo{
+
+    width:44px;
+
+    height:70px;
+
+}
+
+.dente-img:hover{
+
+    transform:
+    translateY(-3px)
+    scale(1.05);
+
+}
+
+/* =========================================
+FORMULÁRIOS
+========================================= */
+
+.form-control{
+
+    border-radius:14px !important;
+
+    padding:12px !important;
+
+}
+
+.btn-salvar{
+
+    padding:14px 28px;
+
+    border-radius:14px;
+
+    font-weight:600;
+
+}
+
+/* =========================================
+SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+
+    border-radius:20px;
+
+}
+
+/* =========================================
+SUBMENU CLÍNICA
+========================================= */
+
+.submenu-clinica{
+
+    list-style:none;
+
+    padding-left:40px;
+
+    margin-top:8px;
+
+}
+
+.submenu-clinica li{
+
+    margin-bottom:8px;
+
+}
+
+.submenu-clinica a{
+
+    color:#94a3b8;
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    transition:.2s;
+
+}
+
+.submenu-clinica a:hover{
+
+    color:#ffffff;
+
+}
+
+.topbar{
+    background:#fff;
+    padding:15px 25px;
+    border-bottom:1px solid #e5e7eb;
+    margin-bottom:20px;
+}
+
+.dentista-badge{
+
+    display:inline-block;
+    padding:6px 12px;
+
+    background:#e8f2ff;
+    color:#2563eb;
+
+    border-radius:20px;
+
+    font-size:.85rem;
+    font-weight:600;
+
+    white-space:nowrap;
+
+}
+
+/* =========================================
+PRODUTOS
+========================================= */
+
+.produto-nome{
+
+    max-width:350px;
+
+    white-space:normal;
+
+    word-break:break-word;
+
+}
+
+.card-estoque{
+    border-left:4px solid #2563eb;
+}
+
+.card-minimo{
+    border-left:4px solid #dc3545;
+}
+
+.card-valor{
+    border-left:4px solid #198754;
+}
+
+.estoque-baixo{
+    background-color: #fff5f5 !important;
+    border-left: 4px solid #dc3545;
+}
+
+.table tbody tr{
+    transition: all .2s ease;
+}
+
+.table tbody tr:hover{
+    background:#f8fafc;
+}
+
+.table td{
+    vertical-align: middle;
+}
+
+.badge.rounded-pill{
+    font-size:.80rem;
+    font-weight:600;
+}
+
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-dark{
+    border-radius:10px;
+}
+
+/* ==========================================
+   RELATÓRIOS
+   ========================================== */
+
+.relatorio-card{
+    border:0;
+    border-radius:12px;
+    transition:.25s;
+    cursor:pointer;
+}
+
+.relatorio-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 .7rem 1.5rem rgba(0,0,0,.12);
+}
+
+.relatorio-icon{
+    font-size:46px;
+    margin-bottom:15px;
+}
+
+.relatorio-card h5{
+    font-weight:600;
+}
+
+.relatorio-card p{
+    min-height:45px;
+    color:#6c757d;
+}
+
+.btn-relatorio{
+
+    background:#fff;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:7px 16px;
+
+    box-shadow:0 .15rem .5rem rgba(0,0,0,.10);
+
+    transition:.2s;
+
+    font-weight:600;
+
+}
+
+.btn-relatorio:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 .35rem .8rem rgba(0,0,0,.18);
+
+}
+
+
+
+/* =========================================
+RESPONSIVO
+========================================= */
+
+@media(max-width:992px){
+
+    .sidebar{
+
+        width:100%;
+
+        height:auto;
+
+        position:relative;
+
+    }
+
+    .main-content{
+
+        margin-left:0;
+
+        width:100%;
+
+    }
+
+}
+
+.form-select,
+.form-control{
+
+    height:48px;
+
+    border-radius:14px !important;
+
+    border:1px solid #dbe2ea !important;
+
+    font-size:15px;
+
+    transition:all .2s ease;
+
+}
+
+.form-select:focus,
+.form-control:focus{
+
+    border-color:#2563eb !important;
+
+    box-shadow:
+        0 0 0 0.18rem rgba(37,99,235,.15) !important;
+
+}

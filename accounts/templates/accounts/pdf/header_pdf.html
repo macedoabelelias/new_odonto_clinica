@@ -1,0 +1,105 @@
+{% load static %}
+
+<div class="header">
+
+    <!-- ========================================= -->
+    <!-- LOGO -->
+    <!-- ========================================= -->
+
+    <div class="header-logo">
+
+        {% if config.logo %}
+
+            <img
+                src="{{ config.logo.url }}"
+                class="logo"
+                alt="Logo da Clínica">
+
+        {% else %}
+
+            <img
+                src="{% static 'img/logo.png' %}"
+                class="logo"
+                alt="Logo">
+
+        {% endif %}
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TÍTULO -->
+    <!-- ========================================= -->
+
+    <div class="header-centro">
+
+        <h2>
+
+            {{ titulo_relatorio }}
+
+        </h2>
+
+        <p>
+
+            Emitido em {% now "d/m/Y \\à\\s H:i" %}
+
+        </p>
+
+        <small>
+
+            Usuário:
+            {{ request.user.get_full_name|default:request.user.username }}
+
+        </small>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- DADOS DA CLÍNICA -->
+    <!-- ========================================= -->
+
+    <div class="header-contato">
+
+        <strong>
+
+            {{ config.nome_clinica }}
+
+        </strong>
+
+        {% if config.cnpj %}
+
+        <div>
+
+            CNPJ:
+            {{ config.cnpj }}
+
+        </div>
+
+        {% endif %}
+
+        {% if config.cro %}
+
+        <div>
+
+            CRO:
+            {{ config.cro }}
+
+        </div>
+
+        {% endif %}
+
+        {% if config.telefone %}
+
+        <div>
+
+            Telefone:
+            {{ config.telefone }}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<hr class="linha-pdf">

@@ -1,0 +1,137 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>Usuários</h1>
+
+        <a href="{% url 'novo_usuario' %}" class="btn btn-primary">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Novo Usuário
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Foto</th>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th>Perfil</th>
+                        <th>Status</th>
+
+                        <th width="180">Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for usuario in usuarios %}
+
+                    <tr>
+
+                        <td>
+
+                            {% if usuario.perfil.foto %}
+
+                            <img src="{{ usuario.perfil.foto.url }}" width="40" height="40"
+                                style="border-radius:50%; object-fit:cover;">
+
+                            {% else %}
+
+                            <div style="
+                        width:40px;
+                        height:40px;
+                        border-radius:50%;
+                        background:#dee2e6;
+                    "></div>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>{{ usuario.first_name }}</td>
+
+                        <td>{{ usuario.username }}</td>
+
+                        <td>{{ usuario.perfil.get_tipo_usuario_display }}</td>
+
+                        <td>
+
+                            <a href="{% url 'alterar_status_usuario' usuario.id %}" class="text-decoration-none">
+
+                                {% if usuario.perfil.ativo %}
+
+                                <span class="badge bg-success">
+                                    Ativo
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-danger">
+                                    Inativo
+                                </span>
+
+                                {% endif %}
+
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            <div class="d-flex gap-2 justify-content-center">
+
+                                <a href="{% url 'perfil_usuario' usuario.id %}"
+                                    class="btn btn-sm btn-outline-secondary rounded-pill">
+
+                                    <i class="bi bi-person-vcard"></i>
+
+                                    Perfil
+
+                                </a>
+
+                                <a href="{% url 'editar_usuario' usuario.id %}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill">
+
+                                    <i class="bi bi-pencil-square"></i>
+
+                                    Editar
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

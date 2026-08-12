@@ -1,0 +1,307 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Central de Relatórios
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4 class="mb-0">
+                <i class="bi bi-bar-chart-line-fill"></i>
+                Central de Relatórios
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- CADASTRAIS -->
+            <h5 class="fw-bold text-primary mb-4">
+                <i class="bi bi-folder2-open"></i>
+                Relatórios Cadastrais
+            </h5>
+
+            <div class="row g-4 mb-5">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-people-fill text-primary relatorio-icon"></i>
+                            <h5>Pacientes</h5>
+                            <p>Cadastros completos dos pacientes.</p>
+                            <a href="{% url 'relatorio_pacientes' %}" class="btn btn-outline-primary btn-sm">
+                                Acessar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-heart-pulse-fill text-success relatorio-icon"></i>
+                            <h5>Tratamentos</h5>
+                            <p>Histórico completo dos tratamentos.</p>
+                            <a href="{% url 'relatorio_tratamentos' %}" class="btn btn-outline-success btn-sm">
+
+                                Acessar
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-cash-stack text-warning relatorio-icon"></i>
+                            <h5>Orçamentos</h5>
+                            <p>Orçamentos emitidos e aprovados.</p>
+                            <a href="{% url 'relatorio_orcamentos' %}"
+                            class="btn btn-outline-warning btn-sm">
+
+                                Acessar
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-clipboard2-pulse-fill text-info relatorio-icon"></i>
+
+                                <h5>Atendimentos</h5>
+
+                                <p>
+                                    Histórico de consultas e atendimentos realizados.
+                                </p>
+
+                                <a href="{% url 'relatorio_atendimentos' %}" class="btn btn-outline-info btn-sm">
+
+                                    Acessar
+
+                                </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FINANCEIRO -->
+            <h5 class="fw-bold text-success mb-4">
+                <i class="bi bi-cash-coin"></i>
+                Relatórios Financeiros
+            </h5>
+
+            <div class="row g-4 mb-5">
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-wallet2 text-success relatorio-icon"></i>
+                            <h5>Contas a Receber</h5>
+                            <p>Controle dos recebimentos.</p>
+                            <a href="{% url 'relatorio_contas_receber' %}" class="btn btn-outline-success btn-sm">
+                                Acessar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-credit-card-fill text-danger relatorio-icon"></i>
+                            <h5>Contas a Pagar</h5>
+                            <p>Despesas e pagamentos.</p>
+                            <a href="{% url 'relatorio_contas_pagar' %}"
+                            class="btn btn-outline-danger btn-sm">
+
+                                Acessar
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm relatorio-card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-safe-fill text-secondary relatorio-icon"></i>
+                            <h5>Caixa</h5>
+                            <p>Movimentação diária do caixa.</p>
+                            <a href="{% url 'relatorio_caixa' %}"
+                            class="btn btn-outline-primary btn-sm">
+
+                                Acessar
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- GERENCIAL -->
+<h5 class="fw-bold text-dark mb-4">
+    <i class="bi bi-graph-up-arrow"></i>
+    Relatórios Gerenciais
+</h5>
+
+<div class="row g-4">
+
+    <!-- PRODUÇÃO -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-bar-chart-fill fs-1 text-success"></i>
+
+                <h4 class="mt-3">
+
+                    Produção
+
+                </h4>
+
+                <p>
+
+                    Produção clínica e procedimentos.
+
+                </p>
+
+                <a href="{% url 'relatorio_producao' %}"
+                   class="btn btn-outline-success">
+
+                    Acessar
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FATURAMENTO -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-currency-dollar fs-1 text-warning"></i>
+
+                <h4 class="mt-3">
+
+                    Faturamento
+
+                </h4>
+
+                <p>
+
+                    Análise do faturamento da clínica.
+
+                </p>
+
+                <a href="{% url 'relatorio_faturamento' %}"
+                   class="btn btn-outline-warning">
+
+                    Acessar
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- AUDITORIA -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-shield-check fs-1 text-primary"></i>
+
+                <h4 class="mt-3">
+
+                    Auditoria do Sistema
+
+                </h4>
+
+                <p>
+
+                    Consulte o histórico de ações realizadas no sistema.
+
+                </p>
+
+                <a href="{% url 'relatorio_auditoria' %}"
+                   class="btn btn-primary">
+
+                    Acessar
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ANIVERSARIANTES -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-cake2-fill fs-1 text-warning"></i>
+
+                <h4 class="mt-3">
+
+                    Aniversariantes
+
+                </h4>
+
+                <p>
+
+                    Relação de pacientes aniversariantes.
+
+                </p>
+
+                <a href="{% url 'relatorio_aniversariantes' %}"
+                   class="btn btn-outline-warning">
+
+                    Acessar
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+            
+
+
+{% endblock %}

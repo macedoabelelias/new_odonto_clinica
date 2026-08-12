@@ -1,0 +1,315 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- CABEÇALHO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h3 class="fw-bold mb-1">
+
+                <i class="bi bi-bullseye text-primary"></i>
+
+                Metas dos Dentistas
+
+            </h3>
+
+            <small class="text-muted">
+
+                Gerencie as metas individuais dos dentistas.
+
+            </small>
+
+        </div>
+
+        <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#modalMeta">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Nova Meta
+
+        </button>
+
+    </div>
+
+    <!-- CARDS -->
+    {% include 'accounts/metas/_cards.html' %}
+
+    <!-- LISTAGEM -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+            <strong>
+
+                Metas Cadastradas
+
+            </strong>
+
+            <span class="badge bg-primary">
+
+                {{ metas|length }} registro{{ metas|length|pluralize }}
+
+            </span>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Dentista</th>
+
+                        <th>Mês/Ano</th>
+
+                        <th class="text-end">Meta Financeira</th>
+
+                        <th class="text-center">Procedimentos</th>
+
+                        <th class="text-center">Pacientes</th>
+
+                        <th class="text-center" width="120">Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for meta in metas %}
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+
+                                {{ meta.dentista.usuario.get_full_name|default:meta.dentista.usuario.username }}
+
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            {{ meta.mes|stringformat:"02d" }}/{{ meta.ano }}
+
+                        </td>
+
+                        <td class="text-end fw-bold text-success">
+
+                            R$ {{ meta.meta_financeira|floatformat:2 }}
+
+                        </td>
+
+                        <td class="text-center">
+
+                            {{ meta.meta_procedimentos }}
+
+                        </td>
+
+                        <td class="text-center">
+
+                            {{ meta.meta_pacientes }}
+
+                        </td>
+
+                        <td class="text-center">
+
+                            <a href="{% url 'editar_meta_dentista' meta.id %}"
+                               class="btn btn-sm btn-outline-primary"
+                               title="Editar">
+
+                                <i class="bi bi-pencil-square"></i>
+
+                            </a>
+
+                            <a href="#"
+                               class="btn btn-sm btn-outline-danger"
+                               title="Excluir">
+
+                                <i class="bi bi-trash"></i>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6" class="text-center py-5">
+
+                            <i class="bi bi-bullseye fs-1 text-secondary"></i>
+
+                            <br>
+
+                            <span class="text-muted">
+
+                                Nenhuma meta cadastrada.
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL NOVA META -->
+
+<div class="modal fade"
+     id="modalMeta"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+
+                        <i class="bi bi-bullseye text-primary"></i>
+
+                        Nova Meta
+
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            {{ form.dentista.label_tag }}
+
+                            {{ form.dentista }}
+
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+
+                            {{ form.mes.label_tag }}
+
+                            {{ form.mes }}
+
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+
+                            {{ form.ano.label_tag }}
+
+                            {{ form.ano }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+
+                            {{ form.meta_financeira.label_tag }}
+
+                            {{ form.meta_financeira }}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            {{ form.meta_procedimentos.label_tag }}
+
+                            {{ form.meta_procedimentos }}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            {{ form.meta_pacientes.label_tag }}
+
+                            {{ form.meta_pacientes }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        {{ form.observacao.label_tag }}
+
+                        {{ form.observacao }}
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-check-circle"></i>
+
+                        Salvar Meta
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

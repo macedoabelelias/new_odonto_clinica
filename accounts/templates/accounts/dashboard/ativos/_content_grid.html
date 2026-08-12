@@ -1,0 +1,632 @@
+<style>
+
+/* Card Próximas Consultas */
+
+.appointments-card{
+
+    display:flex;
+    flex-direction:column;
+
+}
+
+.appointments-body{
+    height:240px;          /* ajuste fino */
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:6px;
+}
+
+/* Scroll */
+
+.appointments-body::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.appointments-body::-webkit-scrollbar-thumb{
+
+    background:#d0d0d0;
+    border-radius:10px;
+
+}
+
+/* ==========================================
+ANIVERSARIANTES
+========================================== */
+
+.birthday-body{
+
+    height:240px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:8px;
+
+}
+
+.birthday-body::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.birthday-body::-webkit-scrollbar-thumb{
+
+    background:#d0d0d0;
+    border-radius:10px;
+
+}
+</style>
+
+<!-- =========================================
+CONTENT GRID
+========================================== -->
+
+<div class="dashboard-row-3">
+
+    <!-- =========================================
+STATUS DA CLÍNICA
+========================================= -->
+
+{% if dashboard.mostrar_faturamento %}
+
+<div class="chart-card dashboard-card">
+
+    <div class="card-header">
+
+        <h5>
+            <i class="bi bi-shield-check text-success me-2"></i>
+            Status da Clínica
+        </h5>
+
+    </div>
+
+    <div class="d-flex flex-column justify-content-center align-items-center">
+
+        <!-- ÍCONE PRINCIPAL -->
+
+        <div class="mb-3">
+
+            <i class="bi bi-shield-check-fill text-success"
+               style="font-size:70px;"></i>
+
+        </div>
+
+        <!-- STATUS -->
+
+        <h4 class="fw-bold mb-1">
+
+            {{ status_clinica }}
+
+        </h4>
+
+        <p class="text-muted mb-4">
+
+            {% if total_criticas == 0 %}
+                Nenhuma ocorrência crítica
+            {% else %}
+                Existem ocorrências críticas
+            {% endif %}
+
+        </p>
+
+        <!-- ÍNDICE OPERACIONAL -->
+
+        <div class="w-100">
+
+            <div class="progress"
+                 style="height:6px; border-radius:20px;">
+
+                <div
+                    class="progress-bar bg-success"
+                    role="progressbar"
+                    style="width: {{ indice_operacional }}%;"
+                    aria-valuenow="{{ indice_operacional }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center w-100 mt-2">
+
+            <small class="text-muted">
+
+                Índice Operacional
+
+                <strong class="text-dark">
+
+                    {{ indice_operacional }}%
+
+                </strong>
+
+            </small>
+
+            <small class="text-muted">
+
+                {{ ultima_atualizacao }}
+
+            </small>
+
+        </div>
+
+        <hr class="w-100 my-4">
+
+        <!-- INDICADORES -->
+
+        <div class="row text-center w-100">
+
+            <!-- Pendências -->
+
+            <div class="col">
+
+                <a href="#"
+                   class="text-decoration-none"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modalPendencias">
+
+                    <h4 class="text-warning mb-1">
+
+                        {{ total_pendencias }}
+
+                    </h4>
+
+                    <small class="text-muted">
+
+                        Pendências
+
+                    </small>
+
+                </a>
+
+            </div>
+
+            <!-- Críticas -->
+
+            <div class="col border-start">
+
+                <a href="#"
+                   class="text-decoration-none"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modalCriticas">
+
+                    <h4 class="text-danger mb-1">
+
+                        {{ total_criticas }}
+
+                    </h4>
+
+                    <small class="text-muted">
+
+                        Críticas
+
+                    </small>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- =========================================
+MODAL - PENDÊNCIAS
+========================================= -->
+
+<div class="modal fade"
+     id="modalPendencias"
+     tabindex="-1"
+     aria-labelledby="modalPendenciasLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content shadow">
+
+            <div class="modal-header bg-warning-subtle">
+
+                <h5 class="modal-title d-flex align-items-center"
+                    id="modalPendenciasLabel">
+
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+
+                    Pendências da Clínica
+
+                    <span class="badge bg-warning text-dark ms-3">
+
+                        {{ total_pendencias }}
+
+                    </span>
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                {% if pendencias %}
+
+                    <div class="list-group list-group-flush">
+
+                        {% for item in pendencias %}
+
+                            {% if item.url %}
+
+                                <a href="{% url item.url %}"
+                                   class="list-group-item list-group-item-action py-3">
+
+                            {% else %}
+
+                                <div class="list-group-item py-3">
+
+                            {% endif %}
+
+                                    <div class="d-flex align-items-start">
+
+                                        <i class="bi bi-arrow-right-circle-fill text-warning fs-5 me-3"></i>
+
+                                        <div>
+
+                                            <h6 class="mb-1 fw-semibold">
+
+                                                {{ item.modulo }}
+
+                                            </h6>
+
+                                            <small class="text-muted">
+
+                                                {{ item.titulo }}
+
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                            {% if item.url %}
+
+                                </a>
+
+                            {% else %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="text-center py-5">
+
+                        <i class="bi bi-check-circle-fill text-success"
+                           style="font-size:60px;"></i>
+
+                        <h5 class="mt-3">
+
+                            Excelente!
+
+                        </h5>
+
+                        <p class="text-muted mb-0">
+
+                            Nenhuma pendência encontrada.
+
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Fechar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+MODAL - CRÍTICAS
+========================================= -->
+
+<div class="modal fade"
+     id="modalCriticas"
+     tabindex="-1"
+     aria-labelledby="modalCriticasLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content shadow">
+
+            <div class="modal-header bg-danger-subtle">
+
+                <h5 class="modal-title d-flex align-items-center"
+                    id="modalCriticasLabel">
+
+                    <i class="bi bi-exclamation-octagon-fill text-danger me-2"></i>
+
+                    Ocorrências Críticas
+
+                    <span class="badge bg-danger ms-3">
+
+                        {{ total_criticas }}
+
+                    </span>
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                {% if criticas %}
+
+                    <div class="list-group list-group-flush">
+
+                        {% for item in criticas %}
+
+                            {% if item.url %}
+
+                                <a href="{% url item.url %}"
+                                   class="list-group-item list-group-item-action py-3">
+
+                            {% else %}
+
+                                <div class="list-group-item py-3">
+
+                            {% endif %}
+
+                                    <div class="d-flex align-items-start">
+
+                                        <i class="bi bi-exclamation-circle-fill text-danger fs-5 me-3"></i>
+
+                                        <div>
+
+                                            <h6 class="mb-1 fw-semibold">
+
+                                                {{ item.modulo }}
+
+                                            </h6>
+
+                                            <small class="text-muted">
+
+                                                {{ item.titulo }}
+
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                            {% if item.url %}
+
+                                </a>
+
+                            {% else %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="text-center py-5">
+
+                        <i class="bi bi-check-circle-fill text-success"
+                           style="font-size:60px;"></i>
+
+                        <h5 class="mt-3">
+
+                            Excelente!
+
+                        </h5>
+
+                        <p class="text-muted mb-0">
+
+                            Nenhuma ocorrência crítica encontrada.
+
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Fechar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- PRÓXIMAS CONSULTAS -->
+
+    {% if dashboard.mostrar_consultas %}
+
+<div class="appointments-card">
+
+    <div class="card-header">
+
+        <h5>Próximas Consultas</h5>
+
+    </div>
+
+    <div class="appointments-body">
+
+        {% for consulta in proximas_consultas %}
+
+        <div class="appointment-item">
+
+            <div>
+
+                <strong>{{ consulta.hora_inicio|time:"H:i" }}</strong>
+
+            </div>
+
+            <div>
+
+                <h6>{{ consulta.paciente.nome }}</h6>
+
+                <p>
+
+                    {% if consulta.procedimento %}
+                        {{ consulta.procedimento.nome }}
+                    {% else %}
+                        Consulta
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+            {% if consulta.status == 'confirmado' %}
+
+                <span class="badge-confirmed">
+                    Confirmada
+                </span>
+
+            {% elif consulta.status == 'agendado' %}
+
+                <span class="badge-pending">
+                    Agendada
+                </span>
+
+            {% elif consulta.status == 'atendimento' %}
+
+                <span class="badge-confirmed">
+                    Em Atendimento
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="appointment-item">
+
+            <strong>Nenhuma consulta encontrada.</strong>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+    <!-- ANIVERSARIANTES -->
+
+{% if dashboard.mostrar_aniversariantes %}
+
+<div class="birthday-card">
+
+    <div class="card-header">
+
+        <h5 style="text-align:center;">
+            🎂 Aniversariantes do Mês
+        </h5>
+
+    </div>
+
+    <div class="birthday-body">
+
+        {% if aniversariantes %}
+
+            {% for aniversariante in aniversariantes %}
+
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+
+                <div>
+
+                    <strong>{{ aniversariante.nome }}</strong><br>
+
+                    <small class="text-muted">
+
+                        {{ aniversariante.nascimento|date:"d/m" }}
+
+                    </small>
+
+                </div>
+
+                <i class="bi bi-cake2-fill text-warning"></i>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="birthday-empty">
+
+                Nenhum aniversariante encontrado.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+</div>

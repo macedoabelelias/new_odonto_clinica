@@ -1,0 +1,235 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- CARD FORM -->
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body p-4">
+
+            <h2 class="fw-bold mb-1">
+                Gerenciar Convênios
+            </h2>
+
+            <p class="text-muted mb-4">
+                Cadastre os convênios e configure índices automáticos.
+            </p>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="row g-3">
+
+                    <!-- NOME -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Nome
+                        </label>
+
+                        {{ form.nome }}
+
+                    </div>
+
+                    <!-- ÍNDICE -->
+                    <div class="col-md-2">
+
+                        <label class="form-label fw-semibold">
+                            Índice
+                        </label>
+
+                        {{ form.indice }}
+
+                    </div>
+
+                    <!-- TELEFONE -->
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Telefone
+                        </label>
+
+                        {{ form.telefone }}
+
+                    </div>
+
+                    <!-- STATUS -->
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold d-block">
+                            Status
+                        </label>
+
+                        <div class="form-check mt-2">
+
+                            {{ form.ativo }}
+
+                            <label class="form-check-label">
+                                Convênio ativo
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <!-- OBSERVAÇÕES -->
+                    <div class="col-12">
+
+                        <label class="form-label fw-semibold">
+                            Observações
+                        </label>
+
+                        {{ form.observacoes }}
+
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary rounded-pill px-4 mt-4">
+
+                    Salvar Convênio
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- LISTAGEM -->
+    <div class="card border-0 shadow-sm rounded-4 mt-4">
+
+        <div class="card-body p-4">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Nome</th>
+                            <th>Índice</th>
+                            <th>Telefone</th>
+                            <th>Status</th>
+                             <th width="140">Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+                   <tbody>
+
+    {% for convenio in convenios %}
+
+    <tr>
+
+        <!-- NOME -->
+        <td>
+
+            <strong>
+                {{ convenio.nome }}
+            </strong>
+
+        </td>
+
+        <!-- ÍNDICE -->
+        <td>
+
+            {{ convenio.indice }}
+
+        </td>
+
+        <!-- TELEFONE -->
+        <td>
+
+            {{ convenio.telefone }}
+
+        </td>
+
+        <!-- STATUS -->
+        <td>
+
+            {% if convenio.ativo %}
+
+                <span class="badge bg-success">
+
+                    Ativo
+
+                </span>
+
+            {% else %}
+
+                <span class="badge bg-secondary">
+
+                    Inativo
+
+                </span>
+
+            {% endif %}
+
+        </td>
+
+        <!-- AÇÕES -->
+        <td>
+
+            <div class="d-flex gap-2">
+
+                <!-- EDITAR -->
+                <a
+                    href="{% url 'editar_convenio' convenio.id %}"
+                    class="btn btn-sm btn-light border"
+                >
+
+                    <i class="fa-solid fa-pen"></i>
+
+                </a>
+
+                <!-- EXCLUIR -->
+                <a
+                    href="{% url 'excluir_convenio' convenio.id %}"
+                    class="btn btn-sm btn-light border"
+                    onclick="return confirm('Deseja excluir este convênio?')"
+                >
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </a>
+
+            </div>
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="5">
+
+            Nenhum convênio cadastrado.
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

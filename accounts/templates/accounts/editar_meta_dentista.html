@@ -1,0 +1,109 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h4>
+
+                <i class="bi bi-pencil-square"></i>
+
+                Editar Meta
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        {{ form.dentista.label_tag }}
+                        {{ form.dentista }}
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                        {{ form.mes.label_tag }}
+                        {{ form.mes }}
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                        {{ form.ano.label_tag }}
+                        {{ form.ano }}
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        {{ form.meta_financeira.label_tag }}
+                        {{ form.meta_financeira }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        {{ form.meta_procedimentos.label_tag }}
+                        {{ form.meta_procedimentos }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        {{ form.meta_pacientes.label_tag }}
+                        {{ form.meta_pacientes }}
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    {{ form.observacao.label_tag }}
+                    {{ form.observacao }}
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Salvar Alterações
+
+                </button>
+
+                <a href="{% url 'metas_dentistas' %}"
+                   class="btn btn-secondary">
+
+                    Cancelar
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

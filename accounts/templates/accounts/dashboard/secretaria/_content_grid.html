@@ -1,0 +1,232 @@
+<div class="content-grid-bottom">
+
+    <!-- =========================================
+    AGENDA DO DIA
+    ========================================= -->
+
+    <div class="agenda-card">
+
+        <div class="agenda-header">
+
+            <h5>
+
+                <i class="bi bi-calendar2-week-fill"></i>
+
+                Agenda do Dia
+
+            </h5>
+
+            <a href="{% url 'agenda' %}" class="btn btn-outline-primary btn-sm btn-agenda">
+
+                Ver Agenda
+
+            </a>
+
+        </div>
+
+        <div class="dashboard-scroll">
+
+            {% if proximas_consultas %}
+
+                {% for consulta in proximas_consultas %}
+
+                    <div class="agenda-item">
+
+                        <div class="agenda-hora">
+
+                            {{ consulta.hora_inicio|time:"H:i" }}
+
+                        </div>
+
+                        <div class="agenda-info">
+
+                            <div class="agenda-paciente">
+
+                                <a href="{% url 'novo_agendamento' %}?paciente={{ consulta.paciente.id }}"
+                                   class="paciente-link">
+
+                                    {{ consulta.paciente.nome }}
+
+                                </a>
+
+                            </div>
+
+                            <div class="agenda-procedimento">
+
+                                {% if consulta.procedimento %}
+                                    {{ consulta.procedimento.nome }}
+                                {% else %}
+                                    Procedimento não informado
+                                {% endif %}
+
+                            </div>
+
+                            <div class="agenda-profissional">
+
+                                <i class="bi bi-person-badge-fill"></i>
+
+                                {{ consulta.profissional.nome }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="agenda-status">
+
+                            {% if consulta.status == "confirmado" %}
+
+                                <span class="badge bg-success">
+
+                                    Confirmado
+
+                                </span>
+
+                            {% elif consulta.status == "agendado" %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    Agendado
+
+                                </span>
+
+                            {% elif consulta.status == "atendimento" %}
+
+                                <span class="badge bg-primary">
+
+                                    Atendimento
+
+                                </span>
+
+                            {% elif consulta.status == "cancelado" %}
+
+                                <span class="badge bg-danger">
+
+                                    Cancelado
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    {{ consulta.get_status_display }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="text-center text-muted py-5">
+
+                    <i class="bi bi-calendar-x fs-2 d-block mb-2"></i>
+
+                    Nenhuma consulta para hoje.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+    PENDÊNCIAS
+    ========================================= -->
+
+    <div class="pendencias-card">
+
+        <div class="pendencias-header">
+
+            <h5>
+
+                <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+
+                Pendências
+
+            </h5>
+
+        </div>
+
+        <div class="pendencias-scroll">
+
+            {% if consultas_confirmar %}
+
+                {% for consulta in consultas_confirmar %}
+
+                    <div class="pendencia-card">
+
+                        <div class="pendencia-paciente">
+
+                            {{ consulta.paciente.nome }}
+
+                        </div>
+
+                        <div class="pendencia-horario">
+
+                            <i class="bi bi-clock"></i>
+
+                            {{ consulta.hora_inicio|time:"H:i" }}
+
+                        </div>
+
+                        <div class="pendencia-profissional">
+
+                            <i class="bi bi-person-badge-fill"></i>
+
+                            {{ consulta.profissional.nome }}
+
+                        </div>
+
+                        <div class="pendencia-status">
+
+                            <span class="badge bg-warning">
+
+                                {{ consulta.get_status_display }}
+
+                            </span>
+
+                        </div>
+
+                        {% if consulta.paciente.whatsapp %}
+
+                            <a href="https://wa.me/55{{ consulta.paciente.whatsapp }}"
+                               target="_blank"
+                               class="btn btn-success btn-sm w-100">
+
+                                <i class="bi bi-whatsapp"></i>
+
+                                Confirmar pelo WhatsApp
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="text-center text-muted py-5">
+
+                    <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
+
+                    Nenhuma pendência para hoje.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>

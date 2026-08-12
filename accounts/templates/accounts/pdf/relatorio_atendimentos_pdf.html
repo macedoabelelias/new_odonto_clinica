@@ -1,0 +1,271 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Atendimentos
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<!-- ========================================= -->
+<!-- RESUMO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Resumo dos Atendimentos
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="40%">
+
+                <strong>Total de Atendimentos</strong>
+
+            </td>
+
+            <td>
+
+                {{ total_atendimentos }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>Confirmados</strong>
+
+            </td>
+
+            <td>
+
+                {{ total_confirmados }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>Em Atendimento</strong>
+
+            </td>
+
+            <td>
+
+                {{ total_atendimento }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>Finalizados</strong>
+
+            </td>
+
+            <td>
+
+                {{ total_finalizados }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>Faltaram</strong>
+
+            </td>
+
+            <td>
+
+                {{ total_faltou }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>Cancelados</strong>
+
+            </td>
+
+            <td>
+
+                {{ total_cancelados }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ========================================= -->
+<!-- TABELA -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Lista de Atendimentos
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th width="10%">
+                    Data
+                </th>
+
+                <th width="8%">
+                    Hora
+                </th>
+
+                <th width="24%">
+                    Paciente
+                </th>
+
+                <th width="22%">
+                    Procedimento
+                </th>
+
+                <th width="24%">
+                    Profissional
+                </th>
+
+                <th width="12%">
+                    Status
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for atendimento in atendimentos %}
+
+            <tr>
+
+                <td style="text-align:center;">
+
+                    {{ atendimento.data|date:"d/m/Y" }}
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    {{ atendimento.hora_inicio|time:"H:i" }}
+
+                </td>
+
+                <td>
+
+                    {{ atendimento.paciente.nome }}
+
+                </td>
+
+                <td>
+
+                    {% if atendimento.procedimento %}
+
+                        {{ atendimento.procedimento.nome }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {{ atendimento.profissional.nome }}
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    {{ atendimento.get_status_display }}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="6" style="text-align:center;">
+
+                    Nenhum atendimento encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

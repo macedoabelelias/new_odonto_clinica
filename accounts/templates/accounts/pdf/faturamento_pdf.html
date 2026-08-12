@@ -1,0 +1,275 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Faturamento
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<!-- ========================================= -->
+<!-- RESUMO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Resumo do Faturamento
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="35%">
+                <strong>Data Inicial</strong>
+            </td>
+
+            <td>
+
+                {{ data_inicio|default:"Todas" }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Data Final</strong>
+            </td>
+
+            <td>
+
+                {{ data_final|default:"Todas" }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Forma de Pagamento</strong>
+            </td>
+
+            <td>
+
+                {% if forma_pagamento %}
+
+                    {{ forma_pagamento }}
+
+                {% else %}
+
+                    Todas
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Faturamento</strong>
+            </td>
+
+            <td>
+
+                <strong style="font-size:18px;color:#198754;">
+
+                    R$ {{ faturamento_bruto|floatformat:2 }}
+
+                </strong>
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Descontos</strong>
+            </td>
+
+            <td>
+
+                R$ {{ total_descontos|floatformat:2 }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Entradas</strong>
+            </td>
+
+            <td>
+
+                R$ {{ total_entrada|floatformat:2 }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Parcelas</strong>
+            </td>
+
+            <td>
+
+                {{ total_parcelas }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Ticket Médio</strong>
+            </td>
+
+            <td>
+
+                R$ {{ ticket_medio|floatformat:2 }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ========================================= -->
+<!-- FATURAMENTO POR FORMA PAGAMENTO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Faturamento por Forma de Pagamento
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Forma de Pagamento</th>
+
+                <th style="text-align:center;">
+
+                    Qtd. Orçamentos
+
+                </th>
+
+                <th style="text-align:right;">
+
+                    Valor Total
+
+                </th>
+
+                <th style="text-align:right;">
+
+                    % do Faturamento
+
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for item in faturamento %}
+
+            <tr>
+
+                <td>
+
+                    {{ item.forma }}
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    {{ item.quantidade }}
+
+                </td>
+
+                <td style="text-align:right;">
+
+                    R$ {{ item.total|floatformat:2 }}
+
+                </td>
+
+                <td style="text-align:right;">
+
+                    {{ item.percentual|floatformat:1 }}%
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="4" style="text-align:center;">
+
+                    Nenhum registro encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!-- =========================================
+PAGE HEADER
+Uso:
+
+{% include 'accounts/components/page_header.html' with
+titulo="Perfis de Acesso"
+subtitulo="Gerencie os perfis de acesso da clínica."
+botao_url="novo_perfil"
+botao_texto="Novo Perfil"
+botao_icone="bi bi-plus-circle"
+%}
+========================================== -->
+
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
+    <div>
+
+        <h2 class="fw-bold text-dark mb-1">
+
+            {% if titulo %}
+                {{ titulo }}
+            {% endif %}
+
+        </h2>
+
+        {% if subtitulo %}
+
+            <p class="text-muted mb-0">
+
+                {{ subtitulo }}
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    {% if botao_url %}
+
+    <div class="mt-3 mt-md-0">
+
+        <a href="{% url botao_url %}"
+           class="btn btn-primary rounded-pill px-4">
+
+            {% if botao_icone %}
+
+                <i class="{{ botao_icone }}"></i>
+
+            {% endif %}
+
+            {{ botao_texto }}
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>

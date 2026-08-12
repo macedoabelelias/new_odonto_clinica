@@ -1,0 +1,476 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Relatório de Orçamentos
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <div>
+
+                    <h4 class="mb-1">
+
+                        <i class="bi bi-file-earmark-text-fill me-2"></i>
+
+                        Relatório de Orçamentos
+
+                    </h4>
+
+                    <p class="mb-0 text-white-50">
+
+                        Visualização completa dos orçamentos cadastrados no sistema.
+
+                    </p>
+
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <!-- PDF -->
+
+                    <a href="{% url 'relatorio_orcamentos_pdf' %}?{{ request.GET.urlencode }}"
+                        target="_blank"
+                        class="btn btn-light btn-sm border">
+
+                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>
+
+                        PDF
+
+                    </a>
+
+                    <!-- Excel -->
+
+                    <a
+                        href="{% url 'excel_orcamentos' %}?{{ request.GET.urlencode }}"
+                        class="btn btn-success btn-sm me-2">
+
+                        <i class="bi bi-file-earmark-excel"></i>
+
+                        Excel
+
+                    </a>
+
+                    
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- Indicadores -->
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Total de Orçamentos
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-primary mb-0">
+
+                                        {{ total_orcamentos }}
+
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-heart-pulse-fill fs-1 text-primary opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Aprovados
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-success mb-0">
+
+                                        {{ orcamentos_aprovados }}
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-check-circle-fill fs-1 text-success opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Em Execução
+                                    </small>
+
+                                    <h2 class="fw-bold text-danger mb-0">
+
+                                        {{ orcamentos_execucao }}
+
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-check2-all fs-1 text-danger opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Finalizados
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-info mb-0">
+
+                                        {{ orcamentos_finalizados }}
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-people-fill fs-1 text-info opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Filtros -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-light">
+
+                        <h6 class="mb-0">
+
+                            <i class="bi bi-funnel-fill text-primary me-2"></i>
+
+                            Filtros de Pesquisa
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- Tabela -->
+
+                        <form method="GET">
+
+                            <div class="row g-3 align-items-end">
+
+                                <!-- Paciente -->
+
+                                <div class="col-lg-4">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Paciente
+
+                                    </label>
+
+                                    <input type="text" name="paciente" class="form-control"
+                                        placeholder="Digite o nome do paciente..." value="{{ paciente }}">
+
+                                </div>
+
+                                <!-- Status -->
+
+                                <div class="col-lg-2">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Status
+
+                                    </label>
+
+                                    <select name="status" class="form-select">
+
+                                        <option value="">Todos</option>
+
+                                        <option value="rascunho" {% if status == "rascunho" %}selected{% endif %}>
+                                            Rascunho
+                                        </option>
+
+                                        <option value="aprovado" {% if status == "aprovado" %}selected{% endif %}>
+                                            Aprovado
+                                        </option>
+
+                                        <option value="em_execucao" {% if status == "em_execucao" %}selected{% endif %}>
+                                            Em Execução
+                                        </option>
+
+                                        <option value="finalizado" {% if status == "finalizado" %}selected{% endif %}>
+                                            Finalizado
+                                        </option>
+
+                                        <option value="cancelado" {% if status == "cancelado" %}selected{% endif %}>
+                                            Cancelado
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                <!-- Data Inicial -->
+
+                                <div class="col-lg-2">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Data Inicial
+
+                                    </label>
+
+                                    <input type="date" name="data_inicio" class="form-control"
+                                        value="{{ data_inicio }}">
+
+                                </div>
+
+                                <!-- Data Final -->
+
+                                <div class="col-lg-2">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Data Final
+
+                                    </label>
+
+                                    <input type="date" name="data_final" class="form-control" value="{{ data_final }}">
+
+                                </div>
+
+                                <!-- Botão -->
+
+                                <div class="col-lg-2">
+
+                                    <button type="submit" class="btn btn-primary w-100">
+
+                                        <i class="bi bi-search me-2"></i>
+
+                                        Pesquisar
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+
+                        <!-- TABELA -->
+
+                        <div class="card border-0 shadow-sm">
+
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+                                <h5 class="mb-0">
+
+                                    <i class="bi bi-table text-primary me-2"></i>
+
+                                    Orçamentos Encontrados
+
+                                </h5>
+
+                                <span class="badge bg-primary">
+
+                                    {{ total_orcamentos }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="table-responsive">
+
+                                <table class="table table-hover align-middle mb-0">
+
+                                    <thead class="table-primary">
+
+                                        <tr>
+
+                                            <th>Nº</th>
+
+                                            <th>Paciente</th>
+
+                                            <th>Tratamento</th>
+
+                                            <th>Total</th>
+
+                                            <th>Entrada</th>
+
+                                            <th>Parcelas</th>
+
+                                            <th>Status</th>
+
+                                            <th>Data</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        {% for orcamento in orcamentos %}
+
+                                        <tr>
+
+                                            <td>
+
+                                                #{{ orcamento.id }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {{ orcamento.paciente.nome }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {% if orcamento.tratamento %}
+
+                                                {{ orcamento.tratamento.titulo }}
+
+                                                {% else %}
+
+                                                —
+
+                                                {% endif %}
+
+                                            </td>
+
+                                            <td>
+
+                                                R$ {{ orcamento.total }}
+
+                                            </td>
+
+                                            <td>
+
+                                                R$ {{ orcamento.entrada }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {{ orcamento.parcelas }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {{ orcamento.get_status_display }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {{ orcamento.criado_em|date:"d/m/Y" }}
+
+                                            </td>
+
+                                        </tr>
+
+                                        {% empty %}
+
+                                        <tr>
+
+                                            <td colspan="8" class="text-center py-4">
+
+                                                Nenhum orçamento encontrado.
+
+                                            </td>
+
+                                        </tr>
+
+                                        {% endfor %}
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endblock %}

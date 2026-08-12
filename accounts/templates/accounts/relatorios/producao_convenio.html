@@ -1,0 +1,401 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Produção por Convênio
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-info text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h4 class="mb-0">
+                    <i class="bi bi-building"></i>
+                    Produção por Convênio
+                </h4>
+
+                <div>
+
+                    <a href="{% url 'pdf_producao_convenio' %}"
+                       target="_blank"
+                       class="btn btn-light btn-sm me-2">
+
+                        <i class="bi bi-file-earmark-pdf text-danger"></i>
+                        PDF
+
+                    </a>
+
+                    <a
+                        href="{% url 'excel_producao_convenio' %}?{{ request.GET.urlencode }}"
+                        class="btn btn-success btn-sm me-2">
+
+                        <i class="bi bi-file-earmark-excel"></i>
+
+                        Excel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-2 align-items-end">
+
+                    <!-- Convênio -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Convênio
+
+                        </label>
+
+                        <select
+    name="convenio"
+    class="form-select">
+
+    <option value="">
+        Todos
+    </option>
+
+    {% for convenio in convenios %}
+
+        <option
+            value="{{ convenio }}"
+            {% if convenio == convenio_id %}selected{% endif %}>
+
+            {{ convenio }}
+
+        </option>
+
+    {% endfor %}
+
+</select>
+
+                    </div>
+
+                    <!-- Data Inicial -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+
+                            Data Inicial
+
+                        </label>
+
+                        <input
+                            type="date"
+                            name="data_inicio"
+                            value="{{ data_inicio }}"
+                            class="form-control">
+
+                    </div>
+
+                    <!-- Data Final -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+
+                            Data Final
+
+                        </label>
+
+                        <input
+                            type="date"
+                            name="data_final"
+                            value="{{ data_final }}"
+                            class="form-control">
+
+                    </div>
+
+                    <!-- Botão -->
+
+                    <div class="col-md-2 d-grid">
+
+                        <button
+                            type="submit"
+                            class="btn btn-info">
+
+                            <i class="bi bi-search"></i>
+                            Pesquisar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <hr class="my-4">        
+       
+
+<!-- INDICADORES -->
+
+<div class="row justify-content-center">
+
+    <!-- Produção Total -->
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card border-primary">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+
+                    Produção Total
+
+                </h6>
+
+                <h4 class="text-primary" style="white-space: nowrap;">
+
+                    R$ {{ total_producao|floatformat:2 }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Procedimentos -->
+
+    <div class="col-md-2 mb-3">
+
+        <div class="card border-success">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+
+                    Procedimentos
+
+                </h6>
+
+                <h4 class="text-success">
+
+                    {{ total_procedimentos }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Pacientes -->
+
+    <div class="col-md-2 mb-3">
+
+        <div class="card border-warning">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+
+                    Pacientes
+
+                </h6>
+
+                <h4 class="text-warning">
+
+                    {{ total_pacientes }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Convênios -->
+
+    <div class="col-md-2 mb-3">
+
+        <div class="card border-danger">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+
+                    Convênios
+
+                </h6>
+
+                <h4 class="text-danger">
+
+                    {{ total_convenios }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Ticket Médio -->
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card border-info">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+
+                    Ticket Médio
+
+                </h6>
+
+                <h4 class="text-info" style="white-space: nowrap;">
+
+                    R$ {{ ticket_medio|floatformat:2 }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- PRODUÇÃO POR CONVÊNIO -->
+
+<div class="card shadow-sm mt-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            Produção por Convênio
+
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>Convênio</th>
+
+                    <th class="text-center">
+
+                        Procedimentos
+
+                    </th>
+
+                    <th class="text-center">
+
+                        Pacientes
+
+                    </th>
+
+                    <th class="text-end">
+
+                        Produção
+
+                    </th>
+
+                    <th class="text-end">
+
+                        Ticket Médio
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in convenios_resumo %}
+
+                <tr>
+
+                    <td>
+
+                        {{ item.nome }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        {{ item.procedimentos }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        {{ item.pacientes }}
+
+                    </td>
+
+                    <td class="text-end">
+
+                        R$ {{ item.producao|floatformat:2 }}
+
+                    </td>
+
+                    <td class="text-end">
+
+                        R$ {{ item.ticket_medio|floatformat:2 }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="5" class="text-center">
+
+                        Nenhum convênio encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

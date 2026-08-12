@@ -1,0 +1,32 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+{{ titulo }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4 class="mb-0">
+                {{ titulo }}
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            {% block relatorio %}
+            {% endblock %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

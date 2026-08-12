@@ -1,0 +1,171 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Orçamentos
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+    <div class="acoes-pdf">
+
+        <button onclick="window.print()">
+
+            🖨️ Imprimir
+
+        </button>
+
+    </div>
+
+    {% include 'accounts/pdf/header_pdf.html' %}
+
+    <div class="card">
+
+        <h4>Resumo do Relatório</h4>
+
+        <table>
+
+            <tr>
+                <td width="40%">
+                    <strong>Total de Orçamentos</strong>
+                </td>
+                <td>{{ total_orcamentos }}</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <strong>Aprovados</strong>
+                </td>
+                <td>{{ orcamentos_aprovados }}</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <strong>Em Execução</strong>
+                </td>
+                <td>{{ orcamentos_execucao }}</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <strong>Finalizados</strong>
+                </td>
+                <td>{{ orcamentos_finalizados }}</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="card">
+
+    <h4>
+
+        Orçamentos Encontrados
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Nº</th>
+
+                <th>Paciente</th>
+
+                <th>Tratamento</th>
+
+                <th>Total</th>
+
+                <th>Status</th>
+
+                <th>Data</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for orcamento in orcamentos %}
+
+            <tr>
+
+                <td>#{{ orcamento.id }}</td>
+
+                <td>{{ orcamento.paciente.nome }}</td>
+
+                <td>
+
+                    {% if orcamento.tratamento %}
+
+                        {{ orcamento.tratamento.titulo }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    R$ {{ orcamento.total }}
+
+                </td>
+
+                <td>
+
+                    {{ orcamento.get_status_display }}
+
+                </td>
+
+                <td>
+
+                    {{ orcamento.criado_em|date:"d/m/Y" }}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="6" style="text-align:center;">
+
+                    Nenhum orçamento encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+    {% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+
+<div class="row mb-4">
+
+    <!-- =========================================
+    META DA CLÍNICA
+    ========================================= -->
+
+    <div class="col-xl-3 col-md-6 mb-4">
+
+        <div class="card dashboard-card border-green">
+
+            <div class="card-body">
+
+                <div class="stats-icon green">
+
+                    <i class="bi bi-bullseye"></i>
+
+                </div>
+
+                <div class="card-title-dashboard">
+
+                    Meta da Clínica
+
+                </div>
+
+                <div class="card-value text-success">
+
+                    R$ {{ meta_total|default:0|floatformat:2 }}
+
+                </div>
+
+                <div class="card-description">
+
+                    Meta financeira definida para o mês.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    DENTISTAS
+    ========================================= -->
+
+    <div class="col-xl-3 col-md-6 mb-4">
+
+        <div class="card dashboard-card border-blue">
+
+            <div class="card-body">
+
+                <div class="stats-icon blue">
+
+                    <i class="bi bi-people-fill"></i>
+
+                </div>
+
+                <div class="card-title-dashboard">
+
+                    Dentistas
+
+                </div>
+
+                <div class="card-value">
+
+                    {{ total_dentistas|default:"0" }}
+
+                </div>
+
+                <div class="card-description">
+
+                    Profissionais ativos na clínica.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+        <!-- =========================================
+    META MÉDIA
+    ========================================= -->
+
+    <div class="col-xl-3 col-md-6 mb-4">
+
+        <div class="card dashboard-card border-orange">
+
+            <div class="card-body">
+
+                <div class="stats-icon orange">
+
+                    <i class="bi bi-graph-up-arrow"></i>
+
+                </div>
+
+                <div class="card-title-dashboard">
+
+                    Meta Média
+
+                </div>
+
+                <div class="card-value text-warning">
+
+                    R$ {{ meta_media|default:0|floatformat:2 }}
+
+                </div>
+
+                <div class="card-description">
+
+                    Média de meta por dentista.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    MÊS ATUAL
+    ========================================= -->
+
+    <div class="col-xl-3 col-md-6 mb-4">
+
+        <div class="card dashboard-card border-purple">
+
+            <div class="card-body">
+
+                <div class="stats-icon purple">
+
+                    <i class="bi bi-calendar-month"></i>
+
+                </div>
+
+                <div class="card-title-dashboard">
+
+                    Mês Atual
+
+                </div>
+
+                <div class="card-value" style="font-size:30px;">
+
+                    {{ mes_atual|date:"F/Y" }}
+
+                </div>
+
+                <div class="card-description">
+
+                    Competência em andamento.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

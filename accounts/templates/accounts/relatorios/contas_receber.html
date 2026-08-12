@@ -1,0 +1,571 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Relatório de Atendimentos
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <div>
+
+                    <h4 class="mb-1">
+
+                        <i class="bi bi-wallet2 me-2"></i>
+
+                        Relatório de Contas a Receber
+
+                    </h4>
+
+                    <p class="mb-0 text-white-50">
+
+                        Controle completo dos recebimentos da clínica.
+
+                    </p>
+
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <a href="{% url 'relatorio_contas_receber_pdf' %}?{{ request.GET.urlencode }}"
+                    target="_blank"
+                    class="btn btn-light btn-sm border">
+
+                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>
+
+                        PDF
+
+                    </a>
+
+                    <a href="#" class="btn btn-light btn-sm border disabled">
+
+                        <i class="bi bi-file-earmark-excel text-success me-1"></i>
+
+                        Excel
+
+                    </a>
+
+                    <button type="button" onclick="window.print();" class="btn btn-light btn-sm border">
+
+                        <i class="bi bi-printer text-secondary me-1"></i>
+
+                        Imprimir
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- INDICADORES -->
+
+            <div class="row g-4 mb-5">
+
+                <!-- Total de Contas -->
+
+                <div class="col-xl-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <small class="text-muted text-uppercase">
+
+                                    Total de Contas
+
+                                </small>
+
+                                <h2 class="fw-bold text-primary mb-0">
+
+                                    {{ total_contas }}
+
+                                </h2>
+
+                            </div>
+
+                            <i class="bi bi-wallet2 fs-1 text-primary opacity-50"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Em Aberto -->
+
+                <div class="col-xl-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <small class="text-muted text-uppercase">
+
+                                    Em Aberto
+
+                                </small>
+
+                                <h2 class="fw-bold text-warning mb-0">
+
+                                    {{ contas_abertas }}
+
+                                </h2>
+
+                            </div>
+
+                            <i class="bi bi-hourglass-split fs-1 text-warning opacity-50"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Recebidas -->
+
+                <div class="col-xl-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <small class="text-muted text-uppercase">
+
+                                    Recebidas
+
+                                </small>
+
+                                <h2 class="fw-bold text-success mb-0">
+
+                                    {{ contas_recebidas }}
+
+                                </h2>
+
+                            </div>
+
+                            <i class="bi bi-check-circle-fill fs-1 text-success opacity-50"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Vencidas -->
+
+                <div class="col-xl-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <small class="text-muted text-uppercase">
+
+                                    Vencidas
+
+                                </small>
+
+                                <h2 class="fw-bold text-danger mb-0">
+
+                                    {{ contas_vencidas }}
+
+                                </h2>
+
+                            </div>
+
+                            <i class="bi bi-exclamation-triangle-fill fs-1 text-danger opacity-50"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Valor Total -->
+
+                <div class="col-xl-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <small class="text-muted text-uppercase">
+
+                                    Valor Total
+
+                                </small>
+
+                                <h2 class="fw-bold text-info mb-0">
+
+                                    R$ {{ valor_total }}
+
+                                </h2>
+
+                            </div>
+
+                            <i class="bi bi-cash-stack fs-1 text-info opacity-50"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Valor Recebido -->
+
+                <div class="col-xl-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <small class="text-muted text-uppercase">
+
+                                    Valor Recebido
+
+                                </small>
+
+                                <h2 class="fw-bold text-success mb-0">
+
+                                    R$ {{ valor_recebido }}
+
+                                </h2>
+
+                            </div>
+
+                            <i class="bi bi-currency-dollar fs-1 text-success opacity-50"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FILTROS -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-light">
+
+                    <h6 class="mb-0">
+
+                        <i class="bi bi-funnel-fill text-primary me-2"></i>
+
+                        Filtros de Pesquisa
+
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form method="GET">
+
+                        <div class="row g-3 align-items-end">
+
+                            <!-- Paciente -->
+
+                            <div class="col-lg-4">
+
+                                <label class="form-label fw-semibold">
+
+                                    Paciente
+
+                                </label>
+
+                                <input type="text" name="paciente" class="form-control"
+                                    placeholder="Nome do paciente..." value="{{ paciente }}">
+
+                            </div>
+
+                            <!-- Status -->
+
+                            <div class="col-lg-2">
+
+                                <label class="form-label fw-semibold">
+
+                                    Status
+
+                                </label>
+
+                                <select name="status" class="form-select">
+
+                                    <option value="">Todos</option>
+
+                                    <option value="aberto" {% if status == "aberto" %}selected{% endif %}>
+                                        Em Aberto
+                                    </option>
+
+                                    <option value="recebido" {% if status == "recebido" %}selected{% endif %}>
+                                        Recebido
+                                    </option>
+
+                                    <option value="vencido" {% if status == "vencido" %}selected{% endif %}>
+                                        Vencido
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- Forma de Pagamento -->
+
+                            <div class="col-lg-2">
+
+                                <label class="form-label fw-semibold">
+
+                                    Forma Pgto.
+
+                                </label>
+
+                                <select name="forma_pagamento" class="form-select">
+
+                                    <option value="">Todas</option>
+
+                                    <option value="pix">PIX</option>
+
+                                    <option value="dinheiro">Dinheiro</option>
+
+                                    <option value="cartao">Cartão</option>
+
+                                    <option value="boleto">Boleto</option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- Data Inicial -->
+
+                            <div class="col-lg-2">
+
+                                <label class="form-label fw-semibold">
+
+                                    Data Inicial
+
+                                </label>
+
+                                <input type="date" name="data_inicio" class="form-control" value="{{ data_inicio }}">
+
+                            </div>
+
+                            <!-- Data Final -->
+
+                            <div class="col-lg-2">
+
+                                <label class="form-label fw-semibold">
+
+                                    Data Final
+
+                                </label>
+
+                                <input type="date" name="data_final" class="form-control" value="{{ data_final }}">
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-3 text-end">
+
+                            <button type="submit" class="btn btn-primary">
+
+                                <i class="bi bi-search me-2"></i>
+
+                                Pesquisar
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABELA -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-table text-primary me-2"></i>
+
+                        Contas a Receber
+
+                    </h5>
+
+                    <span class="badge bg-primary">
+
+                        {{ total_contas }}
+
+                    </span>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-primary">
+
+                            <tr>
+
+                                <th>Paciente</th>
+
+                                <th>Descrição</th>
+
+                                <th>Vencimento</th>
+
+                                <th class="text-end">Valor</th>
+
+                                <th>Forma Pgto.</th>
+
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for conta in contas %}
+
+                            <tr>
+
+                                <td>
+
+                                    {{ conta.paciente.nome }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ conta.descricao }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ conta.vencimento|date:"d/m/Y" }}
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    R$ {{ conta.valor|floatformat:2 }}
+
+                                </td>
+
+                                <td>
+
+                                    {% if conta.forma_pagamento %}
+
+                                    {{ conta.forma_pagamento }}
+
+                                    {% else %}
+
+                                    —
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if conta.status == "pendente" %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Pendente
+
+                                    </span>
+
+                                    {% elif conta.status == "recebido" %}
+
+                                    <span class="badge bg-success">
+
+                                        Recebido
+
+                                    </span>
+
+                                    {% elif conta.status == "cancelado" %}
+
+                                    <span class="badge bg-secondary">
+
+                                        Cancelado
+
+                                    </span>
+
+                                    {% else %}
+
+                                    <span class="badge bg-primary">
+
+                                        {{ conta.get_status_display }}
+
+                                    </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="6" class="text-center py-4">
+
+                                    Nenhuma conta encontrada.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

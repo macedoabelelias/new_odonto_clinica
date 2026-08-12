@@ -1,0 +1,247 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Produção por Profissional
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<!-- ========================================= -->
+<!-- RESUMO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Resumo da Produção
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="35%"><strong>Profissional</strong></td>
+
+            <td>{{ nome_profissional }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Período</strong></td>
+
+            <td>{{ periodo }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Produção Total</strong></td>
+
+            <td>
+
+                <strong style="font-size:18px;color:#0d6efd;">
+
+                    R$ {{ total_producao|floatformat:2 }}
+
+                </strong>
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Procedimentos</strong></td>
+
+            <td>{{ total_procedimentos }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Pacientes</strong></td>
+
+            <td>{{ total_pacientes }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Ticket Médio</strong></td>
+
+            <td>
+
+                R$ {{ ticket_medio|floatformat:2 }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ========================================= -->
+<!-- TABELA -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Procedimentos Realizados
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th width="22%">
+
+                    Paciente
+
+                </th>
+
+                <th width="22%">
+
+                    Profissional
+
+                </th>
+
+                <th width="30%">
+
+                    Procedimento
+
+                </th>
+
+                <th width="6%">
+
+                    Qtd.
+
+                </th>
+
+                <th width="10%">
+
+                    Valor Unit.
+
+                </th>
+
+                <th width="10%">
+
+                    Total
+
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for item in procedimentos %}
+
+            <tr>
+
+                <td>
+
+                    {{ item.orcamento.paciente.nome }}
+
+                </td>
+
+                <td>
+
+                    {% if item.orcamento.paciente.dentista %}
+
+                        {{ item.orcamento.paciente.dentista.get_full_name|default:item.orcamento.paciente.dentista.username }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {{ item.procedimento.nome }}
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    {{ item.quantidade }}
+
+                </td>
+
+                <td style="text-align:right;">
+
+                    R$ {{ item.valor_unitario|floatformat:2 }}
+
+                </td>
+
+                <td style="text-align:right;">
+
+                    R$ {{ item.total|floatformat:2 }}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="6" style="text-align:center;">
+
+                    Nenhum procedimento encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

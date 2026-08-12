@@ -1,0 +1,757 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block title %}
+Leads
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================
+CABEÇALHO
+========================================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h4 class="fw-semibold mb-1">
+
+            <i class="bi bi-person-lines-fill text-primary me-2"></i>
+
+            Leads
+
+        </h4>
+
+        <p class="text-muted mb-0">
+
+            Gerencie os Leads e acompanhe os próximos contatos.
+
+        </p>
+
+    </div>
+
+    <div>
+
+        <a href="{% url 'novo_lead' %}" class="btn btn-primary">
+
+            <i class="bi bi-plus-circle me-1"></i>
+
+            Novo Lead
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+RESUMO DOS FOLLOW-UPS
+========================================= -->
+
+<div class="row g-3 mb-4">
+
+    <!-- =========================================
+    ATRASADOS
+    ========================================= -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex align-items-center">
+
+                    <div
+                        class="rounded-circle bg-danger bg-opacity-10
+                               text-danger d-flex align-items-center
+                               justify-content-center me-3"
+                        style="width:48px;height:48px;"
+                    >
+
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-muted small">
+
+                            Follow-ups atrasados
+
+                        </div>
+
+                        <div class="fs-4 fw-bold text-danger">
+
+                            {{ followups_atrasados }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    HOJE
+    ========================================= -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex align-items-center">
+
+                    <div
+                        class="rounded-circle bg-warning bg-opacity-10
+                               text-warning d-flex align-items-center
+                               justify-content-center me-3"
+                        style="width:48px;height:48px;"
+                    >
+
+                        <i class="bi bi-calendar-event-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-muted small">
+
+                            Contatos para hoje
+
+                        </div>
+
+                        <div class="fs-4 fw-bold text-warning">
+
+                            {{ contatos_hoje }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    FUTUROS
+    ========================================= -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="rounded-circle bg-primary bg-opacity-10
+                                text-primary d-flex align-items-center
+                                justify-content-center me-3"
+                         style="width:48px;height:48px;">
+
+                        <i class="bi bi-calendar-check-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-muted small">
+
+                            Próximos contatos
+
+                        </div>
+
+                        <div class="fs-4 fw-bold text-primary">
+
+                            {{ proximos_contatos }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+LISTA DE LEADS
+========================================= -->
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-primary text-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-person-lines-fill me-2"></i>
+
+                Lista de Leads
+
+            </h5>
+
+            <span class="badge bg-light text-primary">
+
+                {{ leads|length }} Leads
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body">
+
+
+        <!-- =========================================
+        FILTROS
+        ========================================= -->
+
+        <div class="mb-4">
+
+
+            <!-- =========================================
+            FILTRO POR STATUS
+            ========================================= -->
+
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+
+                <span class="fw-semibold me-2">
+                    Status:
+                </span>
+
+
+                <!-- TODOS -->
+
+                <a
+                    href="?{% if followup_filtro %}followup={{ followup_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if not status_filtro %}
+                        btn-primary
+                    {% else %}
+                        btn-outline-primary
+                    {% endif %}"
+                >
+
+                    Todos
+
+                </a>
+
+
+                <!-- NOVOS -->
+
+                <a
+                    href="?status=NOVO{% if followup_filtro %}&followup={{ followup_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if status_filtro == 'NOVO' %}
+                        btn-success
+                    {% else %}
+                        btn-outline-success
+                    {% endif %}"
+                >
+
+                    Novos
+
+                </a>
+
+
+                <!-- CONTATADOS -->
+
+                <a
+                    href="?status=CONTATADO{% if followup_filtro %}&followup={{ followup_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if status_filtro == 'CONTATADO' %}
+                        btn-info text-white
+                    {% else %}
+                        btn-outline-info
+                    {% endif %}"
+                >
+
+                    Contatados
+
+                </a>
+
+
+                <!-- AGENDADOS -->
+
+                <a
+                    href="?status=AGENDADO{% if followup_filtro %}&followup={{ followup_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if status_filtro == 'AGENDADO' %}
+                        btn-warning text-dark
+                    {% else %}
+                        btn-outline-warning
+                    {% endif %}"
+                >
+
+                    Agendados
+
+                </a>
+
+
+                <!-- CONVERTIDOS -->
+
+                <a
+                    href="?status=CONVERTIDO{% if followup_filtro %}&followup={{ followup_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if status_filtro == 'CONVERTIDO' %}
+                        btn-primary
+                    {% else %}
+                        btn-outline-primary
+                    {% endif %}"
+                >
+
+                    Convertidos
+
+                </a>
+
+
+                <!-- PERDIDOS -->
+
+                <a
+                    href="?status=PERDIDO{% if followup_filtro %}&followup={{ followup_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if status_filtro == 'PERDIDO' %}
+                        btn-danger
+                    {% else %}
+                        btn-outline-danger
+                    {% endif %}"
+                >
+
+                    Perdidos
+
+                </a>
+
+            </div>
+
+
+            <!-- =========================================
+            FILTRO POR FOLLOW-UP
+            ========================================= -->
+
+            <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
+
+                <span class="fw-semibold me-2">
+                    Follow-up:
+                </span>
+
+
+                <!-- TODOS -->
+
+                <a
+                    href="?{% if status_filtro %}status={{ status_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if not followup_filtro %}
+                        btn-secondary
+                    {% else %}
+                        btn-outline-secondary
+                    {% endif %}"
+                >
+
+                    Todos
+
+                </a>
+
+
+                <!-- ATRASADOS -->
+
+                <a
+                    href="?followup=atrasados{% if status_filtro %}&status={{ status_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if followup_filtro == 'atrasados' %}
+                        btn-danger
+                    {% else %}
+                        btn-outline-danger
+                    {% endif %}"
+                >
+
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
+                    Atrasados
+
+                </a>
+
+
+                <!-- HOJE -->
+
+                <a
+                    href="?followup=hoje{% if status_filtro %}&status={{ status_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if followup_filtro == 'hoje' %}
+                        btn-warning text-dark
+                    {% else %}
+                        btn-outline-warning
+                    {% endif %}"
+                >
+
+                    <i class="bi bi-calendar-check me-1"></i>
+
+                    Hoje
+
+                </a>
+
+
+                <!-- PRÓXIMOS -->
+
+                <a
+                    href="?followup=proximos{% if status_filtro %}&status={{ status_filtro }}{% endif %}"
+                    class="btn btn-sm
+                    {% if followup_filtro == 'proximos' %}
+                        btn-primary
+                    {% else %}
+                        btn-outline-primary
+                    {% endif %}"
+                >
+
+                    <i class="bi bi-calendar-event me-1"></i>
+
+                    Próximos
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+        TABELA
+        ========================================= -->
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Nome</th>
+
+                        <th>Origem</th>
+
+                        <th>Status</th>
+
+                        <th>Responsável</th>
+
+                        <th>Próximo Contato</th>
+
+                        <th
+                            class="text-center"
+                            width="170"
+                        >
+
+                            Ações
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for lead in leads %}
+
+
+                    <tr>
+
+
+                        <!-- =========================================
+                        NOME
+                        ========================================= -->
+
+                        <td>
+
+                            <span class="fw-semibold">
+
+                                {{ lead.nome }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- =========================================
+                        ORIGEM
+                        ========================================= -->
+
+                        <td>
+
+                            {% if lead.origem == "GOOGLE" %}
+
+                                <i class="bi bi-google text-danger me-1"></i>
+
+                            {% elif lead.origem == "INSTAGRAM" %}
+
+                                <i class="bi bi-instagram text-danger me-1"></i>
+
+                            {% elif lead.origem == "FACEBOOK" %}
+
+                                <i class="bi bi-facebook text-primary me-1"></i>
+
+                            {% elif lead.origem == "WHATSAPP" %}
+
+                                <i class="bi bi-whatsapp text-success me-1"></i>
+
+                            {% elif lead.origem == "SITE" %}
+
+                                <i class="bi bi-globe text-info me-1"></i>
+
+                            {% elif lead.origem == "INDICACAO" %}
+
+                                <i class="bi bi-people-fill text-warning me-1"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-dot text-secondary me-1"></i>
+
+                            {% endif %}
+
+                            {{ lead.get_origem_display }}
+
+                        </td>
+
+
+                        <!-- =========================================
+                        STATUS
+                        ========================================= -->
+
+                        <td>
+
+                            {% if lead.status == "NOVO" %}
+
+                                <span class="badge bg-success">
+                                    Novo
+                                </span>
+
+                            {% elif lead.status == "CONTATADO" %}
+
+                                <span class="badge bg-info">
+                                    Contatado
+                                </span>
+
+                            {% elif lead.status == "AGENDADO" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Agendado
+                                </span>
+
+                            {% elif lead.status == "CONVERTIDO" %}
+
+                                <span class="badge bg-primary">
+                                    Convertido
+                                </span>
+
+                            {% elif lead.status == "PERDIDO" %}
+
+                                <span class="badge bg-danger">
+                                    Perdido
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- =========================================
+                        RESPONSÁVEL
+                        ========================================= -->
+
+                        <td>
+
+                            {{ lead.responsavel|default:"-" }}
+
+                        </td>
+
+
+                        <!-- =========================================
+                        PRÓXIMO CONTATO
+                        ========================================= -->
+
+                        <td>
+
+                            {% if lead.proximo_contato %}
+
+                                {% now "Y-m-d" as data_hoje %}
+
+
+                                {% if lead.proximo_contato|date:"Y-m-d" < data_hoje %}
+
+                                    <span class="text-danger fw-semibold">
+
+                                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+
+                                        {{ lead.proximo_contato|date:"d/m/Y H:i" }}
+
+                                    </span>
+
+                                    <div>
+
+                                        <span class="badge bg-danger">
+
+                                            Atrasado
+
+                                        </span>
+
+                                    </div>
+
+
+                                {% elif lead.proximo_contato|date:"Y-m-d" == data_hoje %}
+
+                                    <span class="text-warning fw-semibold">
+
+                                        <i class="bi bi-calendar-event-fill me-1"></i>
+
+                                        {{ lead.proximo_contato|date:"d/m/Y H:i" }}
+
+                                    </span>
+
+                                    <div>
+
+                                        <span class="badge bg-warning text-dark">
+
+                                            Hoje
+
+                                        </span>
+
+                                    </div>
+
+
+                                {% else %}
+
+                                    <span class="text-primary">
+
+                                        <i class="bi bi-calendar-check me-1"></i>
+
+                                        {{ lead.proximo_contato|date:"d/m/Y H:i" }}
+
+                                    </span>
+
+                                    <div>
+
+                                        <span class="badge bg-primary">
+
+                                            Próximo
+
+                                        </span>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    <i class="bi bi-calendar-x me-1"></i>
+
+                                    Sem agendamento
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- =========================================
+                        AÇÕES
+                        ========================================= -->
+
+                        <td class="text-center">
+
+                            <a
+                                href="{% url 'detalhe_lead' lead.id %}"
+                                class="btn btn-sm btn-info text-white"
+                                title="Visualizar"
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'editar_lead' lead.id %}"
+                                class="btn btn-sm btn-warning"
+                                title="Editar"
+                            >
+
+                                <i class="bi bi-pencil"></i>
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'excluir_lead' lead.id %}"
+                                class="btn btn-sm btn-danger"
+                                title="Excluir"
+                            >
+
+                                <i class="bi bi-trash"></i>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center text-muted py-5"
+                        >
+
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+
+                            Nenhum Lead cadastrado.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

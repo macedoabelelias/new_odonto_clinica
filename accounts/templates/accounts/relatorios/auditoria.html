@@ -1,0 +1,568 @@
+<style> 
+   
+/* =========================================
+   SCROLL - EVENTOS REGISTRADOS
+========================================= */
+
+.auditoria-eventos-scroll {
+
+    max-height: 450px;
+
+    overflow-y: auto;
+
+    overflow-x: auto;
+
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+
+}
+
+
+/* =========================================
+   CABEÇALHO FIXO DA TABELA
+========================================= */
+
+.auditoria-eventos-scroll thead th {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 10;
+
+    background-color: #f8f9fa;
+
+    box-shadow: 0 1px 0 #dee2e6;
+
+}
+
+</style> 
+
+
+
+
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Auditoria do Sistema
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-dark text-white">
+
+            <h4 class="mb-0">
+
+                <i class="bi bi-shield-check"></i>
+
+                Auditoria do Sistema
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <!-- ========================================= -->
+                <!-- PRIMEIRA LINHA -->
+                <!-- ========================================= -->
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Data Inicial
+                        </label>
+
+                        <input
+                            type="date"
+                            name="data_inicio"
+                            class="form-control"
+                            value="{{ data_inicio }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Data Final
+                        </label>
+
+                        <input
+                            type="date"
+                            name="data_final"
+                            class="form-control"
+                            value="{{ data_final }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Usuário
+                        </label>
+
+                        <select
+                            name="usuario"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            {% for u in usuarios %}
+
+                            <option
+                                value="{{ u.id }}"
+                                {% if usuario == u.id|stringformat:"s" %}selected{% endif %}
+                            >
+                                {{ u.get_full_name|default:u.username }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Módulo
+                        </label>
+
+                        <select
+                            name="modulo"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            {% for item in modulos %}
+
+                            <option
+                                value="{{ item }}"
+                                {% if modulo == item %}selected{% endif %}
+                            >
+                                {{ item }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================================= -->
+                <!-- SEGUNDA LINHA -->
+                <!-- ========================================= -->
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Ação
+                        </label>
+
+                        <select
+                            name="acao"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Todas
+                            </option>
+
+                            {% for item in acoes %}
+
+                            <option
+                                value="{{ item }}"
+                                {% if acao == item %}selected{% endif %}
+                            >
+                                {{ item|title }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Nível
+                        </label>
+
+                        <select
+                            name="nivel"
+                            class="form-select"
+                        >
+
+                            <option value="" {% if not nivel %}selected{% endif %}>
+                                Todos
+                            </option>
+
+                            <option value="info" {% if nivel == "info" %}selected{% endif %}>
+                                🟢 Informação
+                            </option>
+
+                            <option value="aviso" {% if nivel == "aviso" %}selected{% endif %}>
+                                🟡 Aviso
+                            </option>
+
+                            <option value="erro" {% if nivel == "erro" %}selected{% endif %}>
+                                🟠 Erro
+                            </option>
+
+                            <option value="critico" {% if nivel == "critico" %}selected{% endif %}>
+                                🔴 Crítico
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- BOTÕES -->
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark w-100"
+                        >
+                            <i class="bi bi-search"></i>
+                            Pesquisar
+                        </button>
+
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <a
+                            href="{% url 'relatorio_auditoria' %}"
+                            class="btn btn-outline-secondary w-100"
+                        >
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Limpar
+                        </a>
+
+                    </div>
+
+                    <div class="col-md-1 d-flex align-items-end">
+
+                        <a
+                            href="{% url 'pdf_auditoria' %}?{{ request.GET.urlencode }}"
+                            target="_blank"
+                            class="btn btn-danger btn-sm me-2">
+
+                            <i class="bi bi-file-earmark-pdf"></i>
+
+                            PDF
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-md-1 d-flex align-items-end">
+
+                        <a
+                            href="{% url 'excel_auditoria' %}?{{ request.GET.urlencode }}"
+                            class="btn btn-success btn-sm me-2">
+
+                            <i class="bi bi-file-earmark-excel"></i>
+
+                            Excel
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <hr>
+
+<!-- ========================================= -->
+<!-- INDICADORES -->
+<!-- ========================================= -->
+
+<div class="row justify-content-center mb-4">
+
+    <div class="col-lg col-md-6 mb-3">
+
+        <div class="card border-primary h-100">
+
+            <div class="card-body text-center py-3">
+
+                <h6 class="text-muted mb-2">
+                    Total de Eventos
+                </h6>
+
+                <h2 class="text-primary fw-bold mb-0">
+                    {{ total_eventos }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg col-md-6 mb-3">
+
+        <div class="card border-success h-100">
+
+            <div class="card-body text-center py-3">
+
+                <h6 class="text-muted mb-2">
+                    Logins
+                </h6>
+
+                <h2 class="text-success fw-bold mb-0">
+                    {{ total_logins }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg col-md-6 mb-3">
+
+        <div class="card border-info h-100">
+
+            <div class="card-body text-center py-3">
+
+                <h6 class="text-muted mb-2">
+                    Logouts
+                </h6>
+
+                <h2 class="text-info fw-bold mb-0">
+                    {{ total_logouts }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg col-md-6 mb-3">
+
+        <div class="card border-warning h-100">
+
+            <div class="card-body text-center py-3">
+
+                <h6 class="text-muted mb-2">
+                    Erros
+                </h6>
+
+                <h2 class="text-warning fw-bold mb-0">
+                    {{ total_erros }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg col-md-6 mb-3">
+
+        <div class="card border-danger h-100">
+
+            <div class="card-body text-center py-3">
+
+                <h6 class="text-muted mb-2">
+                    Eventos Críticos
+                </h6>
+
+                <h2 class="text-danger fw-bold mb-0">
+                    {{ total_criticos }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- EVENTOS -->
+<!-- ========================================= -->
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-secondary text-white">
+
+        <i class="bi bi-list-ul"></i>
+
+        <strong>Eventos Registrados</strong>
+
+    </div>
+
+    <div class="table-responsive auditoria-eventos-scroll">
+
+        <table class="table table-hover table-striped align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th style="width:140px;">Data/Hora</th>
+
+                    <th style="width:220px;">Usuário</th>
+
+                    <th style="width:160px;">Módulo</th>
+
+                    <th style="width:110px;">Ação</th>
+
+                    <th>Descrição</th>
+
+                    <th style="width:120px;">IP</th>
+
+                    <th style="width:120px;">Nível</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in auditorias %}
+
+                <tr>
+
+                    <td>
+                        {{ item.data_hora|date:"d/m/Y H:i" }}
+                    </td>
+
+                    <td>
+                        {% if item.usuario %}
+                            {{ item.usuario.get_full_name|default:item.usuario.username }}
+                        {% else %}
+                            Sistema
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ item.modulo }}
+                    </td>
+
+                    <td>
+
+                        {% if item.acao == "login" %}
+                            Login
+                        {% elif item.acao == "logout" %}
+                            Logout
+                        {% elif item.acao == "cadastro" %}
+                            Cadastro
+                        {% elif item.acao == "alteracao" %}
+                            Alteração
+                        {% elif item.acao == "exclusao" %}
+                            Exclusão
+                        {% elif item.acao == "impressao" %}
+                            Impressão
+                        {% elif item.acao == "exportacao" %}
+                            Exportação
+                        {% else %}
+                            {{ item.acao|title }}
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ item.descricao }}
+                    </td>
+
+                    <td>
+                        {{ item.ip|default:"-" }}
+                    </td>
+
+                    <td>
+
+                        {% if item.nivel == "info" %}
+
+                            <span class="badge bg-success">
+                                Informação
+                            </span>
+
+                        {% elif item.nivel == "aviso" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Aviso
+                            </span>
+
+                        {% elif item.nivel == "erro" %}
+
+                            <span class="badge bg-danger">
+                                Erro
+                            </span>
+
+                        {% elif item.nivel == "critico" %}
+
+                            <span class="badge bg-dark">
+                                Crítico
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                {{ item.nivel|title }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="7" class="text-center py-4">
+
+                        Nenhum evento encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+        </div>   <!-- card-body -->
+
+    </div>       <!-- card -->
+
+</div>           <!-- container-fluid -->
+
+{% endblock %}

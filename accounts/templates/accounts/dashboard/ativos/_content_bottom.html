@@ -1,0 +1,242 @@
+<style>
+
+/* =========================================
+RANKING DOS DENTISTAS
+========================================= */
+
+.medalha{
+
+    font-size:22px;
+    line-height:1;
+
+}
+
+</style>
+
+<div class="content-grid-bottom mt-4">
+    
+    <!-- RANKING DOS DENTISTAS -->
+
+    <div class="chart-card dashboard-bottom-card">
+
+        <div class="card-header">
+
+            {% if dashboard_tipo == "dentista" %}
+
+            <h5>
+                📈 Minha Produção
+            </h5>
+
+            {% else %}
+
+            <h5>
+                🏆 Ranking dos Dentistas
+            </h5>
+
+            {% endif %}
+
+        </div>
+
+        <div class="table-responsive dashboard-scroll">
+
+            <table class="table table-hover align-middle mb-0 dashboard-table">
+
+    <thead>
+
+        <thead>
+
+<tr>
+
+    <th style="width:8%;">#</th>
+
+    <th>Dentista</th>
+
+    <th class="text-end" style="width:130px;">
+        Produção
+    </th>
+
+    <th class="text-end" style="width:130px;">
+        Comissão
+    </th>
+
+</tr>
+
+</thead>
+
+    </thead>
+
+    <tbody>
+
+        {% for item in desempenho_dentistas %}
+
+        <tr>
+
+            <td class="ranking-medalha">
+
+                {% if item.posicao == 1 %}
+                    <span class="medalha">🥇</span>
+                {% elif item.posicao == 2 %}
+                    <span class="medalha">🥈</span>
+                {% elif item.posicao == 3 %}
+                    <span class="medalha">🥉</span>
+                {% else %}
+                    {{ item.posicao }}º
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                {{ item.dentista.get_full_name|default:item.dentista.username }}
+
+            </td>
+
+            <td class="pe-2 text-end">
+
+    <span class="d-block text-end">
+
+        R$ {{ item.producao|floatformat:2 }}
+
+    </span>
+
+</td>
+
+<td class="pe-2 text-end">
+
+    <span class="d-block text-end">
+
+        R$ {{ item.comissao|floatformat:2 }}
+
+    </span>
+
+</td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="4" class="text-center py-4">
+
+                Nenhuma produção encontrada.
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+        </div>
+
+    </div>
+
+    {% if dashboard.mostrar_movimentacoes %}
+
+<!-- ÚLTIMAS MOVIMENTAÇÕES -->
+
+<div class="chart-card dashboard-bottom-card">
+
+    <div class="card-header">
+
+        <h5>
+
+            Últimas Movimentações do Caixa
+
+        </h5>
+
+    </div>
+
+    <div class="table-responsive dashboard-scroll">
+
+        <table class="table table-hover align-middle mb-0 caixa-table">
+
+            <thead>
+
+                <tr>
+
+                    <th style="width:18%;">Data</th>
+                    <th style="width:42%;">Descrição</th>
+                    <th style="width:15%;">Tipo</th>
+                    <th class="text-end" style="width:25%;">Valor</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for mov in ultimas_movimentacoes %}
+
+                <tr>
+
+                    <td class="data">
+                        {{ mov.data|date:"d/m" }}
+                    </td>
+
+                    <td class="descricao">
+                        {{ mov.descricao }}
+                    </td>
+
+                    <td>
+
+                        {% if mov.tipo == 'ENTRADA' %}
+
+                            <span class="badge bg-success">
+                                Entrada
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+                                Saída
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="text-end valor">
+
+                        {% if mov.tipo == 'ENTRADA' %}
+
+                            <span class="text-success fw-bold">
+                                + R$ {{ mov.valor }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-danger fw-bold">
+                                - R$ {{ mov.valor }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" class="text-center py-4">
+                        Nenhuma movimentação encontrada.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}

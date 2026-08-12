@@ -1,0 +1,483 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ========================================= -->
+    <!-- TÍTULO -->
+    <!-- ========================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                Gerenciar Procedimentos
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Cadastre, edite e exclua procedimentos do odontograma.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- FORM -->
+    <!-- ========================================= -->
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="row g-3">
+
+                    <!-- NOME -->
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+
+                            Nome
+
+                        </label>
+
+                        <input
+
+                            type="text"
+
+                            name="nome"
+
+                            class="form-control"
+
+                            placeholder="Nome do procedimento"
+
+                            value="{{ form.nome.value|default:'' }}"
+
+                        >
+
+                    </div>
+
+                    <!-- CATEGORIA -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Categoria
+
+                        </label>
+
+                        {{ form.categoria }}
+
+                    </div>
+
+                    <!-- TIPO -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+
+                            Tipo
+
+                        </label>
+
+                        {{ form.tipo }}
+
+                    </div>
+
+<!-- LINHA ÍCONE / POSIÇÃO / STATUS -->
+<div class="row g-4 align-items-start mt-2">
+
+    <!-- ÍCONE -->
+    <div class="col-md-5">
+
+        <label class="form-label fw-semibold text-dark">
+            Ícone
+        </label>
+
+        <input
+            type="text"
+            name="arquivo_icone"
+            id="id_arquivo_icone"
+            class="form-control shadow-sm"
+            list="lista-icones"
+            autocomplete="off"
+            placeholder="Digite ou pesquise um ícone"
+            value="{{ form.icone.value|default:'' }}"
+            oninput="atualizarPreviewIcone()"
+        >
+
+        <datalist id="lista-icones">
+
+            {% for icone in icones %}
+                <option value="{{ icone }}">
+            {% endfor %}
+
+        </datalist>
+
+        <!-- PREVIEW -->
+    <div class="preview-icone-box mt-3">
+
+    <div class="preview-icone-card">
+
+        <img
+
+            id="preview-icone"
+
+            src=""
+
+            alt="Preview"
+
+            style="
+                width:90px;
+                height:90px;
+                object-fit:contain;
+                display:none;
+            "
+
+        >
+
+    </div>
+
+    <small class="text-muted mt-2 d-block">
+
+        Pré-visualização do ícone
+
+    </small>
+
+</div>   
+
+    </div>
+
+    <!-- POSIÇÃO -->
+    <div class="col-md-4">
+
+        <label class="form-label fw-semibold text-dark mb-2">
+            Posição do Ícone
+        </label>
+
+        <div class="select-premium">
+            {{ form.posicao_icone }}
+        </div>
+
+        <small class="text-muted d-block mt-2">
+            Define onde o ícone será exibido no dente.
+        </small>
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="col-md-3">
+
+        <label class="form-label fw-semibold text-dark">
+            Status
+        </label>
+
+        {{ form.status }}
+
+        <small class="text-muted d-block mt-2">
+            Situação inicial do procedimento.
+        </small>
+
+    </div>
+
+</div>
+
+<!-- LINHA FINANCEIRA -->
+<div class="row g-3 mt-1">
+
+    <!-- VALOR PARTICULAR -->
+    <div class="col-md-4">
+
+        <label class="form-label fw-semibold">
+            Valor Particular
+        </label>
+
+        {{ form.valor_particular }}
+
+    </div>
+
+    <!-- TEMPO -->
+    <div class="col-md-4">
+
+        <label class="form-label fw-semibold">
+            Tempo (min)
+        </label>
+
+        {{ form.tempo_estimado }}
+
+    </div>
+
+    <!-- CUSTO -->
+    <div class="col-md-4">
+
+        <label class="form-label fw-semibold">
+            Custo Clínico
+        </label>
+
+        {{ form.custo_clinico }}
+
+    </div>
+
+</div>
+
+                    <!-- ATIVO -->
+
+                    <div class="col-md-12">
+
+                        <div class="form-check mt-2">
+
+                            {{ form.ativo }}
+
+                            <label class="form-check-label">
+
+                                Procedimento ativo
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- BOTÃO -->
+
+                <div class="mt-4">
+
+                    <button
+
+                        type="submit"
+
+                        class="btn btn-primary rounded-pill px-4"
+
+                    >
+
+                        Salvar Procedimento
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+ <!-- ========================================= -->
+<!-- LISTAGEM -->
+<!-- ========================================= -->
+
+<div class="card shadow-sm border-0 rounded-4">
+
+    <div class="card-body p-4">
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Ícone</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Posição</th>
+                        <th>Status</th>
+                        <th width="140">Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for procedimento in procedimentos %}
+
+                    <tr>
+
+                        <!-- ÍCONE -->
+                        <td width="80">
+
+{% if procedimento.tipo == 'hemiarcada' or procedimento.tipo == 'geral' %}
+
+    <img
+        src="{% static 'img/procedimentos/full/' %}{{ procedimento.arquivo_icone }}"
+        width="60"
+        style="object-fit:contain;"
+    >
+
+{% else %}
+
+    <img
+        src="{% static 'img/procedimentos/mini/' %}{{ procedimento.arquivo_icone }}"
+        width="34"
+        style="object-fit:contain;"
+    >
+
+{% endif %}
+
+
+                        </td>
+
+                        <!-- NOME -->
+                        <td>
+
+                            {{ procedimento.nome }}
+
+                        </td>
+
+                        <!-- CATEGORIA -->
+                        <td>
+
+                            {{ procedimento.categoria }}
+
+                        </td>
+
+                        <!-- POSIÇÃO -->
+                        <td>
+
+                            {{ procedimento.get_posicao_icone_display }}
+
+                        </td>
+
+                        <!-- STATUS -->
+                        <td>
+
+                            {% if procedimento.ativo %}
+
+                                <span class="badge bg-success">
+
+                                    Ativo
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    Inativo
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- AÇÕES -->
+                        <td>
+
+                            <div class="d-flex gap-2">
+
+                                <!-- EDITAR -->
+                                <a
+                                    href="{% url 'editar_procedimento' procedimento.id %}"
+                                    class="btn btn-sm btn-light border"
+                                    title="Editar"
+                                >
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <!-- EXCLUIR -->
+                                <a
+                                    href="{% url 'excluir_procedimento' procedimento.id %}"
+                                    class="btn btn-sm btn-light border"
+                                    title="Excluir"
+                                    onclick="return confirm('Deseja excluir este procedimento?')"
+                                >
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6" class="text-center text-muted py-4">
+
+                            Nenhum procedimento cadastrado.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>   
+
+</div>
+
+<script>
+
+function atualizarPreviewIcone() {
+
+    const input = document.getElementById('id_arquivo_icone');
+
+    const preview = document.getElementById('preview-icone');
+
+    if (!input || !preview) return;
+
+    const nomeIcone = input.value.trim();
+
+    if (nomeIcone !== '') {
+
+        preview.style.display = 'block';
+
+        preview.src = `/static/img/procedimentos/full/${nomeIcone}`;
+
+        preview.onerror = function () {
+
+            preview.onerror = null;
+
+            preview.src = `/static/img/procedimentos/mini/${nomeIcone}`;
+
+        };
+
+    } else {
+
+        preview.style.display = 'none';
+
+    }
+
+}
+
+document.addEventListener(
+    'DOMContentLoaded',
+    atualizarPreviewIcone
+);
+
+</script>
+
+{% endblock %}

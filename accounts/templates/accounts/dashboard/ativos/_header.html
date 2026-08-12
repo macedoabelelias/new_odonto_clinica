@@ -1,0 +1,31 @@
+<!-- HEADER -->
+
+<div class="page-header">
+
+    <div>
+
+        <h5 class="mb-1 fw-bold">
+
+            Olá, {{ request.user.first_name|default:request.user.username }}! 👋
+
+        </h5>
+
+        <p style="font-size:14px;">
+
+            Aqui está o resumo da sua clínica hoje.
+
+        </p>
+
+    </div>
+
+    <button class="date-btn">
+
+        <i class="bi bi-calendar3"></i>
+
+        {% now "d/m/Y" %}
+
+    </button>
+
+</div>
+
+<hr>

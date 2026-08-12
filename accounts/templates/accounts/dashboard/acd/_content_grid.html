@@ -1,0 +1,137 @@
+<!-- =========================================
+CONTENT GRID - ACD
+========================================= -->
+
+<style>
+.dashboard-row-2{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:24px;
+    align-items:stretch;
+}
+
+.appointments-card,
+.birthday-card{
+    height:100%;
+}
+</style>
+
+<div class="dashboard-row-2">
+
+    <!-- =========================================
+    PRÓXIMAS CONSULTAS
+    ========================================= -->
+
+    <div class="appointments-card">
+
+        <div class="card-header">
+            <h5>
+                <i class="bi bi-calendar-check text-primary me-2"></i>
+                Próximas Consultas
+            </h5>
+        </div>
+
+        {% for consulta in proximas_consultas %}
+
+        <div class="appointment-item">
+
+            <div>
+                <strong>{{ consulta.hora_inicio|time:"H:i" }}</strong>
+            </div>
+
+            <div>
+
+                <h6>{{ consulta.paciente.nome }}</h6>
+
+                <p>
+                    {% if consulta.procedimento %}
+                        {{ consulta.procedimento.nome }}
+                    {% else %}
+                        Consulta
+                    {% endif %}
+                </p>
+
+            </div>
+
+            {% if consulta.status == "confirmado" %}
+
+                <span class="badge-confirmed">
+                    Confirmada
+                </span>
+
+            {% elif consulta.status == "agendado" %}
+
+                <span class="badge-pending">
+                    Agendada
+                </span>
+
+            {% elif consulta.status == "atendimento" %}
+
+                <span class="badge-confirmed">
+                    Em Atendimento
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="appointment-item">
+
+            <strong>Nenhuma consulta encontrada.</strong>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- =========================================
+    ANIVERSARIANTES
+    ========================================= -->
+
+    <div class="birthday-card">
+
+        <div class="card-header">
+            <h5 class="text-center">
+                <i class="bi bi-cake2-fill text-danger me-2"></i>
+                Aniversariantes do Mês
+            </h5>
+        </div>
+
+        {% if aniversariantes %}
+
+            {% for aniversariante in aniversariantes %}
+
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+
+                <div>
+
+                    <strong>{{ aniversariante.nome }}</strong><br>
+
+                    <small class="text-muted">
+                        {{ aniversariante.nascimento|date:"d/m" }}
+                    </small>
+
+                </div>
+
+                <i class="bi bi-cake2-fill text-warning"></i>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="birthday-empty">
+
+                Nenhum aniversariante encontrado.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>

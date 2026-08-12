@@ -1,0 +1,32 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Novo Agendamento
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1>Novo Agendamento</h1>
+
+    <hr>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">
+
+            Salvar
+
+        </button>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

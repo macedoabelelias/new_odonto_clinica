@@ -1,0 +1,608 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Relatório de Tratamentos
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <div>
+
+                    <h4 class="mb-1">
+
+                        <i class="bi bi-heart-pulse-fill me-2"></i>
+
+                        Relatório de Tratamentos
+
+                    </h4>
+
+                    <p class="mb-0 text-white-50">
+
+                        Visualização completa dos tratamentos cadastrados no sistema.
+
+                    </p>
+
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <!-- PDF -->
+
+                    <a href="{% url 'pdf_relatorio_tratamentos' %}"
+                        class="btn btn-light btn-sm border">
+
+                        PDF
+
+                    </a>
+                    <!-- Excel -->
+
+                    <a
+                        href="{% url 'excel_tratamentos' %}?{{ request.GET.urlencode }}"
+                        class="btn btn-success btn-sm me-2">
+
+                        <i class="bi bi-file-earmark-excel"></i>
+
+                        Excel
+
+                    </a>
+
+                    
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- Indicadores -->
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Total de Tratamentos
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-primary mb-0">
+
+                                        {{ total_tratamentos }}
+
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-heart-pulse-fill fs-1 text-primary opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Tratamentos Ativos
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-success mb-0">
+
+                                        {{ tratamentos_ativos }}
+
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-check-circle-fill fs-1 text-success opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Tratamentos Encerrados
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-danger mb-0">
+
+                                        {{ tratamentos_encerrados }}
+
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-check2-all fs-1 text-danger opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+
+                                        Pacientes em Tratamento
+
+                                    </small>
+
+                                    <h2 class="fw-bold text-info mb-0">
+
+                                        {{ pacientes_em_tratamento }}
+
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-people-fill fs-1 text-info opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Filtros -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-light">
+
+                        <h6 class="mb-0">
+
+                            <i class="bi bi-funnel-fill text-primary me-2"></i>
+
+                            Filtros de Pesquisa
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <form method="GET">
+
+                            <div class="row g-3 align-items-end">
+
+                                <!-- Paciente -->
+
+                                <div class="col-lg-3">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Paciente
+
+                                    </label>
+
+                                    <input type="text" name="paciente" class="form-control"
+                                        placeholder="Digite o nome do paciente..." value="{{ request.GET.paciente }}">
+
+                                </div>
+
+                                <!-- Status -->
+
+                                <div class="col-lg-2">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Status
+
+                                    </label>
+
+                                    <select name="status" class="form-select">
+
+                                        <option value="" {% if not status %}selected{% endif %}>
+                                            Todos
+                                        </option>
+
+                                        <option value="ATIVO" {% if status == "ATIVO" %}selected{% endif %}>
+                                            Ativo
+                                        </option>
+
+                                        <option value="ENCERRADO" {% if status == "ENCERRADO" %}selected{% endif %}>
+                                            Encerrado
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                <!-- Data Inicial -->
+
+                                <div class="col-lg-2">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Data Inicial
+
+                                    </label>
+
+                                    <input type="date" name="data_inicio" class="form-control"
+                                        value="{{ request.GET.data_inicio }}">
+
+                                </div>
+
+                                <!-- Data Final -->
+
+                                <div class="col-lg-2">
+
+                                    <label class="form-label fw-semibold">
+
+                                        Data Final
+
+                                    </label>
+
+                                    <input type="date" name="data_final" class="form-control"
+                                        value="{{ request.GET.data_final }}">
+
+                                </div>
+
+                                <!-- Botão -->
+
+                                <div class="col-lg-3">
+
+                                    <button type="submit" class="btn btn-primary w-100">
+
+                                        <i class="bi bi-search me-2"></i>
+
+                                        Pesquisar
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+                <!-- Tabela -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-light">
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                            <div>
+
+                                <h6 class="mb-1">
+
+                                    <i class="bi bi-table me-2 text-primary"></i>
+
+                                    Tratamentos Encontrados
+
+                                </h6>
+
+                                <small class="text-muted">
+
+                                    Total de registros encontrados
+
+                                </small>
+
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <span class="badge bg-primary fs-6 px-3 py-2">
+
+                                    {{ pacientes|length }} paciente(s)
+
+                                </span>
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body p-0">
+
+                        <div class="table-responsive">
+
+                            <table class="table table-hover align-middle">
+
+                                <thead class="table-primary">
+
+                                    <tr>
+
+                                        <th>Paciente</th>
+
+                                        <th>Tratamento</th>
+
+                                        <th>Início</th>
+
+                                        <th>Encerramento</th>
+
+                                        <th>Status</th>
+
+                                        <th class="text-center">
+
+                                            Ações
+
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for tratamento in tratamentos %}
+
+                                    <tr>
+
+                                        <td>
+
+                                            <strong>
+
+                                                {{ tratamento.paciente.nome }}
+
+                                            </strong>
+
+                                        </td>
+
+                                        <td>
+
+                                            {{ tratamento.titulo }}
+
+                                        </td>
+
+                                        <td>
+
+                                            {{ tratamento.data_inicio|date:"d/m/Y" }}
+
+                                        </td>
+
+                                        <td>
+
+                                            {% if tratamento.data_encerramento %}
+
+                                            {{ tratamento.data_encerramento|date:"d/m/Y" }}
+
+                                            {% else %}
+
+                                            —
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+
+                                            {% if tratamento.status == "ATIVO" %}
+
+                                            <span class="badge rounded-pill bg-success">
+
+                                                Ativo
+
+                                            </span>
+
+                                            {% else %}
+
+                                            <span class="badge rounded-pill bg-secondary">
+
+                                                Encerrado
+
+                                            </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <a href="{% url 'odontograma' tratamento.paciente.id %}"
+                                                class="btn btn-outline-primary btn-sm" title="Abrir Tratamento">
+
+                                                <i class="bi bi-eye-fill"></i>
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="6" class="text-center text-muted">
+
+                                            Nenhum tratamento encontrado.
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="card-footer bg-white">
+
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                                <!-- Paginação -->
+
+                                <nav>
+
+                                    <ul class="pagination pagination-sm mb-0">
+
+                                        <!-- Anterior -->
+
+                                        {% if pacientes.has_previous %}
+
+                                        <li class="page-item">
+
+                                            <a class="page-link"
+                                                href="?page={{ pacientes.previous_page_number }}&q={{ request.GET.q }}&convenio={{ request.GET.convenio }}&status={{ request.GET.status }}">
+
+                                                Anterior
+
+                                            </a>
+
+                                        </li>
+
+                                        {% else %}
+
+                                        <li class="page-item disabled">
+
+                                            <span class="page-link">
+
+                                                Anterior
+
+                                            </span>
+
+                                        </li>
+
+                                        {% endif %}
+
+                                        <!-- Páginas -->
+
+                                        {% for num in pacientes.paginator.page_range %}
+
+                                        {% if pacientes.number == num %}
+
+                                        <li class="page-item active">
+
+                                            <span class="page-link">
+
+                                                {{ num }}
+
+                                            </span>
+
+                                        </li>
+
+                                        {% else %}
+
+                                        <li class="page-item">
+
+                                            <a class="page-link"
+                                                href="?page={{ num }}&q={{ request.GET.q }}&convenio={{ request.GET.convenio }}&status={{ request.GET.status }}">
+
+                                                {{ num }}
+
+                                            </a>
+
+                                        </li>
+
+                                        {% endif %}
+
+                                        {% endfor %}
+
+                                        <!-- Próxima -->
+
+                                        {% if pacientes.has_next %}
+
+                                        <li class="page-item">
+
+                                            <a class="page-link"
+                                                href="?page={{ pacientes.next_page_number }}&q={{ request.GET.q }}&convenio={{ request.GET.convenio }}&status={{ request.GET.status }}">
+
+                                                Próxima
+
+                                            </a>
+
+                                        </li>
+
+                                        {% else %}
+
+                                        <li class="page-item disabled">
+
+                                            <span class="page-link">
+
+                                                Próxima
+
+                                            </span>
+
+                                        </li>
+
+                                        {% endif %}
+
+                                    </ul>
+
+                                </nav>
+
+                                <!-- Botões -->
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endblock %}

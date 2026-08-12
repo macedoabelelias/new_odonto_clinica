@@ -1,0 +1,259 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Auditoria
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<!-- ========================================= -->
+<!-- RESUMO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Resumo da Auditoria
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="35%"><strong>Data Inicial</strong></td>
+
+            <td>{{ data_inicio|default:"Todas" }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Data Final</strong></td>
+
+            <td>{{ data_final|default:"Todas" }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Usuário</strong></td>
+
+            <td>{{ usuario_nome|default:"Todos" }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Módulo</strong></td>
+
+            <td>{{ modulo|default:"Todos" }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Ação</strong></td>
+
+            <td>{{ acao|default:"Todas" }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Nível</strong></td>
+
+            <td>{{ nivel|default:"Todos" }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Total de Eventos</strong></td>
+
+            <td>
+
+                <strong style="font-size:18px;color:#0d6efd;">
+
+                    {{ total_eventos }}
+
+                </strong>
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Logins</strong></td>
+
+            <td>{{ total_logins }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Logouts</strong></td>
+
+            <td>{{ total_logouts }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Erros</strong></td>
+
+            <td>{{ total_erros }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Eventos Críticos</strong></td>
+
+            <td>{{ total_criticos }}</td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ========================================= -->
+<!-- EVENTOS -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Eventos Registrados
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Data/Hora</th>
+
+                <th>Usuário</th>
+
+                <th>Módulo</th>
+
+                <th>Ação</th>
+
+                <th>Descrição</th>
+
+                <th>IP</th>
+
+                <th>Nível</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for item in auditorias %}
+
+            <tr>
+
+                <td>
+
+                    {{ item.data_hora|date:"d/m/Y H:i" }}
+
+                </td>
+
+                <td>
+
+                    {{ item.usuario.get_full_name|default:item.usuario.username|default:"Sistema" }}
+
+                </td>
+
+                <td>
+
+                    {{ item.modulo }}
+
+                </td>
+
+                <td>
+
+                    {{ item.acao|title }}
+
+                </td>
+
+                <td>
+
+                    {{ item.descricao }}
+
+                </td>
+
+                <td>
+
+                    {{ item.ip|default:"-" }}
+
+                </td>
+
+                <td>
+
+                    {{ item.nivel|title }}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="7" style="text-align:center;">
+
+                    Nenhum evento encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

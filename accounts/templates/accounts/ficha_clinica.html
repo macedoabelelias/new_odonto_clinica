@@ -1,0 +1,670 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+
+.cards-clinicos-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+    margin-top:20px;
+    align-items:start;
+}
+
+.card-clinico{
+    height:100%;
+}
+
+.card-clinico .timeline-body{
+    padding-bottom:10px;
+}
+
+.cards-clinicos-grid > .card-clinico{
+    display:flex;
+    flex-direction:column;
+}
+
+.timeline-face{
+
+    font-size:.85rem;
+
+    color:#6c757d;
+
+    margin-top:4px;
+
+    margin-bottom:6px;
+
+}
+
+</style>
+
+<!-- =========================================
+HEADER
+========================================= -->
+
+<div class="page-header mb-4">
+
+    <div>
+
+        <h2 class="patient-name">
+
+            {{ paciente.nome }}
+
+        </h2>
+
+        <p class="patient-contact">
+
+            Evolução Clínica do Paciente
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+MENU CLÍNICO GLOBAL
+========================================= -->
+
+{% include 'accounts/components/menu_paciente.html' %}
+
+<!-- =========================================
+LAYOUT
+========================================= -->
+
+<!-- =========================================
+LAYOUT PRINCIPAL
+========================================= -->
+
+<div class="ficha-grid">
+
+    <!-- =========================================
+    PRONTUÁRIO CLÍNICO
+    ========================================= -->
+
+    <div class="ficha-form-card">
+
+        <div class="section-header-premium">
+
+            <div class="section-icon blue">
+                <i class="fa-solid fa-file-medical"></i>
+            </div>
+
+            <div>
+
+                <h5>Prontuário Clínico</h5>
+
+                <p>
+                    Registros clínicos e observações do paciente.
+                </p>
+
+            </div>
+
+        </div>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label class="anamnese-label">
+                Título
+            </label>
+
+            <input type="text" name="titulo" class="anamnese-input" placeholder="Ex: Avaliação Inicial" required>
+
+            <div class="mt-4">
+
+                <label class="anamnese-label">
+                    Registro Clínico
+                </label>
+
+                <textarea name="anotacao" class="anamnese-textarea" rows="8"
+                    placeholder="Descreva observações clínicas..." required></textarea>
+
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-4">
+
+                <a href="{% url 'imprimir_prontuario' paciente.id %}" target="_blank" class="btn btn-outline-primary">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    Gerar PDF
+                </a>
+
+                <button type="submit" class="btn-anamnese">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Salvar Registro
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- =========================================
+COLUNA DIREITA
+========================================= -->
+
+    <div class="painel-lateral">
+
+        <!-- BOTÕES -->
+
+        <div class="tabs-premium">
+
+            <button class="tab-btn active" data-tab="registros">
+                <i class="fa-solid fa-file-lines"></i>
+                Registros
+            </button>
+
+            <button class="tab-btn" data-tab="anexos">
+                <i class="fa-solid fa-paperclip"></i>
+                Anexos
+            </button>
+
+            <button class="tab-btn" data-tab="documentos">
+                <i class="fa-solid fa-file-medical"></i>
+                Documentos
+            </button>
+
+        </div>
+
+        <!-- CARD DAS ABAS -->
+
+        <div class="tab-card">
+
+            <!-- REGISTROS -->
+
+            <div class="tab-content active" id="tab-registros" style="display:block;">
+
+                <h5>Prontuário do Paciente</h5>
+
+                <p class="mb-4">
+                    Histórico clínico registrado manualmente.
+                </p>
+
+                {% for item in prontuarios %}
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <div class="timeline-top">
+
+                            <strong>
+                                {{ item.titulo }}
+                            </strong>
+
+                            <span>
+                                {{ item.criado_em|date:"d/m/Y H:i" }}
+                            </span>
+
+                        </div>
+
+                        <p>
+                            {{ item.anotacao|linebreaks }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="empty-timeline">
+                    Nenhum registro clínico cadastrado.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- ANEXOS -->
+
+            <div class="tab-content" id="tab-anexos" style="display:none;">
+
+                <h5>Anexos</h5>
+
+                <p class="mb-4">
+                    Radiografias, fotos e exames.
+                </p>
+
+                <form method="POST" action="{% url 'upload_anexo' paciente.id %}" enctype="multipart/form-data"
+                    class="mb-4">
+
+                    {% csrf_token %}
+
+                    <input type="text" name="descricao" class="anamnese-input mb-2" placeholder="Descrição do arquivo"
+                        required>
+
+                    <input type="file" name="arquivo" class="form-control mb-3" required>
+
+                    <button type="submit" class="btn-anamnese">
+                        <i class="fa-solid fa-upload"></i>
+                        Enviar Arquivo
+                    </button>
+
+                </form>
+
+                {% for anexo in anexos %}
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <div class="timeline-top">
+
+                            <strong>
+                                {{ anexo.descricao }}
+                            </strong>
+
+                            <span>
+                                {{ anexo.criado_em|date:"d/m/Y H:i" }}
+                            </span>
+
+                        </div>
+
+                        <a href="{{ anexo.arquivo.url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                            Visualizar Arquivo
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="empty-timeline">
+                    Nenhum anexo cadastrado.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- DOCUMENTOS -->
+            <div class="tab-content" id="tab-documentos" style="display:none;">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div>
+
+                        <h5>Documentos</h5>
+
+                        <p>
+                            Documentos clínicos do paciente.
+                        </p>
+
+                    </div>
+
+                    <a href="{% url 'novo_documento' paciente.id %}" class="btn-anamnese">
+                        <i class="fa-solid fa-plus"></i>
+                        Novo Documento
+                    </a>
+
+                </div>
+
+                {% for documento in documentos %}
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <div class="timeline-top">
+
+                            <strong>
+
+                                {{ documento.titulo }}
+
+                            </strong>
+
+                            <span>
+
+                                {{ documento.criado_em|date:"d/m/Y H:i" }}
+
+                            </span>
+
+                        </div>
+
+                        <div class="mt-2 d-flex gap-2">
+
+                            <a href="{% url 'visualizar_documento' documento.id %}" class="btn btn-sm btn-primary">
+                                Visualizar
+                            </a>
+
+                            <a href="{% url 'editar_documento' documento.id %}" class="btn btn-sm btn-outline-primary">
+                                Editar
+                            </a>
+
+                            <a href="{% url 'excluir_documento' documento.id %}" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Deseja realmente excluir este documento?')">
+                                Excluir
+                            </a>
+
+                        </div>
+
+                        <div class="documento-preview">
+
+                            <div class="documento-preview-header">
+
+                                <i class="fa-solid fa-file-signature"></i>
+
+                                <span>
+                                    Pré-visualização
+                                </span>
+
+                            </div>
+
+                            <div class="documento-preview-body">
+
+                                {{ documento.conteudo|linebreaks }}
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="empty-timeline">
+
+                    Nenhum documento cadastrado.
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div> <!-- tab-card -->
+
+    </div> <!-- painel-lateral -->
+
+</div> <!-- ficha-grid -->
+<br>
+
+<div class="linha-inferior">
+    <!-- =========================================
+        TIMELINE CLÍNICA
+        ========================================= -->
+
+    <div class="timeline-card timeline-full">
+
+        <div class="timeline-header">
+
+            <h5>
+                Timeline Clínica
+            </h5>
+
+            <p>
+                Histórico completo do paciente
+            </p>
+
+        </div>
+
+        <div class="timeline-body">
+
+            {% for evolucao in evolucoes %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-top">
+
+                        <strong>
+
+                            {% if evolucao.procedimento %}
+                            {{ evolucao.procedimento.nome }}
+                            {% else %}
+                            Atualização Clínica
+                            {% endif %}
+
+                        </strong>
+
+                        <span>
+
+                            {{ evolucao.criado_em|date:"d/m/Y H:i" }}
+
+                        </span>
+
+                    </div>
+
+                    {% if evolucao.dente %}
+                    <div class="timeline-dente">
+                        🦷 Dente {{ evolucao.dente }}
+                    </div>
+                    {% endif %}
+
+                    {% if evolucao.face %}
+                    <div class="timeline-face">
+                        📍 Face {{ evolucao.face }}
+                    </div>
+                    {% endif %}
+
+                    {% if evolucao.descricao %}
+                    <div class="timeline-evento">
+
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+                        {{ evolucao.descricao }}
+
+                    </div>
+                    {% endif %}
+
+                    <div class="timeline-status timeline-status-{{ evolucao.status }}">
+
+                        {{ evolucao.get_status_display }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-timeline">
+
+                Nenhuma evolução clínica cadastrada.
+
+            </div>
+
+            {% endfor %}
+
+        </div> <!-- timeline-body -->
+
+    </div> <!-- timeline-card -->
+
+   <div class="cards-clinicos-grid">
+
+    <!-- RECEITAS -->
+    <div class="timeline-card card-clinico">
+
+        <div class="timeline-header">
+            <h5>Receitas Emitidas</h5>
+        </div>
+
+        <div class="timeline-body">
+
+            {% for receita in receitas %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-top">
+
+                        <strong>
+                            💊 {{ receita.medicamento }}
+                        </strong>
+
+                        <span>
+                            {{ receita.criado_em|date:"d/m/Y H:i" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-timeline">
+                Nenhuma receita emitida.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- SOLICITAÇÕES -->
+    <div class="timeline-card card-clinico">
+
+        <div class="timeline-header">
+            <h5>Solicitações de Exames</h5>
+        </div>
+
+        <div class="timeline-body">
+
+            {% for solicitacao in solicitacoes %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-top">
+
+                        <strong>
+                            🧪 {{ solicitacao.titulo }}
+                        </strong>
+
+                        <span>
+                            {{ solicitacao.criado_em|date:"d/m/Y H:i" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-timeline">
+                Nenhuma solicitação cadastrada.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- EXAMES -->
+    <div class="timeline-card card-clinico">
+
+        <div class="timeline-header">
+            <h5>Exames Anexados</h5>
+        </div>
+
+        <div class="timeline-body">
+
+            {% for exame in exames %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-top">
+
+                        <strong>
+                            📎 {{ exame.nome }}
+                        </strong>
+
+                        <span>
+                            {{ exame.criado_em|date:"d/m/Y H:i" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-timeline">
+                Nenhum exame anexado.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const botoes = document.querySelectorAll('.tab-btn');
+
+            const conteudos = document.querySelectorAll('.tab-content');
+
+            botoes.forEach(botao => {
+
+                botao.addEventListener('click', function () {
+
+                    const aba = this.dataset.tab;
+
+                    botoes.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+
+                    conteudos.forEach(item => {
+                        item.style.display = 'none';
+                    });
+
+                    this.classList.add('active');
+
+                    const painel = document.getElementById(
+                        'tab-' + aba
+                    );
+
+                    if (painel) {
+                        painel.style.display = 'block';
+                    }
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+    {% endblock %}

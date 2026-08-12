@@ -1,0 +1,314 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Campanhas de Marketing
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================
+CABEÇALHO
+========================================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h4 class="fw-semibold mb-1">
+
+            <i class="bi bi-megaphone-fill text-primary me-2"></i>
+
+            Campanhas de Marketing
+
+        </h4>
+
+        <p class="text-muted mb-0">
+
+            Gerencie as campanhas e acompanhe a geração de leads.
+
+        </p>
+
+    </div>
+
+    <div>
+
+        <a href="{% url 'campanhas_marketing_nova' %}" class="btn btn-primary">
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Nova Campanha
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+CARD
+========================================= -->
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-body">
+
+        {% if campanhas %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Campanha</th>
+
+                        <th>Canal</th>
+
+                        <th>Status</th>
+
+                        <th>Início</th>
+
+                        <th>Fim</th>
+
+                        <th>Investimento</th>
+
+                        <th class="text-center">
+                            Leads
+                        </th>
+
+                        <th class="text-center">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for campanha in campanhas %}
+
+                    <tr>
+
+                        <!-- =========================================
+                                CAMPANHA
+                                ========================================= -->
+
+                        <td>
+
+                            <strong>
+                                {{ campanha.nome }}
+                            </strong>
+
+                            {% if campanha.descricao %}
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                {{ campanha.descricao|truncatechars:80 }}
+
+                            </small>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- =========================================
+                                CANAL
+                                ========================================= -->
+
+                        <td>
+
+                            {{ campanha.get_canal_display }}
+
+                        </td>
+
+
+                        <!-- =========================================
+                                STATUS
+                                ========================================= -->
+
+                        <td>
+
+                            {% if campanha.status == "ATIVA" %}
+
+                            <span class="badge bg-success">
+                                Ativa
+                            </span>
+
+                            {% elif campanha.status == "PAUSADA" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Pausada
+                            </span>
+
+                            {% elif campanha.status == "FINALIZADA" %}
+
+                            <span class="badge bg-secondary">
+                                Finalizada
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-secondary">
+                                {{ campanha.get_status_display }}
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- =========================================
+                                DATA INÍCIO
+                                ========================================= -->
+
+                        <td>
+
+                            {{ campanha.data_inicio|date:"d/m/Y" }}
+
+                        </td>
+
+
+                        <!-- =========================================
+                                DATA FIM
+                                ========================================= -->
+
+                        <td>
+
+                            {% if campanha.data_fim %}
+
+                            {{ campanha.data_fim|date:"d/m/Y" }}
+
+                            {% else %}
+
+                            —
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- =========================================
+                                INVESTIMENTO
+                                ========================================= -->
+
+                        <td>
+
+                            R$ {{ campanha.investimento|floatformat:2 }}
+
+                        </td>
+
+
+                        <!-- =========================================
+                        LEADS
+                        ========================================= -->
+
+                        <td class="text-center">
+
+                            <span class="badge bg-primary">
+
+                                {{ campanha.leads.count }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- =========================================
+AÇÕES
+========================================= -->
+
+                        <td class="text-center">
+
+                            <div class="d-flex justify-content-center gap-1">
+
+                                <!-- DETALHES -->
+
+                                <a href="{% url 'detalhe_campanha_marketing' campanha.pk %}"
+                                    class="btn btn-sm btn-outline-info" title="Detalhes da campanha">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </a>
+
+
+                                <!-- EDITAR -->
+
+                                <a href="{% url 'editar_campanha_marketing' campanha.pk %}"
+                                    class="btn btn-sm btn-outline-primary" title="Editar campanha">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </a>
+
+
+                                <!-- EXCLUIR -->
+
+                                <a href="{% url 'excluir_campanha_marketing' campanha.pk %}"
+                                    class="btn btn-sm btn-outline-danger" title="Excluir campanha">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- =========================================
+            ESTADO VAZIO
+            ========================================= -->
+
+        <div class="text-center py-5">
+
+            <i class="bi bi-megaphone display-4 text-muted"></i>
+
+            <h5 class="mt-3">
+
+                Nenhuma campanha cadastrada
+
+            </h5>
+
+            <p class="text-muted">
+
+                Comece cadastrando sua primeira campanha
+                de marketing.
+
+            </p>
+
+            <a href="{% url 'campanhas_marketing_nova' %}" class="btn btn-primary">
+
+                <i class="bi bi-plus-lg me-1"></i>
+
+                Nova Campanha
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

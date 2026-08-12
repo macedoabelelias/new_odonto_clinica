@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Novo Medicamento</title>
+</head>
+
+<body>
+
+    <h2>Novo Medicamento</h2>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <p>
+
+            <label>Nome:</label><br>
+
+            <input
+                type="text"
+                name="nome"
+                required
+            >
+
+        </p>
+
+        <p>
+
+            <label>Concentração:</label><br>
+
+            <input
+                type="text"
+                name="concentracao"
+            >
+
+        </p>
+
+        <p>
+
+            <label>Categoria:</label><br>
+
+            <select name="categoria">
+
+                <option value="antibiotico">
+                    Antibiótico
+                </option>
+
+                <option value="analgesico">
+                    Analgésico
+                </option>
+
+                <option value="antiinflamatorio">
+                    Anti-inflamatório
+                </option>
+
+                <option value="antisseptico">
+                    Antisséptico
+                </option>
+
+                <option value="outro">
+                    Outro
+                </option>
+
+            </select>
+
+        </p>
+
+        <button type="submit">
+
+            Salvar
+
+        </button>
+
+    </form>
+
+</body>
+
+</html>

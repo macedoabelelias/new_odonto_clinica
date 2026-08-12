@@ -1,0 +1,302 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Produção por Procedimento
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<!-- ========================================= -->
+<!-- RESUMO -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    <h4>
+
+        Resumo da Produção
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="35%"><strong>Procedimento</strong></td>
+
+            <td>
+
+                {% if procedimento_id %}
+
+                    {% for procedimento in procedimentos %}
+
+                        {% if procedimento.id|stringformat:"s" == procedimento_id %}
+
+                            {{ procedimento.nome }}
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% else %}
+
+                    Todos
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Período</strong></td>
+
+            <td>
+
+                {% if data_inicio or data_final %}
+
+                    {{ data_inicio|default:"..." }} até {{ data_final|default:"..." }}
+
+                {% else %}
+
+                    Todos
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Produção Total</strong></td>
+
+            <td>
+
+                <strong style="font-size:18px;color:#198754;">
+
+                    R$ {{ total_producao|floatformat:2 }}
+
+                </strong>
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Procedimentos</strong></td>
+
+            <td>{{ total_procedimentos }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Pacientes</strong></td>
+
+            <td>{{ total_pacientes }}</td>
+
+        </tr>
+
+        <tr>
+
+            <td><strong>Média por Paciente</strong></td>
+
+            <td>
+
+                R$ {{ media_paciente|floatformat:2 }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ========================================= -->
+<!-- RANKING -->
+<!-- ========================================= -->
+
+<div class="card">
+
+    {% if procedimento_id %}
+
+        <h4>
+
+            Produção por Profissional
+
+        </h4>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Profissional</th>
+                    <th>Procedimentos</th>
+                    <th>Pacientes</th>
+                    <th>Produção</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in ranking_profissionais %}
+
+                <tr>
+
+                    <td>
+
+                        {{ item.orcamento__paciente__dentista__first_name }}
+                        {{ item.orcamento__paciente__dentista__last_name }}
+
+                    </td>
+
+                    <td style="text-align:center;">
+
+                        {{ item.quantidade }}
+
+                    </td>
+
+                    <td style="text-align:center;">
+
+                        {{ item.pacientes }}
+
+                    </td>
+
+                    <td style="text-align:right;">
+
+                        R$ {{ item.total|floatformat:2 }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" style="text-align:center;">
+
+                        Nenhum registro encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <h4>
+
+            Ranking de Procedimentos
+
+        </h4>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Procedimento</th>
+                    <th>Qtd.</th>
+                    <th>Pacientes</th>
+                    <th>Produção</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in ranking %}
+
+                <tr>
+
+                    <td>{{ item.procedimento__nome }}</td>
+
+                    <td style="text-align:center;">
+
+                        {{ item.quantidade }}
+
+                    </td>
+
+                    <td style="text-align:center;">
+
+                        {{ item.pacientes }}
+
+                    </td>
+
+                    <td style="text-align:right;">
+
+                        R$ {{ item.total|floatformat:2 }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" style="text-align:center;">
+
+                        Nenhum procedimento encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% endif %}
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

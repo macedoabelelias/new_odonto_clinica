@@ -1,0 +1,567 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<style>
+    #eventoModal .btn-sm {
+        min-width: 75px;
+        font-size: 0.67rem;
+        font-weight: 500;
+    }
+
+    #eventoModal .modal-footer {
+        padding-top: .75rem;
+        padding-bottom: .75rem;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+
+        <h1 class="mb-3">
+            Agenda
+        </h1>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div class="btn-group shadow-sm" role="group">
+
+        {% if request.user.perfil.tipo_usuario == "dentista" %}
+
+            <a href="?modo=minha"
+               class="btn {% if modo == 'clinica' %}btn-outline-primary{% else %}btn-primary{% endif %}">
+
+                <i class="bi bi-person-circle"></i>
+                Minha Agenda
+
+            </a>
+
+        {% endif %}
+
+        <a href="?modo=clinica"
+           class="btn {% if modo == 'clinica' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+
+            <i class="bi bi-buildings"></i>
+            Agenda da Clínica
+
+        </a>
+
+    </div>
+
+    <a href="{% url 'novo_agendamento' %}"
+       class="btn btn-primary rounded-pill px-4">
+
+        <i class="bi bi-plus-circle"></i>
+
+        Novo Agendamento
+
+    </a>
+
+</div>
+
+    <div id="calendar" style="
+            background:white;
+            padding:20px;
+            border-radius:20px;
+        "></div>
+
+</div>
+
+<!-- MODAL DO AGENDAMENTO -->
+
+<div class="modal fade" id="eventoModal" tabindex="-1">
+
+    <div class="modal-dialog" style="max-width:500px;">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="modalPaciente">
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3">
+
+                    <span id="modalStatus" class="badge bg-primary fs-6">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <strong>Procedimento</strong>
+
+                    <div id="modalProcedimento" class="text-muted">
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <strong>Profissional</strong>
+
+                    <div id="modalProfissional" class="text-muted">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <div class="w-100">
+
+                    <div class="d-flex justify-content-center gap-2 mb-2">
+
+                        <a id="btnConfirmar" class="btn btn-success btn-sm">
+                            <i class="bi bi-check-circle"></i>
+                            Confirmar
+                        </a>
+
+                        <a id="btnAtendimento" class="btn btn-warning btn-sm">
+                            <i class="bi bi-play-circle"></i>
+                            Em Atendimento
+                        </a>
+
+                        <a id="btnFinalizar" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-flag"></i>
+                            Finalizado
+                        </a>
+
+                        <a id="btnFalta" class="btn btn-danger btn-sm">
+                            <i class="bi bi-x-circle"></i>
+                            Faltou
+                        </a>
+
+                        <a id="btnCancelar" class="btn btn-dark btn-sm">
+                            <i class="bi bi-slash-circle"></i>
+                            Cancelar
+                        </a>
+
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2">
+
+                        <a id="btnPerfil" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-person"></i>
+                            Perfil
+                        </a>
+
+                        <a id="btnEditar" class="btn btn-primary btn-sm">
+                            <i class="bi bi-pencil-square"></i>
+                            Editar
+                        </a>
+
+                        <a id="btnWhatsapp" class="btn btn-success btn-sm" target="_blank">
+
+                            <i class="bi bi-whatsapp"></i>
+                            WhatsApp
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        function getCookie(name) {
+
+            let cookieValue = null;
+
+            if (document.cookie && document.cookie !== '') {
+
+                const cookies = document.cookie.split(';');
+
+                for (let i = 0; i < cookies.length; i++) {
+
+                    const cookie = cookies[i].trim();
+
+                    if (
+                        cookie.substring(0, name.length + 1) ===
+                        (name + '=')
+                    ) {
+
+                        cookieValue = decodeURIComponent(
+                            cookie.substring(name.length + 1)
+                        );
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            return cookieValue;
+
+        }
+
+        const calendarEl = document.getElementById('calendar');
+
+        let eventoSelecionado = null;
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+
+            locale: 'pt-br',
+
+            initialView: 'dayGridMonth',
+
+            height: 'auto',
+            contentHeight: 'auto',
+            aspectRatio: 1.8,
+
+            dayMaxEventRows: 3,
+            expandRows: true,
+
+            editable: true,
+
+            events: '/agenda/eventos/?modo={{ modo }}',
+
+            headerToolbar: {
+
+                left: 'prev,next today',
+
+                center: 'title',
+
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+
+            },
+
+            buttonText: {
+
+                today: 'Hoje',
+
+                month: 'Mês',
+
+                week: 'Semana',
+
+                day: 'Dia'
+
+            },
+
+            eventDidMount: function (info) {
+
+                info.el.title =
+
+                    'Paciente: ' +
+                    info.event.extendedProps.paciente +
+
+                    '\nStatus: ' +
+                    info.event.extendedProps.status +
+
+                    '\nProcedimento: ' +
+                    info.event.extendedProps.procedimento +
+
+                    '\nProfissional: ' +
+                    info.event.extendedProps.profissional;
+
+            },
+
+            eventClick: function (info) {
+
+                eventoSelecionado = info.event;
+
+                info.jsEvent.preventDefault();
+
+                document.getElementById(
+                    'modalPaciente'
+                ).innerText =
+                    info.event.extendedProps.paciente;
+
+                const statusEl = document.getElementById(
+                    'modalStatus'
+                );
+
+                statusEl.innerText =
+                    info.event.extendedProps.status;
+
+                statusEl.className =
+                    'badge fs-6';
+
+                if (
+                    info.event.extendedProps.status ===
+                    'Confirmado'
+                ) {
+
+                    statusEl.classList.add(
+                        'bg-success'
+                    );
+
+                } else if (
+
+                    info.event.extendedProps.status ===
+                    'Em Atendimento'
+
+                ) {
+
+                    statusEl.classList.add(
+                        'bg-warning'
+                    );
+
+                } else if (
+
+                    info.event.extendedProps.status ===
+                    'Finalizado'
+
+                ) {
+
+                    statusEl.classList.add(
+                        'bg-secondary'
+                    );
+
+                } else {
+
+                    statusEl.classList.add(
+                        'bg-primary'
+                    );
+
+                }
+
+                document.getElementById(
+                    'modalProcedimento'
+                ).innerText =
+                    info.event.extendedProps.procedimento;
+
+                document.getElementById(
+                    'modalProfissional'
+                ).innerText =
+                    info.event.extendedProps.profissional;
+
+                document.getElementById(
+                    'btnPerfil'
+                ).href =
+                    info.event.extendedProps.perfil_url;
+
+                document.getElementById(
+                    'btnEditar'
+                ).href =
+                    info.event.extendedProps.editar_url;
+
+                document.getElementById(
+                    'btnAtendimento'
+                ).href =
+                    info.event.extendedProps.iniciar_url;
+
+                console.log(
+                    info.event.extendedProps.whatsapp_url
+                );
+
+                document.getElementById(
+                    'btnWhatsapp'
+                ).href =
+                    info.event.extendedProps.whatsapp_url;
+
+                const modal = new bootstrap.Modal(
+
+                    document.getElementById(
+                        'eventoModal'
+                    )
+
+                );
+
+                modal.show();
+
+            },
+
+            eventDrop: function (info) {
+
+                fetch('/agenda/mover-agendamento/', {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type': 'application/json',
+
+                        'X-CSRFToken': getCookie('csrftoken')
+
+                    },
+
+                    body: JSON.stringify({
+
+                        agendamento_id: info.event.id,
+
+                        nova_data: info.event.startStr
+
+                    })
+
+                })
+
+                    .then(response => response.json())
+
+                    .then(data => {
+
+                        if (!data.sucesso) {
+
+                            alert('Erro ao mover agendamento');
+
+                            info.revert();
+
+                        }
+
+                    });
+
+            }
+
+        });
+
+        function alterarStatus(status) {
+
+            if (!eventoSelecionado) return;
+
+            fetch('/agenda/alterar-status/', {
+
+                method: 'POST',
+
+                headers: {
+
+                    'Content-Type': 'application/json',
+
+                    'X-CSRFToken': getCookie('csrftoken')
+
+                },
+
+                body: JSON.stringify({
+
+                    agendamento_id: eventoSelecionado.id,
+
+                    status: status
+
+                })
+
+            })
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    if (data.sucesso) {
+
+                        let cor = '#0d6efd';
+
+                        if (status === 'confirmado')
+                            cor = '#198754';
+
+                        else if (status === 'atendimento')
+                            cor = '#f89847';
+
+                        else if (status === 'finalizado')
+                            cor = '#6c757d';
+
+                        else if (status === 'cancelado')
+                            cor = '#382a2b';
+
+                        else if (status === 'faltou')
+                            cor = '#e93636';
+
+                        eventoSelecionado.setProp(
+                            'backgroundColor',
+                            cor
+                        );
+
+                        eventoSelecionado.setProp(
+                            'borderColor',
+                            cor
+                        );
+
+                        bootstrap.Modal.getInstance(
+                            document.getElementById(
+                                'eventoModal'
+                            )
+                        ).hide();
+
+                    }
+
+                });
+
+        }
+
+        document.getElementById(
+            'btnConfirmar'
+        ).addEventListener(
+            'click',
+            function (e) {
+
+                e.preventDefault();
+
+                alterarStatus(
+                    'confirmado'
+                );
+
+            }
+        );
+
+        document.getElementById(
+            'btnFalta'
+        ).addEventListener(
+            'click',
+            function (e) {
+
+                e.preventDefault();
+
+                alterarStatus(
+                    'faltou'
+                );
+
+            }
+        );
+
+        document.getElementById(
+            'btnCancelar'
+        ).addEventListener(
+            'click',
+            function (e) {
+
+                e.preventDefault();
+
+                alterarStatus(
+                    'cancelado'
+                );
+
+            }
+        );
+
+        document.getElementById(
+            'btnFinalizar'
+        ).addEventListener(
+            'click',
+            function (e) {
+
+                e.preventDefault();
+
+                alterarStatus(
+                    'finalizado'
+                );
+
+            }
+        );
+
+        calendar.render();
+
+    });
+
+</script>
+
+{% endblock %}

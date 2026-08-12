@@ -1,0 +1,259 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+{{ titulo }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm border-0 rounded-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4 class="mb-0">
+
+                <i class="bi bi-shield-lock-fill me-2"></i>
+
+                {{ titulo }}
+
+            </h4>
+
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Nome do Perfil
+
+                        </label>
+
+                        {{ form.nome }}
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Status
+
+                        </label>
+
+                        {{ form.ativo }}
+
+                    </div>
+
+                    <div class="col-12 mb-3">
+
+                        <label class="form-label">
+
+                            Descrição
+
+                        </label>
+
+                        {{ form.descricao }}
+
+                    </div>
+
+                </div>
+
+                        </div>
+
+            <!-- ========================================= -->
+<!-- CENTRAL DO PERFIL -->
+<!-- ========================================= -->
+
+<div class="card-body border-top">
+
+    <h5 class="mb-4">
+        <i class="bi bi-gear-fill me-2"></i>
+        Gerenciamento do Perfil
+    </h5>
+
+    <div class="row">
+
+        <!-- ========================================= -->
+        <!-- PERMISSÕES -->
+        <!-- ========================================= -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card h-100 shadow-sm border-warning">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-shield-lock-fill text-warning fs-1"></i>
+
+                    <h5 class="mt-3">
+                        Permissões
+                    </h5>
+
+                    <p class="text-muted small">
+                        Configure os módulos e ações permitidas para este perfil.
+                    </p>
+
+                    {% if perfil %}
+
+                        <a href="{% url 'permissoes_perfil' perfil.id %}"
+                           class="btn btn-warning">
+
+                            <i class="bi bi-shield-check me-1"></i>
+                            Abrir
+
+                        </a>
+
+                    {% else %}
+
+                        <button class="btn btn-warning" disabled>
+
+                            <i class="bi bi-lock me-1"></i>
+                            Salve o perfil
+
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- FUNCIONÁRIOS -->
+        <!-- ========================================= -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card h-100 shadow-sm border-primary">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-people-fill text-primary fs-1"></i>
+
+                    <h5 class="mt-3">
+                        Funcionários
+                    </h5>
+
+                    <p class="text-muted small">
+                        Funcionários vinculados a este perfil.
+                    </p>
+
+                    {% if perfil %}
+
+                        <a href="{% url 'funcionarios_perfil' perfil.id %}"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-people me-1"></i>
+                            Abrir
+
+                        </a>
+
+                    {% else %}
+
+                        <button class="btn btn-primary" disabled>
+
+                            <i class="bi bi-lock me-1"></i>
+                            Salve o perfil
+
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- RESTAURAR PERMISSÕES -->
+        <!-- ========================================= -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card h-100 shadow-sm border-success">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-arrow-repeat text-success fs-1"></i>
+
+                    <h5 class="mt-3">
+                        Restaurar Permissões
+                    </h5>
+
+                    <p class="text-muted small">
+                        Reaplica automaticamente as permissões padrão deste perfil.
+                    </p>
+
+                    {% if perfil %}
+
+                        <a href="{% url 'aplicar_permissoes_padrao' perfil.id %}"
+                           class="btn btn-success">
+
+                            <i class="bi bi-arrow-repeat me-1"></i>
+                            Restaurar
+
+                        </a>
+
+                    {% else %}
+
+                        <button class="btn btn-success" disabled>
+
+                            <i class="bi bi-lock me-1"></i>
+                            Salve o perfil
+
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- RODAPÉ -->
+<!-- ========================================= -->
+
+<div class="card-footer bg-white">
+
+    <div class="d-flex justify-content-end gap-2">
+
+        <a href="{% url 'perfis' %}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar
+
+        </a>
+
+        <button type="submit"
+                class="btn btn-primary">
+
+            <i class="bi bi-check-circle me-1"></i>
+            Salvar
+
+        </button>
+
+    </div>
+
+</div>
+
+    {% endblock %}

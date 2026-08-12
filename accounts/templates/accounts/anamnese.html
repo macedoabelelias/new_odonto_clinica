@@ -1,0 +1,1043 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- =========================================
+HEADER
+========================================= -->
+
+<div class="page-header mb-4">
+
+    <div>
+
+        <h3 class="patient-name">
+
+            {{ paciente.nome }}
+
+        </h3>
+
+        <p class="patient-contact">
+
+            Anamnese Clínica Premium
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+ABAS
+========================================= -->
+
+<div class="abas-prontuario">
+
+    <a
+        href="{% url 'perfil_paciente' paciente.id %}"
+        class="aba-item"
+    >
+        Visão Geral
+    </a>
+
+    <a
+        href="{% url 'anamnese' paciente.id %}"
+        class="aba-item active"
+    >
+        Anamnese
+    </a>
+
+    <a
+        href="{% url 'odontograma' paciente.id %}"
+        class="aba-item"
+    >
+        Odontograma
+    </a>
+
+    <a
+        href="{% url 'ficha_clinica' paciente.id %}"
+        class="aba-item"
+    >
+        Ficha Clínica
+    </a>
+
+</div>
+
+<!-- =========================================
+RESUMO CLÍNICO
+========================================= -->
+
+<div class="clinical-alerts">
+
+    {% if anamnese.hipertenso %}
+        <div class="alert-pill red">
+            <i class="fa-solid fa-heart"></i>
+            Hipertenso
+        </div>
+    {% endif %}
+
+    {% if anamnese.diabetico %}
+        <div class="alert-pill orange">
+            <i class="fa-solid fa-syringe"></i>
+            Diabético
+        </div>
+    {% endif %}
+
+    {% if anamnese.fumante %}
+        <div class="alert-pill dark">
+            <i class="fa-solid fa-smoking"></i>
+            Fumante
+        </div>
+    {% endif %}
+
+    {% if anamnese.bruxismo %}
+        <div class="alert-pill purple">
+            <i class="fa-solid fa-tooth"></i>
+            Bruxismo
+        </div>
+    {% endif %}
+
+</div>
+
+<!-- =========================================
+FORM
+========================================= -->
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <div class="anamnese-wrapper">
+
+        <div class="accordion" id="accordionAnamnese">
+
+            <!-- =========================================
+            QUEIXA PRINCIPAL
+            ========================================== -->
+
+            <div class="accordion-item premium-accordion">
+
+                <h2 class="accordion-header">
+
+                    <button
+                        class="accordion-button premium-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#queixaPrincipal"
+                    >
+
+                        <i class="fa-solid fa-notes-medical me-3"></i>
+
+                        <h6>Queixa Principal</h6>
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="queixaPrincipal"
+                    class="accordion-collapse collapse show"
+                    data-bs-parent="#accordionAnamnese"
+                >
+
+                    <div class="accordion-body">
+
+                        <p class="accordion-subtitle">
+
+                            Motivo principal da consulta.
+
+                        </p>
+
+                        <textarea
+                            name="queixa_principal"
+                            class="anamnese-textarea"
+                            placeholder="Descreva a principal queixa do paciente..."
+                        >{{ anamnese.queixa_principal }}</textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+ <!-- =========================================
+HISTÓRICO MÉDICO
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon blue">
+
+            <i class="fa-solid fa-heart-pulse"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Histórico Médico
+            </h6>
+
+            <p>
+                Condições sistêmicas e saúde geral.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="check-grid-premium">
+
+        <label class="check-pill">
+            <input type="checkbox" name="hipertenso"
+            {% if anamnese.hipertenso %}checked{% endif %}>
+            <span>Hipertenso</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="diabetico"
+            {% if anamnese.diabetico %}checked{% endif %}>
+            <span>Diabético</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="cardiopatia"
+            {% if anamnese.cardiopatia %}checked{% endif %}>
+            <span>Cardiopatia</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="gravida"
+            {% if anamnese.gravida %}checked{% endif %}>
+            <span>Gestante</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="fumante"
+            {% if anamnese.fumante %}checked{% endif %}>
+            <span>Fumante</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="asma"
+            {% if anamnese.asma %}checked{% endif %}>
+            <span>Asma</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="bronquite"
+            {% if anamnese.bronquite %}checked{% endif %}>
+            <span>Bronquite</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="anemia"
+            {% if anamnese.anemia %}checked{% endif %}>
+            <span>Anemia</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="hepatite"
+            {% if anamnese.hepatite %}checked{% endif %}>
+            <span>Hepatite</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="rinite"
+            {% if anamnese.rinite %}checked{% endif %}>
+            <span>Rinite</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="sinusite"
+            {% if anamnese.sinusite %}checked{% endif %}>
+            <span>Sinusite</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="problema_renal"
+            {% if anamnese.problema_renal %}checked{% endif %}>
+            <span>Problema renal</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="sangramento_excessivo"
+            {% if anamnese.sangramento_excessivo %}checked{% endif %}>
+            <span>Sangramento excessivo</span>
+        </label>
+
+    </div>
+
+    <div class="anamnese-grid mt-4">
+
+        <div>
+
+            <label class="anamnese-label">
+
+                Medicamentos em uso
+
+            </label>
+
+            <textarea
+                name="medicamentos"
+                class="anamnese-textarea"
+            >{{ anamnese.medicamentos }}</textarea>
+
+        </div>
+
+        <div>
+
+            <label class="anamnese-label">
+
+                Alergias
+
+            </label>
+
+            <textarea
+                name="alergias"
+                class="anamnese-textarea"
+            >{{ anamnese.alergias }}</textarea>
+
+        </div>
+
+    </div>
+
+</div>  
+</div>
+
+<!-- =========================================
+CIRURGIAS E HOSPITALIZAÇÕES
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon orange">
+
+            <i class="fa-solid fa-hospital"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Cirurgias e Hospitalizações
+            </h6>
+
+            <p>
+                Histórico cirúrgico e internações do paciente.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="checkbox-grid">
+
+        <label class="check-item">
+
+            <input
+                type="checkbox"
+                name="cirurgia"
+                {% if anamnese.cirurgia %}checked{% endif %}
+            >
+
+            Já realizou cirurgia
+
+        </label>
+
+        <label class="check-item">
+
+            <input
+                type="checkbox"
+                name="hospitalizado"
+                {% if anamnese.hospitalizado %}checked{% endif %}
+            >
+
+            Já foi hospitalizado
+
+        </label>
+
+        <label class="check-item">
+
+            <input
+                type="checkbox"
+                name="transfusao_sangue"
+                {% if anamnese.transfusao_sangue %}checked{% endif %}
+            >
+
+            Recebeu transfusão sanguínea
+
+        </label>
+
+    </div>
+
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+
+                Descrição das cirurgias
+
+            </label>
+
+            <textarea
+                name="cirurgias"
+                class="form-control"
+                rows="4"
+            >{{ anamnese.cirurgias }}</textarea>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+
+                Motivo da hospitalização
+
+            </label>
+
+            <textarea
+                name="hospitalizacao"
+                class="form-control"
+                rows="4"
+            >{{ anamnese.hospitalizacao }}</textarea>
+
+        </div>
+
+    </div>
+
+</div>
+            
+ <!-- =========================================
+HISTÓRICO ODONTOLÓGICO
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon purple">
+
+            <i class="fa-solid fa-tooth"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Histórico Odontológico
+            </h6>
+
+            <p>
+                Hábitos e sintomas odontológicos.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="check-grid-premium">
+
+        <label class="check-pill">
+            <input type="checkbox" name="sensibilidade"
+            {% if anamnese.sensibilidade %}checked{% endif %}>
+            <span>Sensibilidade</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="sangramento_gengival"
+            {% if anamnese.sangramento_gengival %}checked{% endif %}>
+            <span>Sangramento gengival</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="dor_mastigar"
+            {% if anamnese.dor_mastigar %}checked{% endif %}>
+            <span>Dor ao mastigar</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="bruxismo"
+            {% if anamnese.bruxismo %}checked{% endif %}>
+            <span>Bruxismo</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="abandono_tratamento"
+            {% if anamnese.abandono_tratamento %}checked{% endif %}>
+            <span>Já abandonou tratamento</span>
+        </label>
+
+        <label class="check-pill">
+            <input type="checkbox" name="medo_dentista"
+            {% if anamnese.medo_dentista %}checked{% endif %}>
+            <span>Medo de dentista</span>
+        </label>
+
+    </div>
+
+    <div class="anamnese-grid mt-4">
+
+        <div>
+
+            <label class="anamnese-label">
+
+                Última consulta odontológica
+
+            </label>
+
+            <input
+                type="date"
+                name="ultima_consulta"
+                class="anamnese-input"
+                value="{{ anamnese.ultima_consulta|date:'Y-m-d' }}"
+            >
+
+        </div>
+
+        <div>
+
+            <label class="anamnese-label">
+
+                Reação à anestesia
+
+            </label>
+
+            <input
+                type="text"
+                name="anestesia_reacao"
+                class="anamnese-input"
+                value="{{ anamnese.anestesia_reacao }}"
+            >
+
+        </div>
+
+    </div>
+
+</div>  
+
+    
+<!-- =========================================
+HIGIENE ORAL
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon green">
+
+            <i class="fa-solid fa-tooth"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Higiene Oral
+            </h6>
+
+            <p>
+                Rotina de higiene bucal do paciente.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="anamnese-grid">
+
+        <div>
+
+            <label class="anamnese-label">
+
+                Frequência de escovação
+
+            </label>
+
+            <input
+                type="text"
+                name="frequencia_escovacao"
+                class="anamnese-input"
+                value="{{ anamnese.frequencia_escovacao }}"
+            >
+
+        </div>
+
+    </div>
+
+    <div class="check-grid-premium mt-4">
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="usa_fio_dental"
+                {% if anamnese.usa_fio_dental %}checked{% endif %}
+            >
+
+            <span>Usa fio dental</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="usa_enxaguante"
+                {% if anamnese.usa_enxaguante %}checked{% endif %}
+            >
+
+            <span>Usa enxaguante</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="escova_lingua"
+                {% if anamnese.escova_lingua %}checked{% endif %}
+            >
+
+            <span>Escova a língua</span>
+
+        </label>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+HÁBITOS DELETÉRIOS
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon purple">
+
+            <i class="fa-solid fa-face-grimace"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Hábitos Deletérios
+            </h6>
+
+            <p>
+                Hábitos que impactam a saúde bucal.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="check-grid-premium">
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="ronco"
+                {% if anamnese.ronco %}checked{% endif %}
+            >
+
+            <span>Ronco</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="respiracao_bucal"
+                {% if anamnese.respiracao_bucal %}checked{% endif %}
+            >
+
+            <span>Respiração bucal</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="roer_unhas"
+                {% if anamnese.roer_unhas %}checked{% endif %}
+            >
+
+            <span>Roer unhas</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="morde_objetos"
+                {% if anamnese.morde_objetos %}checked{% endif %}
+            >
+
+            <span>Morde objetos</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="chupeta"
+                {% if anamnese.chupeta %}checked{% endif %}
+            >
+
+            <span>Uso de chupeta</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="succao_dedo"
+                {% if anamnese.succao_dedo %}checked{% endif %}
+            >
+<span>Sucção de dedo</span>
+
+</label>
+
+<label class="check-pill">
+
+    <input
+        type="checkbox"
+        name="baba_travesseiro"
+        {% if anamnese.baba_travesseiro %}checked{% endif %}
+    >
+
+    <span>Baba no travesseiro</span>
+
+</label>
+
+<label class="check-pill">
+
+    <input
+        type="checkbox"
+        name="dorme_boca_aberta"
+        {% if anamnese.dorme_boca_aberta %}checked{% endif %}
+    >
+
+    <span>Dorme boca aberta</span>
+
+</label>
+
+<label class="check-pill">
+
+    <input
+        type="checkbox"
+        name="morde_labios"
+        {% if anamnese.morde_labios %}checked{% endif %}
+    >
+
+    <span>Morde lábios</span>
+
+</label>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+HÁBITOS ALIMENTARES
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon orange">
+
+            <i class="fa-solid fa-utensils"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Hábitos Alimentares
+            </h6>
+
+            <p>
+                Rotina alimentar e consumo cariogênico.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="check-grid-premium">
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="belisca_refeicoes"
+                {% if anamnese.belisca_refeicoes %}checked{% endif %}
+            >
+
+            <span>Belisca entre refeições</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="alimentacao_cariogenica"
+                {% if anamnese.alimentacao_cariogenica %}checked{% endif %}
+            >
+
+            <span>Alimentação rica em açúcar</span>
+
+        </label>
+
+    </div>
+
+    <div class="anamnese-grid mt-4">
+
+        <div>
+
+            <label class="anamnese-label">
+
+                Tipo de alimentação
+
+            </label>
+
+            <input
+                type="text"
+                name="tipo_alimentacao"
+                class="anamnese-input"
+                value="{{ anamnese.tipo_alimentacao }}"
+                placeholder="Sólida, pastosa, líquida..."
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+PERFIL COMPORTAMENTAL
+========================================= -->
+
+<div class="anamnese-card">
+
+    <div class="section-header-premium">
+
+        <div class="section-icon orange">
+
+            <i class="fa-solid fa-brain"></i>
+
+        </div>
+
+        <div>
+
+            <h6>
+                Perfil Comportamental
+            </h6>
+
+            <p>
+                Perfil psicológico do paciente.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="check-grid-premium">
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="ansioso"
+                {% if anamnese.ansioso %}checked{% endif %}
+            >
+
+            <span>Ansioso</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="agitado"
+                {% if anamnese.agitado %}checked{% endif %}
+            >
+
+            <span>Agitado</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="calmo"
+                {% if anamnese.calmo %}checked{% endif %}
+            >
+
+            <span>Calmo</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="comunicativo"
+                {% if anamnese.comunicativo %}checked{% endif %}
+            >
+
+            <span>Comunicativo</span>
+
+        </label>
+
+        <label class="check-pill">
+
+            <input
+                type="checkbox"
+                name="retraido"
+                {% if anamnese.retraido %}checked{% endif %}
+            >
+
+        <span>Retraído</span>
+
+</label>
+
+<label class="check-pill">
+
+    <input
+        type="checkbox"
+        name="introvertido"
+        {% if anamnese.introvertido %}checked{% endif %}
+    >
+
+    <span>Introvertido</span>
+
+</label>
+
+<label class="check-pill">
+
+    <input
+        type="checkbox"
+        name="extrovertido"
+        {% if anamnese.extrovertido %}checked{% endif %}
+    >
+
+    <span>Extrovertido</span>
+
+</label>
+
+    </div>
+
+</div>
+
+            <!-- =========================================
+            OBSERVAÇÕES
+            ========================================== -->
+
+            <div class="anamnese-card">
+
+                <div class="section-header-premium">
+
+                    <div class="section-icon orange">
+
+                        <i class="fa-solid fa-file-medical"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h6>
+                            Observações Gerais
+                        </h6>
+
+                        <p>
+                            Informações complementares do paciente.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <textarea
+                    name="observacoes"
+                    class="anamnese-textarea"
+                    placeholder="Digite observações clínicas..."
+                >{{ anamnese.observacoes }}</textarea>
+
+            </div>
+
+        </div>
+       
+        <!-- =========================================
+        BOTÃO
+        ========================================== -->
+
+      <div class="d-flex justify-content-end gap-3 mt-4">
+
+    <a
+        href="{% url 'imprimir_anamnese' paciente.id %}"
+        target="_blank"
+        class="btn-anamnese-outline"
+    >
+
+        <i class="fa-solid fa-print"></i>
+
+        Imprimir
+
+    </a>
+
+    <a
+        href="{% url 'anamnese' paciente.id %}"
+        class="btn-anamnese-outline"
+    >
+
+        <i class="fa-solid fa-pen"></i>
+
+        Editar
+
+    </a>
+
+    <button
+        type="submit"
+        class="btn-anamnese"
+    >
+
+        <i class="fa-solid fa-floppy-disk"></i>
+
+        Salvar Anamnese
+
+    </button>
+
+</div>
+
+        </div>
+
+    </div>
+</div>
+
+</form>
+
+{% endblock %}

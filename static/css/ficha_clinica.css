@@ -1,0 +1,678 @@
+/* =========================================
+LAYOUT PRINCIPAL
+========================================= */
+
+.ficha-grid{
+
+
+display:grid;
+
+grid-template-columns:2fr 1fr;
+
+gap:24px;
+
+align-items:start;
+
+
+}
+
+/* =========================================
+COLUNA DIREITA
+========================================= */
+
+.painel-lateral{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    height:100%;
+
+}
+
+/* =========================================
+BOTÕES SUPERIORES
+========================================= */
+
+.tabs-premium{
+
+    display:flex;
+
+    flex-wrap:nowrap;
+
+    gap:6px;
+
+    margin-bottom:8px;
+
+    overflow-x:auto;
+
+}
+
+.tab-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:5px;
+
+    height:32px;
+
+    padding:0 10px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#f1f5f9;
+
+    color:#334155;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    transition:.2s;
+
+}
+
+.tab-btn i{
+
+    font-size:11px;
+
+}
+
+.tab-btn:hover{
+
+    background:#e2e8f0;
+
+}
+
+.tab-btn.active{
+
+    background:#2563eb;
+
+    color:#fff;
+
+}
+
+/* =========================================
+CARD DAS ABAS
+========================================= */
+
+.tab-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    border:1px solid #e2e8f0;
+    
+    border-top:4px solid #2563eb;
+
+    padding:20px;
+
+    height:470px;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+}
+
+.tab-card::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.tab-card::-webkit-scrollbar-track{
+
+    background:#f1f5f9;
+
+    border-radius:10px;
+
+}
+
+.tab-card::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+
+    border-radius:10px;
+
+}
+
+.tab-card::-webkit-scrollbar-thumb:hover{
+
+    background:#94a3b8;
+
+}
+
+/* =========================================
+CARDS SUPERIORES
+========================================= */
+
+.ficha-form-card{
+    height:auto;
+}
+
+.painel-lateral .timeline-card{
+     background:#fff;
+
+    border-radius:24px;
+
+    border-top:4px solid #2563eb;
+
+    padding:18px;
+}
+
+/* =========================================
+TIMELINE E ANEXOS
+========================================= */
+
+.linha-inferior{
+
+    grid-column:1 / -1;
+
+    width:100%;
+
+}
+
+.timeline-full{
+
+    width:100%;
+
+}
+
+.linha-inferior .timeline-card{
+
+    position:relative;
+
+    top:auto;
+
+    width:100%;
+
+    padding:18px;
+
+}
+
+.timeline-status{
+
+    display:inline-flex;
+
+    margin-top:8px;
+
+    padding:4px 10px;
+
+    border-radius:999px;
+
+    background:#ecfdf5;
+
+    color:#047857;
+
+    font-size:11px;
+
+    font-weight:700;
+
+}
+
+/* =========================================
+STATUS TIMELINE
+========================================= */
+
+.timeline-status-existente{
+
+    background:#e0f2fe;
+
+    color:#0369a1;
+
+}
+
+.timeline-status-planejado{
+
+    background:#fef3c7;
+
+    color:#b45309;
+
+}
+
+.timeline-status-andamento{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+}
+
+.timeline-status-realizado{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+.timeline-status-cancelado{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+
+}
+
+.timeline-evento{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:10px;
+
+    padding:10px 14px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:10px;
+
+    color:#334155;
+
+    font-size:14px;
+
+    font-weight:500;
+
+}
+
+.timeline-evento i{
+
+    color:#2563eb;
+
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.timeline-header{
+
+
+margin-bottom:12px;
+
+
+}
+
+.timeline-header h5{
+
+
+font-size:20px;
+
+font-weight:700;
+
+color:#0f172a;
+
+margin-bottom:4px;
+
+
+}
+
+.timeline-header p{
+
+
+color:#64748b;
+
+font-size:13px;
+
+margin:0;
+
+
+}
+
+/* =========================================
+BODY
+========================================= */
+
+.timeline-body{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    height:220px;
+
+    overflow-y:auto;
+
+    padding-right:6px;
+
+}
+
+/* =========================================
+ITEM
+========================================= */
+
+.timeline-item{
+
+
+display:flex;
+
+align-items:flex-start;
+
+gap:14px;
+
+
+}
+
+.timeline-dot{
+
+
+width:12px;
+
+height:12px;
+
+min-width:12px;
+
+border-radius:50%;
+
+background:#2563eb;
+
+margin-top:8px;
+
+
+}
+
+.timeline-content{
+
+    flex:1;
+
+    background:#ffffff;
+
+    border:1px solid #dbeafe;
+
+    border-radius:16px;
+
+    padding:14px;
+
+}
+
+.timeline-top{
+
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+gap:12px;
+
+margin-bottom:10px;
+
+
+}
+
+.timeline-top strong{
+
+
+font-size:14px;
+
+
+}
+
+.timeline-top span{
+
+
+font-size:12px;
+
+color:#64748b;
+
+
+}
+
+.timeline-dente{
+
+
+display:inline-flex;
+
+padding:5px 10px;
+
+border-radius:999px;
+
+background:#eff6ff;
+
+color:#2563eb;
+
+font-size:11px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+
+}
+
+.timeline-content p{
+
+
+margin:0;
+
+line-height:1.6;
+
+
+}
+
+.documento-preview-body h1,
+.documento-preview-body h2,
+.documento-preview-body h3{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+    color:#0f172a;
+
+}
+
+.empty-timeline{
+
+
+background:#f8fafc;
+
+border:2px dashed #cbd5e1;
+
+border-radius:18px;
+
+padding:40px 20px;
+
+text-align:center;
+
+color:#64748b;
+
+
+}
+
+/* =========================================
+RESPONSIVO
+========================================= */
+
+@media(max-width:1200px){
+
+
+.ficha-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.linha-inferior{
+
+    grid-template-columns:1fr;
+
+}
+
+
+}
+
+/* =========================================
+VISUALIZAÇÃO DOCUMENTO
+========================================= */
+
+.documento-visualizacao{
+
+    background:#fff;
+
+    border:1px solid #dbeafe;
+
+    border-radius:18px;
+
+    padding:50px;
+
+    min-height:700px;
+
+    font-family:"Times New Roman", serif;
+
+    font-size:17px;
+
+    line-height:2;
+
+    color:#111827;
+
+}
+
+/* =========================================
+CABEÇALHO
+========================================= */
+
+.documento-header{
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+}
+
+.documento-logo{
+
+    max-height:110px;
+
+    width:auto;
+
+    margin-bottom:6px;
+
+}
+
+.nome-clinica{
+
+    margin:0;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.cro-clinica{
+
+    margin-top:8px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#475569;
+
+}
+
+/* =========================================
+CONTEÚDO
+========================================= */
+
+.documento-corpo{
+    padding-left:40px;
+    padding-right:40px;
+}
+
+.documento-corpo p{
+
+    margin-bottom:16px;
+
+}
+
+.documento-texto{
+
+    white-space: pre-wrap;
+
+    font-family: "Times New Roman", serif;
+
+    font-size: 17px;
+
+    line-height: 2;
+
+    margin: 0;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+}
+
+/* =========================================
+DIVISOR
+========================================= */
+
+.documento-divisor{
+
+    border:none;
+
+    border-top:1px solid #e2e8f0;
+
+    margin:30px 0;
+
+}
+
+/* =========================================
+RODAPÉ
+========================================= */
+
+.documento-rodape{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:10px;
+
+    font-size:14px;
+
+    color:#64748b;
+
+}
+
+.rodape-esquerda{
+
+    text-align:left;
+
+}
+
+.rodape-direita{
+
+    text-align:right;
+
+}

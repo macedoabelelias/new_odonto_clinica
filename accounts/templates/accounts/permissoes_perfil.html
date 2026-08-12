@@ -1,0 +1,331 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Permissões do Perfil
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="card-header bg-warning text-dark">
+
+                <h4 class="mb-0">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    Permissões do Perfil
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                <h5>{{ perfil.nome }}</h5>
+
+                <hr>
+
+                <p class="text-muted">
+                    Esta tela será utilizada para configurar as permissões de acesso do perfil.
+                </p>
+
+                <!-- ========================================= -->
+                <!-- BOTÕES -->
+                <!-- ========================================= -->
+
+                <div class="mb-3 d-flex gap-2">
+
+                    <button
+                        type="button"
+                        id="marcarTudo"
+                        class="btn btn-success btn-sm">
+
+                        <i class="bi bi-check2-square"></i>
+
+                        Marcar Tudo
+
+                    </button>
+
+                    <button
+                        type="button"
+                        id="desmarcarTudo"
+                        class="btn btn-secondary btn-sm">
+
+                        <i class="bi bi-square"></i>
+
+                        Desmarcar Tudo
+
+                    </button>
+
+                </div>
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th width="320">
+
+                                Módulo
+
+                            </th>
+
+                            <th class="text-center">Visualizar</th>
+
+                            <th class="text-center">Inserir</th>
+
+                            <th class="text-center">Editar</th>
+
+                            <th class="text-center">Excluir</th>
+
+                            <th class="text-center">Exportar</th>
+
+                            <th class="text-center">Aprovar</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for grupo, modulos in grupos.items %}
+
+                        <!-- ========================================= -->
+                        <!-- GRUPO -->
+                        <!-- ========================================= -->
+
+                        <tr class="table-secondary">
+
+                            <th colspan="7">
+
+                                <div class="d-flex align-items-center">
+
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input me-2 grupo-checkbox"
+                                        data-grupo="{{ forloop.counter }}">
+
+                                    <strong>
+
+                                        {{ grupo|upper }}
+
+                                    </strong>
+
+                                </div>
+
+                            </th>
+
+                        </tr>
+
+                        <!-- ========================================= -->
+                        <!-- MÓDULOS -->
+                        <!-- ========================================= -->
+
+                        {% for modulo in modulos %}
+
+                        <tr>
+
+                            <td>
+
+                                <i class="{{ modulo.icone }}"></i>
+
+                                {{ modulo.nome }}
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input grupo-{{ forloop.parentloop.counter }}"
+                                    name="visualizar_{{ modulo.id }}"
+                                    {% if modulo.permissao and modulo.permissao.visualizar %}checked{% endif %}>
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input grupo-{{ forloop.parentloop.counter }}"
+                                    name="inserir_{{ modulo.id }}"
+                                    {% if modulo.permissao and modulo.permissao.inserir %}checked{% endif %}>
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input grupo-{{ forloop.parentloop.counter }}"
+                                    name="editar_{{ modulo.id }}"
+                                    {% if modulo.permissao and modulo.permissao.editar %}checked{% endif %}>
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input grupo-{{ forloop.parentloop.counter }}"
+                                    name="excluir_{{ modulo.id }}"
+                                    {% if modulo.permissao and modulo.permissao.excluir %}checked{% endif %}>
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input grupo-{{ forloop.parentloop.counter }}"
+                                    name="exportar_{{ modulo.id }}"
+                                    {% if modulo.permissao and modulo.permissao.exportar %}checked{% endif %}>
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input grupo-{{ forloop.parentloop.counter }}"
+                                    name="aprovar_{{ modulo.id }}"
+                                    {% if modulo.permissao and modulo.permissao.aprovar %}checked{% endif %}>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="card-footer bg-white d-flex justify-content-between">
+
+                <a
+                    href="{% url 'editar_perfil' perfil.id %}"
+                    class="btn btn-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Voltar
+
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Salvar Permissões
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const todasPermissoes = document.querySelectorAll(
+        ".form-check-input:not(.grupo-checkbox)"
+    );
+
+    //----------------------------------------------------
+    // MARCAR TUDO
+    //----------------------------------------------------
+
+    document
+        .getElementById("marcarTudo")
+        .addEventListener("click", function () {
+
+            todasPermissoes.forEach(function (checkbox) {
+
+                checkbox.checked = true;
+
+            });
+
+            document
+                .querySelectorAll(".grupo-checkbox")
+                .forEach(function (grupo) {
+
+                    grupo.checked = true;
+
+                });
+
+        });
+
+    //----------------------------------------------------
+    // DESMARCAR TUDO
+    //----------------------------------------------------
+
+    document
+        .getElementById("desmarcarTudo")
+        .addEventListener("click", function () {
+
+            todasPermissoes.forEach(function (checkbox) {
+
+                checkbox.checked = false;
+
+            });
+
+            document
+                .querySelectorAll(".grupo-checkbox")
+                .forEach(function (grupo) {
+
+                    grupo.checked = false;
+
+                });
+
+        });
+
+    //----------------------------------------------------
+    // MARCAR POR GRUPO
+    //----------------------------------------------------
+
+    document
+        .querySelectorAll(".grupo-checkbox")
+        .forEach(function (grupo) {
+
+            grupo.addEventListener("change", function () {
+
+                const numero = this.dataset.grupo;
+
+                document
+                    .querySelectorAll(".grupo-" + numero)
+                    .forEach(function (checkbox) {
+
+                        checkbox.checked = grupo.checked;
+
+                    });
+
+            });
+
+        });
+
+});
+
+</script>
+
+{% endblock %}

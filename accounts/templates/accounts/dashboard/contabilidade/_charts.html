@@ -1,0 +1,115 @@
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas = document.getElementById("graficoContabilidade");
+
+    if (!canvas) return;
+
+    new Chart(canvas, {
+
+        type: "bar",
+
+        data: {
+
+            labels: {{ meses|safe }},
+
+            datasets: [
+
+    {
+
+        label: "Entradas",
+
+        data: {{ entradas_mes|safe }},
+
+        backgroundColor: "#16a34a",
+
+        borderRadius: 8,
+
+        borderSkipped: false,
+
+    },
+
+    {
+
+        label: "Saídas",
+
+        data: {{ saidas_mes|safe }},
+
+        backgroundColor: "#dc2626",
+
+        borderRadius: 8,
+
+        borderSkipped: false,
+
+    }
+
+]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+
+                mode: "index",
+
+                intersect: false,
+
+            },
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom",
+
+                    labels: {
+
+                        usePointStyle: true,
+
+                        padding: 20,
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+
+                        display: false
+
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+
+                        color: "#eeeeee"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+});
+
+</script>

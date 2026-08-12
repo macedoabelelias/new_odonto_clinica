@@ -1,0 +1,485 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        console.log('JS Fornecedor carregado');
+
+        function mascaraCNPJ(valor) {
+
+            valor = valor.replace(/\D/g, '').substring(0, 14);
+
+            valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+
+            return valor;
+
+        }
+
+        function mascaraTelefone(valor) {
+
+            valor = valor.replace(/\D/g, '').substring(0, 11);
+
+            if (valor.length <= 10) {
+
+                valor = valor.replace(
+                    /^(\d{2})(\d)/,
+                    '($1) $2'
+                );
+
+                valor = valor.replace(
+                    /(\d{4})(\d)/,
+                    '$1-$2'
+                );
+
+            } else {
+
+                valor = valor.replace(
+                    /^(\d{2})(\d)/,
+                    '($1) $2'
+                );
+
+                valor = valor.replace(
+                    /(\d{5})(\d)/,
+                    '$1-$2'
+                );
+
+            }
+
+            return valor;
+
+        }
+
+        function mascaraCEP(valor) {
+
+            valor = valor.replace(/\D/g, '');
+
+            valor = valor.substring(0, 8);
+
+            valor = valor.replace(
+                /^(\d{5})(\d)/,
+                '$1-$2'
+            );
+
+            return valor;
+
+        }
+
+        function somenteLetras(valor) {
+
+            return valor.replace(
+                /[^a-zA-ZÀ-ÿ\s]/g,
+                ''
+            );
+
+        }
+
+        const cnpj = document.getElementById('cnpj');
+        const telefone = document.getElementById('telefone');
+        const celular = document.getElementById('celular');
+        const cep = document.getElementById('cep');
+        const contato = document.getElementById('contato');
+
+        if (cnpj) {
+
+            cnpj.addEventListener('input', function () {
+
+                this.value = mascaraCNPJ(this.value);
+
+            });
+
+        }
+
+        if (contato) {
+
+            contato.addEventListener('input', function () {
+
+                this.value = somenteLetras(
+                    this.value
+                );
+
+            });
+
+        }
+
+        if (telefone) {
+
+            telefone.addEventListener('input', function () {
+
+                this.value = mascaraTelefone(this.value);
+
+            });
+
+        }
+
+        if (celular) {
+
+            celular.addEventListener('input', function () {
+
+                this.value = mascaraTelefone(this.value);
+
+            });
+
+        }
+
+        if (cep) {
+
+            cep.addEventListener('input', function () {
+
+                this.value = mascaraCEP(this.value);
+
+            });
+
+            cep.addEventListener('blur', function () {
+
+                const valorCEP = this.value.replace(/\D/g, '');
+
+                if (valorCEP.length !== 8) {
+
+                    return;
+
+                }
+
+                fetch(`https://viacep.com.br/ws/${valorCEP}/json/`)
+
+                    .then(response => response.json())
+
+                    .then(data => {
+
+                        if (data.erro) {
+
+                            return;
+
+                        }
+
+                        document.getElementById('logradouro').value =
+                            data.logradouro || '';
+
+                        document.getElementById('bairro').value =
+                            data.bairro || '';
+
+                        document.getElementById('cidade').value =
+                            data.localidade || '';
+
+                        document.getElementById('uf').value =
+                            data.uf || '';
+
+                    })
+
+                    .catch(error => {
+
+                        console.error(
+                            'Erro ao consultar CEP:',
+                            error
+                        );
+
+                    });
+
+            });
+
+        }
+
+    });
+
+
+
+</script>
+
+
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>Novo Fornecedor</h1>
+
+        <a href="{% url 'fornecedores' %}" class="btn btn-secondary">
+
+            Voltar
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+
+<div class="card-body">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+                    Nome Fantasia
+                </label>
+
+                <input
+                    type="text"
+                    name="nome"
+                    class="form-control"
+                    value="{{ fornecedor.nome|default:'' }}"
+                    required
+                >
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+                    Razão Social
+                </label>
+
+                <input
+                    type="text"
+                    name="razao_social"
+                    class="form-control"
+                    value="{{ fornecedor.razao_social|default:'' }}"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+
+                <label class="form-label">
+                    CNPJ
+                </label>
+
+                <input
+                    type="text"
+                    id="cnpj"
+                    name="cnpj"
+                    class="form-control"
+                    maxlength="18"
+                    value="{{ fornecedor.cnpj|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-4 mb-3">
+
+                <label class="form-label">
+                    Contato
+                </label>
+
+                <input
+                    type="text"
+                    id="contato"
+                    name="contato"
+                    class="form-control"
+                    value="{{ fornecedor.contato|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-4 mb-3">
+
+                <label class="form-label">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ fornecedor.email|default:'' }}"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+                    Telefone
+                </label>
+
+                <input
+                    type="text"
+                    id="telefone"
+                    name="telefone"
+                    class="form-control"
+                    maxlength="14"
+                    value="{{ fornecedor.telefone|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+                    Celular
+                </label>
+
+                <input
+                    type="text"
+                    id="celular"
+                    name="celular"
+                    class="form-control"
+                    maxlength="15"
+                    value="{{ fornecedor.celular|default:'' }}"
+                >
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="row">
+
+            <div class="col-md-3 mb-3">
+
+                <label class="form-label">
+                    CEP
+                </label>
+
+                <input
+                    type="text"
+                    id="cep"
+                    name="cep"
+                    class="form-control"
+                    maxlength="9"
+                    value="{{ fornecedor.cep|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-7 mb-3">
+
+                <label class="form-label">
+                    Logradouro
+                </label>
+
+                <input
+                    type="text"
+                    id="logradouro"
+                    name="logradouro"
+                    class="form-control"
+                    value="{{ fornecedor.logradouro|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-2 mb-3">
+
+                <label class="form-label">
+                    Número
+                </label>
+
+                <input
+                    type="text"
+                    name="numero"
+                    class="form-control"
+                    value="{{ fornecedor.numero|default:'' }}"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-3 mb-3">
+
+                <label class="form-label">
+                    Complemento
+                </label>
+
+                <input
+                    type="text"
+                    name="complemento"
+                    class="form-control"
+                    value="{{ fornecedor.complemento|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-3 mb-3">
+
+                <label class="form-label">
+                    Bairro
+                </label>
+
+                <input
+                    type="text"
+                    id="bairro"
+                    name="bairro"
+                    class="form-control"
+                    value="{{ fornecedor.bairro|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-4 mb-3">
+
+                <label class="form-label">
+                    Cidade
+                </label>
+
+                <input
+                    type="text"
+                    id="cidade"
+                    name="cidade"
+                    class="form-control"
+                    value="{{ fornecedor.cidade|default:'' }}"
+                >
+
+            </div>
+
+            <div class="col-md-2 mb-3">
+
+                <label class="form-label">
+                    UF
+                </label>
+
+                <input
+                    type="text"
+                    id="uf"
+                    name="uf"
+                    class="form-control"
+                    maxlength="2"
+                    value="{{ fornecedor.uf|default:'' }}"
+                >
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <button type="submit" class="btn btn-primary">
+
+            {% if fornecedor %}
+                Atualizar Fornecedor
+            {% else %}
+                Salvar Fornecedor
+            {% endif %}
+
+        </button>
+
+    </form>
+
+</div>
+
+
+</div>
+
+
+{% endblock %}

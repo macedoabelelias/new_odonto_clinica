@@ -1,0 +1,131 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>
+            Novo Lote
+        </h1>
+
+        <a
+            href="{% url 'lotes' %}"
+            class="btn btn-secondary"
+        >
+            Voltar
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Produto
+                        </label>
+
+                        <select
+                            name="produto"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            {% for produto in produtos %}
+
+                            <option
+                                value="{{ produto.id }}"
+                            >
+
+                                {{ produto.nome }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                        <label class="form-label">
+                            Lote
+                        </label>
+
+                        <input
+                            type="text"
+                            name="lote"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                        <label class="form-label">
+                            Quantidade
+                        </label>
+
+                        <input
+                            type="number"
+                            name="quantidade"
+                            class="form-control"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-3 mb-3">
+
+                        <label class="form-label">
+                            Validade
+                        </label>
+
+                        <input
+                            type="date"
+                            name="validade"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Salvar Lote
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

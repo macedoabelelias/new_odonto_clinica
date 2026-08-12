@@ -1,0 +1,295 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Contas a Receber
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+
+<div class="card">
+
+    <h4>
+
+        Resumo do Relatório
+
+    </h4>
+
+    <table>
+
+    <tr>
+
+        <td width="40%">
+
+            <strong>
+
+                Total de Contas
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            {{ total_contas }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            <strong>
+
+                Pendentes
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            {{ contas_pendentes }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            <strong>
+
+                Recebidas
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            {{ contas_recebidas }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            <strong>
+
+                Vencidas
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            {{ contas_vencidas }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            <strong>
+
+                Canceladas
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            {{ contas_canceladas }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            <strong>
+
+                Valor Total
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            R$ {{ valor_total|floatformat:2 }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            <strong>
+
+                Valor Recebido
+
+            </strong>
+
+        </td>
+
+        <td>
+
+            R$ {{ valor_recebido|floatformat:2 }}
+
+        </td>
+
+    </tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+    <h4>
+
+        Contas Encontradas
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Paciente</th>
+
+                <th>Descrição</th>
+
+                <th>Parcela</th>
+
+                <th>Vencimento</th>
+
+                <th>Valor</th>
+
+                <th>Forma Pgto.</th>
+
+                <th>Status</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for conta in contas %}
+
+            <tr>
+
+                <td>
+
+                    {{ conta.paciente.nome }}
+
+                </td>
+
+                <td>
+
+                    {{ conta.descricao }}
+
+                </td>
+
+                <td>
+
+                    {{ conta.parcela }}/{{ conta.total_parcelas }}
+
+                </td>
+
+                <td>
+
+                    {{ conta.vencimento|date:"d/m/Y" }}
+
+                </td>
+
+                <td>
+
+                    R$ {{ conta.valor|floatformat:2 }}
+
+                </td>
+
+                <td>
+
+                    {{ conta.forma_pagamento }}
+
+                </td>
+
+                <td>
+
+                    {{ conta.get_status_display }}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="7" style="text-align:center;">
+
+                    Nenhuma conta encontrada.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,347 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        {{ campanha.nome }} | AM Systems
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <style>
+
+        body {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f5f8fc,
+                    #ffffff
+                );
+
+            min-height: 100vh;
+
+        }
+
+        .campanha-container {
+
+            max-width: 1000px;
+
+            margin: 50px auto;
+
+            padding: 20px;
+
+        }
+
+        .campanha-card {
+
+            border: none;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 10px 35px
+                rgba(0,0,0,.08);
+
+        }
+
+        .campanha-imagem {
+
+            width: 100%;
+
+            max-height: 420px;
+
+            object-fit: cover;
+
+        }
+
+        .form-card {
+
+            border-radius: 16px;
+
+            background: #fff;
+
+        }
+
+        .logo {
+
+            max-width: 180px;
+
+            margin-bottom: 25px;
+
+        }
+
+        .btn-captacao {
+
+            padding: 12px 25px;
+
+            font-weight: 600;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="campanha-container">
+
+    <div class="text-center">
+
+        <div class="mb-3">
+
+            <strong class="text-primary fs-4">
+
+                AM Systems
+
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="card campanha-card">
+
+        {% if campanha.imagem %}
+
+            <img
+                src="{{ campanha.imagem.url }}"
+                class="campanha-imagem"
+                alt="{{ campanha.nome }}"
+            >
+
+        {% endif %}
+
+
+        <div class="card-body p-4 p-md-5">
+
+            <div class="row g-5">
+
+                <!-- =========================================
+                     INFORMAÇÕES
+                     ========================================= -->
+
+                <div class="col-lg-6">
+
+                    <span class="badge bg-primary mb-3">
+
+                        {{ campanha.get_canal_display }}
+
+                    </span>
+
+
+                    <h1 class="fw-bold mb-3">
+
+                        {{ campanha.nome }}
+
+                    </h1>
+
+
+                    {% if campanha.descricao %}
+
+                        <div class="text-muted">
+
+                            {{ campanha.descricao|linebreaks }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="mt-4">
+
+                        <div class="d-flex mb-3">
+
+                            <i class="bi bi-check-circle-fill
+                                      text-success me-2"></i>
+
+                            Atendimento especializado
+
+                        </div>
+
+
+                        <div class="d-flex mb-3">
+
+                            <i class="bi bi-check-circle-fill
+                                      text-success me-2"></i>
+
+                            Avaliação personalizada
+
+                        </div>
+
+
+                        <div class="d-flex">
+
+                            <i class="bi bi-check-circle-fill
+                                      text-success me-2"></i>
+
+                            Entre em contato conosco
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     FORMULÁRIO
+                     ========================================= -->
+
+                <div class="col-lg-6">
+
+                    <div class="form-card">
+
+                        <h4 class="fw-bold mb-2">
+
+                            Quero saber mais
+
+                        </h4>
+
+                        <p class="text-muted mb-4">
+
+                            Preencha seus dados e nossa equipe
+                            entrará em contato.
+
+                        </p>
+
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+
+                            {% if form.non_field_errors %}
+
+                                <div class="alert alert-danger">
+
+                                    {{ form.non_field_errors }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Nome
+
+                                </label>
+
+                                {{ form.nome }}
+
+                                {{ form.nome.errors }}
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Telefone
+
+                                </label>
+
+                                {{ form.telefone }}
+
+                                {{ form.telefone.errors }}
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    WhatsApp
+
+                                </label>
+
+                                {{ form.whatsapp }}
+
+                                {{ form.whatsapp.errors }}
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    E-mail
+
+                                </label>
+
+                                {{ form.email }}
+
+                                {{ form.email.errors }}
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary
+                                       btn-captacao
+                                       w-100"
+                            >
+
+                                <i class="bi bi-send me-2"></i>
+
+                                Quero receber informações
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="text-center text-muted mt-4">
+
+        <small>
+
+            AM Systems Odontologia
+
+        </small>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

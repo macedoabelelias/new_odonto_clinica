@@ -1,0 +1,1 @@
+from .auditoria import registrar_auditoria

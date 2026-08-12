@@ -1,0 +1,467 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Detalhes do Lead
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================
+TIMELINE
+========================================= */
+
+.timeline {
+
+    position: relative;
+
+    margin-top: 20px;
+
+}
+
+.timeline-item {
+
+    display: flex;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+
+}
+
+.timeline-icon {
+
+    width: 36px;
+
+    height: 36px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    color: #fff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+}
+
+.timeline-content {
+
+    flex: 1;
+
+    background: #f8fafc;
+
+    border-radius: 12px;
+
+    padding: 12px 16px;
+
+    border: 1px solid #e2e8f0;
+
+}
+
+.timeline-content strong {
+
+    color: #0f172a;
+
+}
+
+.timeline-content small {
+
+    color: #64748b;
+
+}
+
+</style>
+
+
+<!-- =========================================
+CABEÇALHO
+========================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-primary text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-person-vcard-fill me-2"></i>
+
+            {{ lead.nome }}
+
+        </h5>
+
+    </div>
+
+
+    <!-- =========================================
+    DADOS DO LEAD
+    ========================================= -->
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Telefone</strong><br>
+
+                {{ lead.telefone|default:"-" }}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>WhatsApp</strong><br>
+
+                {{ lead.whatsapp|default:"-" }}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>E-mail</strong><br>
+
+                {{ lead.email|default:"-" }}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Origem</strong><br>
+
+                {{ lead.get_origem_display }}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Campanha</strong><br>
+
+                {% if lead.campanha %}
+
+                    {{ lead.campanha.nome }}
+
+                {% else %}
+
+                    <span class="text-muted">
+                        -
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Status</strong><br>
+
+                {{ lead.get_status_display }}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Responsável</strong><br>
+
+                {{ lead.responsavel|default:"-" }}
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Último contato</strong><br>
+
+                {% if lead.ultimo_contato %}
+
+                    {{ lead.ultimo_contato|date:"d/m/Y H:i" }}
+
+                {% else %}
+
+                    <span class="text-muted">
+                        Nenhum contato registrado.
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================================
+            OBSERVAÇÕES
+            ========================================= -->
+
+            <div class="col-12">
+
+                <strong>Observações</strong>
+
+                <div class="border rounded p-3 mt-2">
+
+                    {% if lead.observacoes %}
+
+                        {{ lead.observacoes }}
+
+                    {% else %}
+
+                        <span class="text-muted">
+
+                            Nenhuma observação.
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card-header">
+
+    <h5 class="mb-0">
+
+        <i class="bi bi-chat-left-text-fill text-primary me-2"></i>
+
+        Registrar Novo Contato
+
+    </h5>
+
+</div>
+
+
+<div class="card-body">
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <!-- =========================================
+        DESCRIÇÃO DO CONTATO
+        ========================================= -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Descrição do contato
+
+            </label>
+
+            <textarea
+                name="descricao"
+                class="form-control"
+                rows="4"
+                placeholder="Descreva o contato realizado com o Lead..."
+                required
+            ></textarea>
+
+        </div>
+
+
+        <!-- =========================================
+        PRÓXIMO CONTATO
+        ========================================= -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Próximo contato
+
+            </label>
+
+            <input
+                type="datetime-local"
+                name="proximo_contato"
+                class="form-control"
+                value="{% if lead.proximo_contato %}{{ lead.proximo_contato|date:'Y-m-d\TH:i' }}{% endif %}"
+            >
+
+            <div class="form-text">
+
+                Defina quando deverá ser realizado o próximo contato com este Lead.
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+        BOTÃO
+        ========================================= -->
+
+        <div class="d-flex justify-content-end">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-check-lg me-1"></i>
+
+                Registrar Contato
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- =========================================
+HISTÓRICO DO LEAD
+========================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-clock-history text-primary me-2"></i>
+
+            Histórico do Lead
+
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+
+        {% if historicos %}
+
+            <div class="timeline">
+
+                {% for historico in historicos %}
+
+                    <div class="timeline-item">
+
+                        <!-- ÍCONE -->
+
+                        <div class="timeline-icon">
+
+                            <i class="bi bi-chat-left-text"></i>
+
+                        </div>
+
+
+                        <!-- CONTEÚDO -->
+
+                        <div class="timeline-content">
+
+                            <strong>
+
+                                {% if historico.usuario %}
+
+                                    {{ historico.usuario.get_full_name|default:historico.usuario.username }}
+
+                                {% else %}
+
+                                    Sistema
+
+                                {% endif %}
+
+                            </strong>
+
+
+                            <div class="mt-1">
+
+                                {{ historico.descricao }}
+
+                            </div>
+
+
+                            <small class="d-block mt-2">
+
+                                <i class="bi bi-calendar3 me-1"></i>
+
+                                {{ historico.data|date:"d/m/Y H:i" }}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center text-muted py-4">
+
+                <i class="bi bi-chat-left-text fs-2 d-block mb-2"></i>
+
+                <div>
+
+                    Nenhum contato registrado.
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+BOTÕES
+========================================= -->
+
+<div class="d-flex justify-content-end gap-2">
+
+    <a
+        href="{% url 'editar_lead' lead.pk %}"
+        class="btn btn-warning"
+    >
+
+        <i class="bi bi-pencil me-1"></i>
+
+        Editar
+
+    </a>
+
+
+    <a
+        href="{% url 'leads' %}"
+        class="btn btn-secondary"
+    >
+
+        <i class="bi bi-arrow-left me-1"></i>
+
+        Voltar
+
+    </a>
+
+</div>
+
+{% endblock %}

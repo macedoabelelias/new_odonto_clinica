@@ -1,0 +1,1021 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Paciente | AM Systems
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/paciente_form.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <div class="page-card">
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1 class="page-title">
+
+                    {% if paciente %}
+
+                    Editar Paciente
+
+                    {% else %}
+
+                    Novo Paciente
+
+                    {% endif %}
+
+                </h1>
+
+                <p class="page-subtitle">
+
+                    Cadastro completo do paciente.
+
+                </p>
+
+            </div>
+
+            <a href="{% url 'pacientes' %}" class="btn-premium text-decoration-none">
+
+                <i class="bi bi-arrow-left"></i>
+
+                Voltar
+
+            </a>
+
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <!-- FOTO -->
+
+            <div class="form-section">
+
+                <h4 class="section-title">
+
+                    Foto do Paciente
+
+                </h4>
+
+                <div class="photo-upload">
+
+                    <div class="photo-preview-wrapper">
+
+                        {% if paciente and paciente.foto %}
+
+                        <img src="{{ paciente.foto.url }}" class="preview-photo">
+
+                        {% else %}
+
+                        <div class="photo-placeholder">
+
+                            <i class="bi bi-person"></i>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <input type="file" name="foto" class="form-control">
+
+                </div>
+
+            </div>
+
+
+            <!-- DADOS PESSOAIS -->
+
+            <div class="form-section">
+
+                <h4 class="section-title">
+
+                    <i class="bi bi-person-vcard"></i>
+
+                    Dados Pessoais
+
+                </h4>
+
+                <!-- LINHA 1 -->
+
+                <div class="form-grid-3">
+
+                    <div>
+
+                        <label>Nome Completo</label>
+
+                        <input type="text" name="nome" class="form-control" value="{{ paciente.nome|default:'' }}"
+                            required>
+
+                    </div>
+
+                    <div>
+
+                        <label>Data Nascimento</label>
+                        <input type="date" id="nascimento" name="nascimento" class="form-control"
+                            value="{{ paciente.nascimento|date:'Y-m-d' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>Idade</label>
+
+                        <input type="text" id="idade" name="idade" class="form-control"
+                            value="{{ paciente.idade|default:'' }}" readonly>
+
+                    </div>
+
+                </div>
+
+                <!-- LINHA 2 -->
+
+                <div class="form-grid-3-equal">
+
+                    <div>
+
+                        <label>CPF</label>
+
+                        <input type="text" id="cpf" name="cpf" class="form-control"
+                            value="{{ paciente.cpf|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>RG/CIN</label>
+
+                        <input type="text" name="rg" class="form-control" value="{{ paciente.rg|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>Estado Civil</label>
+
+                        <select name="estado_civil" class="form-control">
+
+                            <option value="Solteiro"
+    {% if paciente.estado_civil == "Solteiro" %}selected{% endif %}>
+    Solteiro(a)
+</option>
+
+<option value="Casado"
+    {% if paciente.estado_civil == "Casado" %}selected{% endif %}>
+    Casado(a)
+</option>
+
+<option value="Divorciado"
+    {% if paciente.estado_civil == "Divorciado" %}selected{% endif %}>
+    Divorciado(a)
+</option>
+
+<option value="Viúvo"
+    {% if paciente.estado_civil == "Viúvo" %}selected{% endif %}>
+    Viúvo(a)
+</option>
+
+<option value="União Estável"
+    {% if paciente.estado_civil == "União Estável" %}selected{% endif %}>
+    União Estável
+</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- LINHA 3 -->
+
+                <div class="form-grid-2">
+
+                    <div>
+
+                        <label>Gênero</label>
+
+                        <select name="genero" class="form-control">
+
+    <option value="">Selecione</option>
+
+    <option value="Masculino"
+        {% if paciente.genero == "Masculino" %}selected{% endif %}>
+        Cis Masculino
+    </option>
+
+    <option value="Feminino"
+        {% if paciente.genero == "Feminino" %}selected{% endif %}>
+        Cis Feminino
+    </option>
+
+    <option value="Trans"
+        {% if paciente.genero == "Trans" %}selected{% endif %}>
+        Transgênero
+    </option>
+
+    <option value="Outros"
+        {% if paciente.genero == "Outros" %}selected{% endif %}>
+        Outros
+    </option>
+
+</select>
+
+                    </div>
+
+                    <div>
+
+                        <label>Profissão</label>
+
+                        <input type="text" name="profissao" class="form-control"
+                            value="{{ paciente.profissao|default:'' }}">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CONTATO -->
+
+            <div class="form-section">
+
+                <h4 class="section-title">
+
+                    <i class="bi bi-telephone"></i>
+
+                    Contato
+
+                </h4>
+
+                <div class="form-grid contato-grid">
+
+                    <div>
+
+                        <label>Telefone</label>
+
+                        <input type="text" id="telefone" name="telefone" class="form-control"
+                            value="{{ paciente.telefone|default:'' }}" oninput="mascaraTelefone(this)">
+
+                    </div>
+
+                    <div>
+
+                        <label>WhatsApp</label>
+
+                        <input type="text" id="whatsapp" name="whatsapp" class="form-control"
+                            value="{{ paciente.whatsapp|default:'' }}" oninput="mascaraCelular(this)">
+
+                    </div>
+
+                    <div>
+
+                        <label>E-mail</label>
+
+                        <input type="email" id="email" name="email" class="form-control"
+                            value="{{ paciente.email|default:'' }}">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ENDEREÇO -->
+
+            <div class="form-section">
+
+                <h4 class="section-title">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                    Endereço
+
+                </h4>
+
+                <!-- LINHA 1 -->
+
+                <div class="form-grid-2">
+
+                    <div>
+
+                        <label>CEP</label>
+
+                        <input type="text" id="cep" name="cep" class="form-control"
+                            value="{{ paciente.cep|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>Estado</label>
+
+                        <select id="estado" name="estado" class="form-control">
+
+                            <option value="">UF</option>
+
+                            <option value="AC">AC</option>
+                            <option value="AL">AL</option>
+                            <option value="AP">AP</option>
+                            <option value="AM">AM</option>
+                            <option value="BA">BA</option>
+                            <option value="CE">CE</option>
+                            <option value="DF">DF</option>
+                            <option value="ES">ES</option>
+                            <option value="GO">GO</option>
+                            <option value="MA">MA</option>
+                            <option value="MT">MT</option>
+                            <option value="MS">MS</option>
+                            <option value="MG">MG</option>
+                            <option value="PA">PA</option>
+                            <option value="PB">PB</option>
+                            <option value="PR">PR</option>
+                            <option value="PE">PE</option>
+                            <option value="PI">PI</option>
+                            <option value="RJ">RJ</option>
+                            <option value="RN">RN</option>
+                            <option value="RS">RS</option>
+                            <option value="RO">RO</option>
+                            <option value="RR">RR</option>
+                            <option value="SC">SC</option>
+                            <option value="SP">SP</option>
+                            <option value="SE">SE</option>
+                            <option value="TO">TO</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- LINHA 2 -->
+
+                <div class="form-group-full">
+
+                    <label>Endereço</label>
+
+                    <input type="text" id="endereco" name="endereco" class="form-control"
+                        value="{{ paciente.endereco|default:'' }}">
+
+                </div>
+
+                <!-- LINHA 3 -->
+
+                <div class="form-grid-2">
+
+                    <div>
+
+                        <label>Número</label>
+
+                        <input type="text" name="numero" class="form-control" value="{{ paciente.numero|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>Complemento</label>
+
+                        <input type="text" name="complemento" class="form-control"
+                            value="{{ paciente.complemento|default:'' }}">
+
+                    </div>
+
+                </div>
+
+                <!-- LINHA 4 -->
+
+                <div class="form-grid-2">
+
+                    <div>
+
+                        <label>Bairro</label>
+
+                        <input type="text" id="bairro" name="bairro" class="form-control"
+                            value="{{ paciente.bairro|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>Cidade</label>
+
+                        <input type="text" id="cidade" name="cidade" class="form-control"
+                            value="{{ paciente.cidade|default:'' }}">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RESPONSÁVEL -->
+            <div class="form-section responsavel-section">
+
+                <h4 class="section-title">
+
+                    <i class="bi bi-shield-check"></i>
+
+                    Responsável
+
+                </h4>
+
+                <div class="form-grid">
+
+                    <div class="form-group-lg">
+
+                        <label>Nome do Responsável</label>
+
+                        <input type="text" name="responsavel" class="form-control"
+                            value="{{ paciente.responsavel|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>CPF Responsável</label>
+
+                        <input type="text" id="cpf_responsavel" name="cpf_responsavel" class="form-control"
+                            value="{{ paciente.cpf_responsavel|default:'' }}">
+
+                    </div>
+
+                    <div>
+
+                        <label>WhatsApp Responsável</label>
+
+                        <input type="text" id="telefone_responsavel" name="telefone_responsavel" class="form-control"
+                            value="{{ paciente.telefone_responsavel|default:'' }}" oninput="mascaraCelular(this)">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- DADOS CLÍNICOS -->
+
+            <div class="form-section">
+
+                <h4 class="section-title">
+
+                    <i class="bi bi-heart-pulse"></i>
+
+                    Dados Clínicos
+
+                </h4>
+
+                <div class="form-grid">
+
+                    <div>
+
+                        <label>Convênio</label>
+
+                        <select name="convenio" class="form-control">
+
+                            <option value="">
+                                Particular
+                            </option>
+
+                            {% for convenio in convenios %}
+
+                            <option
+                                value="{{ convenio.nome }}"
+                                {% if paciente.convenio == convenio.nome %}selected{% endif %}
+                            >
+                                {{ convenio.nome }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div>
+
+                        <label>Carteirinha</label>
+
+                        <input type="text" name="carteirinha" class="form-control"
+                            value="{{ paciente.carteirinha|default:'' }}">
+
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <label>Dentista Responsável</label>
+
+                    <select name="dentista" class="form-control">
+
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        {% for dentista in dentistas %}
+
+                        <option
+                            value="{{ dentista.id }}"
+                            {% if paciente.dentista_id == dentista.id %}selected{% endif %}
+                        >
+                            {{ dentista.get_full_name|default:dentista.username }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="clinico-grid">
+
+                <div class="clinico-card">
+
+                    <label>Alergias</label>
+
+                    <textarea name="alergias" class="form-control">{{ paciente.alergias|default:'' }}</textarea>
+
+                </div>
+
+                <div class="clinico-card">
+
+                    <label>Medicamentos em Uso</label>
+
+                    <textarea name="medicamentos" class="form-control">{{ paciente.medicamentos|default:'' }}</textarea>
+
+                </div>
+
+                <div class="clinico-card">
+
+                    <label>Observações Clínicas</label>
+
+                    <textarea name="observacoes" class="form-control">{{ paciente.observacoes|default:'' }}</textarea>
+
+                </div>
+
+            </div>
+
+            <!-- BOTÕES -->
+
+            <div class="form-actions">
+
+                <a href="{% url 'pacientes' %}" class="btn-cancel">
+
+                    Cancelar
+
+                </a>
+
+                <button type="submit" class="btn-save">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Salvar Paciente
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // =====================================
+        // ELEMENTOS
+        // =====================================
+
+        const cpf = document.getElementById('cpf');
+        const cpfResponsavel = document.getElementById('cpf_responsavel');
+
+        const telefone = document.getElementById('telefone');
+        const whatsapp = document.getElementById('whatsapp');
+        const telefoneResponsavel = document.getElementById('telefone_responsavel');
+
+        const nascimento = document.getElementById('nascimento');
+        const idade = document.getElementById('idade');
+
+        const cep = document.getElementById('cep');
+
+        // =====================================
+        // MÁSCARA CPF
+        // =====================================
+
+        function mascaraCPF(campo) {
+
+            let v = campo.value.replace(/\D/g, '');
+
+            v = v.substring(0, 11);
+
+            if (v.length > 9) {
+
+                v = v.replace(
+                    /^(\d{3})(\d{3})(\d{3})(\d{0,2}).*/,
+                    '$1.$2.$3-$4'
+                );
+
+            } else if (v.length > 6) {
+
+                v = v.replace(
+                    /^(\d{3})(\d{3})(\d+).*/,
+                    '$1.$2.$3'
+                );
+
+            } else if (v.length > 3) {
+
+                v = v.replace(
+                    /^(\d{3})(\d+).*/,
+                    '$1.$2'
+                );
+
+            }
+
+            campo.value = v;
+
+        }
+
+        // =====================================
+        // VALIDAÇÃO CPF
+        // =====================================
+
+        function validarCPF(cpf) {
+
+            cpf = cpf.replace(/\D/g, '');
+
+            if (cpf.length !== 11)
+                return false;
+
+            if (/^(\d)\1+$/.test(cpf))
+                return false;
+
+            let soma = 0;
+
+            for (let i = 0; i < 9; i++) {
+
+                soma += parseInt(cpf.charAt(i))
+                    * (10 - i);
+
+            }
+
+            let resto = 11 - (soma % 11);
+
+            if (resto >= 10)
+                resto = 0;
+
+            if (resto !== parseInt(cpf.charAt(9)))
+                return false;
+
+            soma = 0;
+
+            for (let i = 0; i < 10; i++) {
+
+                soma += parseInt(cpf.charAt(i))
+                    * (11 - i);
+
+            }
+
+            resto = 11 - (soma % 11);
+
+            if (resto >= 10)
+                resto = 0;
+
+            return resto === parseInt(
+                cpf.charAt(10)
+            );
+
+        }
+
+        // =====================================
+        // MÁSCARA TELEFONE
+        // =====================================
+
+        function mascaraTelefone(campo) {
+
+            let v = campo.value.replace(/\D/g, '');
+
+            v = v.substring(0, 10);
+
+            if (v.length > 6) {
+
+                v = v.replace(
+                    /^(\d{2})(\d{4})(\d{0,4}).*/,
+                    '($1) $2-$3'
+                );
+
+            } else if (v.length > 2) {
+
+                v = v.replace(
+                    /^(\d{2})(\d+).*/,
+                    '($1) $2'
+                );
+
+            }
+
+            campo.value = v;
+
+        }
+
+        function mascaraCelular(campo) {
+
+            let v = campo.value.replace(/\D/g, '');
+
+            v = v.substring(0, 11);
+
+            if (v.length > 7) {
+
+                v = v.replace(
+                    /^(\d{2})(\d{5})(\d{0,4}).*/,
+                    '($1) $2-$3'
+                );
+
+            } else if (v.length > 2) {
+
+                v = v.replace(
+                    /^(\d{2})(\d+).*/,
+                    '($1) $2'
+                );
+
+            }
+
+            campo.value = v;
+
+        }
+
+
+        // =====================================
+        // CPF PACIENTE
+        // =====================================
+
+        if (cpf) {
+
+            cpf.addEventListener('input', function () {
+
+                mascaraCPF(this);
+
+            });
+
+            cpf.addEventListener('blur', function () {
+
+                if (!this.value)
+                    return;
+
+                if (!validarCPF(this.value)) {
+
+                    this.value = '';
+
+                    alert('CPF inválido');
+
+                }
+
+            });
+
+        }
+
+        // =====================================
+        // CPF RESPONSÁVEL
+        // =====================================
+
+        if (cpfResponsavel) {
+
+            cpfResponsavel.addEventListener(
+                'input',
+                function () {
+
+                    mascaraCPF(this);
+
+                }
+            );
+
+            cpfResponsavel.addEventListener(
+                'blur',
+                function () {
+
+                    if (!this.value)
+                        return;
+
+                    if (!validarCPF(this.value)) {
+
+                        this.value = '';
+
+                        alert(
+                            'CPF do responsável inválido'
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+        // =====================================
+        // WHATSAPP PACIENTE
+        // =====================================
+
+        if (whatsapp) {
+
+            whatsapp.addEventListener(
+                'input',
+                function () {
+                    mascaraCelular(this);
+                }
+            );
+
+        }
+
+        if (telefone) {
+
+            telefone.addEventListener(
+                'input',
+                function () {
+
+                    mascaraTelefone(this);
+
+                }
+            );
+
+        }
+
+        // =====================================
+        // WHATSAPP RESPONSÁVEL
+        // =====================================
+
+        if (telefoneResponsavel) {
+
+            telefoneResponsavel.addEventListener(
+                'input',
+                function () {
+                    mascaraCelular(this);
+                }
+            );
+
+        }
+
+        // =====================================
+        // IDADE AUTOMÁTICA
+        // =====================================
+
+        function calcularIdade() {
+
+            if (!nascimento || !idade)
+                return;
+
+            if (!nascimento.value) {
+
+                idade.value = '';
+
+                return;
+
+            }
+
+            const nasc = new Date(
+                nascimento.value
+            );
+
+            const hoje = new Date();
+
+            let anos =
+                hoje.getFullYear()
+                - nasc.getFullYear();
+
+            const mes =
+                hoje.getMonth()
+                - nasc.getMonth();
+
+            if (
+                mes < 0 ||
+                (
+                    mes === 0 &&
+                    hoje.getDate() < nasc.getDate()
+                )
+            ) {
+
+                anos--;
+
+            }
+
+            idade.value = anos + ' anos';
+
+        }
+
+        if (nascimento) {
+
+            nascimento.addEventListener(
+                'change',
+                calcularIdade
+            );
+
+            calcularIdade();
+
+        }
+
+        // =====================================
+        // CEP AUTOMÁTICO
+        // =====================================
+
+        if (cep) {
+
+            cep.addEventListener('input', function () {
+
+                let v = this.value.replace(/\D/g, '');
+
+                v = v.substring(0, 8);
+
+                if (v.length > 5) {
+
+                    v = v.replace(
+                        /^(\d{5})(\d{0,3}).*/,
+                        '$1-$2'
+                    );
+
+                }
+
+                this.value = v;
+
+            });
+
+            cep.addEventListener(
+                'blur',
+                function () {
+
+                    const valor =
+                        this.value.replace(/\D/g, '');
+
+                    if (valor.length !== 8)
+                        return;
+
+                    fetch(
+                        `https://viacep.com.br/ws/${valor}/json/`
+                    )
+                        .then(response => response.json())
+                        .then(data => {
+
+                            if (data.erro)
+                                return;
+
+                            const endereco =
+                                document.getElementById('endereco');
+
+                            const bairro =
+                                document.getElementById('bairro');
+
+                            const cidade =
+                                document.getElementById('cidade');
+
+                            const estado =
+                                document.getElementById('estado');
+
+                            if (endereco)
+                                endereco.value =
+                                    data.logradouro || '';
+
+                            if (bairro)
+                                bairro.value =
+                                    data.bairro || '';
+
+                            if (cidade)
+                                cidade.value =
+                                    data.localidade || '';
+
+                            if (estado)
+                                estado.value =
+                                    data.uf || '';
+
+                        })
+                        .catch(error => {
+
+                            console.error(
+                                'Erro ViaCEP:',
+                                error
+                            );
+
+                        });
+
+                }
+            );
+
+        }
+
+    });
+
+</script>
+
+{% endblock %}

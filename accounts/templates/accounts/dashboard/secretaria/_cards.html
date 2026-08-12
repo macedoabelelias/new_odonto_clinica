@@ -1,0 +1,83 @@
+<div class="stats-grid">
+
+    <!-- =========================================
+    CONSULTAS HOJE
+    ========================================= -->
+
+    <a href="{% url 'agenda' %}" class="stats-card">
+
+        <div class="stats-icon blue">
+            <i class="bi bi-calendar2-week-fill"></i>
+        </div>
+
+        <div>
+
+            <small>Consultas Hoje</small>
+
+            <h3>{{ consultas_hoje }}</h3>
+
+        </div>
+
+    </a>
+
+    <!-- =========================================
+    CONFIRMADAS
+    ========================================= -->
+
+    <a href="{% url 'agenda' %}?status=confirmado" class="stats-card">
+
+        <div class="stats-icon green">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+
+        <div>
+
+            <small>Confirmadas</small>
+
+            <h3>{{ consultas_confirmadas }}</h3>
+
+        </div>
+
+    </a>
+
+    <!-- =========================================
+    A CONFIRMAR
+    ========================================= -->
+
+    <a href="{% url 'agenda' %}?status=agendado" class="stats-card">
+
+        <div class="stats-icon orange">
+            <i class="bi bi-clock-history"></i>
+        </div>
+
+        <div>
+
+            <small>A Confirmar</small>
+
+            <h3>{{ consultas_pendentes }}</h3>
+
+        </div>
+
+    </a>
+
+    <!-- =========================================
+    PACIENTES HOJE
+    ========================================= -->
+
+    <a href="{% url 'agenda' %}" class="stats-card">
+
+        <div class="stats-icon purple">
+            <i class="bi bi-people-fill"></i>
+        </div>
+
+        <div>
+
+            <small>Pacientes Hoje</small>
+
+            <h3>{{ pacientes_hoje }}</h3>
+
+        </div>
+
+    </a>
+
+</div>

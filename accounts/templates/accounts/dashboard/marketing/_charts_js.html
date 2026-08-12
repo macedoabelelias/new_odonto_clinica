@@ -1,0 +1,220 @@
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas = document.getElementById("graficoMarketing");
+
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    // =========================================
+    // GRADIENTE
+    // =========================================
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+
+    gradient.addColorStop(0, "rgba(37,99,235,.35)");
+    gradient.addColorStop(1, "rgba(37,99,235,0)");
+
+    // =========================================
+    // DADOS (TEMPORÁRIOS)
+    // =========================================
+
+    const labels = [
+        "Jan",
+        "Fev",
+        "Mar",
+        "Abr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Out",
+        "Nov",
+        "Dez"
+    ];
+
+    // =========================================
+    // DADOS REAIS DOS LEADS
+    // =========================================
+
+    const valores = {{ leads_por_mes|safe }};
+
+    // =========================================
+    // GRÁFICO
+    // =========================================
+
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [{
+
+                label: "Leads",
+
+                data: valores,
+
+                borderColor: "#2563eb",
+
+                backgroundColor: gradient,
+
+                fill: true,
+
+                tension: 0.35,
+
+                borderWidth: 4,
+
+                pointRadius: 4,
+
+                pointHoverRadius: 7,
+
+                pointBackgroundColor: "#2563eb",
+
+                pointBorderColor: "#ffffff",
+
+                pointBorderWidth: 2,
+
+                pointHoverBorderWidth: 3
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+
+                mode: "index",
+
+                intersect: false
+
+            },
+
+            layout: {
+
+                padding: {
+
+                    top: 5,
+
+                    right: 10,
+
+                    bottom: 0,
+
+                    left: 10
+
+                }
+
+            },
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                },
+
+                tooltip: {
+
+                    backgroundColor: "#1e293b",
+
+                    titleColor: "#ffffff",
+
+                    bodyColor: "#ffffff",
+
+                    displayColors: false,
+
+                    padding: 12,
+
+                    cornerRadius: 10
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    offset: false,
+
+                    grid: {
+
+                        display: false
+
+                    },
+
+                    ticks: {
+
+                        color: "#6b7280",
+
+                        autoSkip: false,
+
+                        maxRotation: 45,
+
+                        minRotation: 45,
+
+                        font: {
+
+                            size: 12,
+
+                            weight: "600"
+
+                        }
+
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    suggestedMax: Math.max(
+                        5,
+                        Math.ceil(
+                            Math.max(...valores, 0) * 1.2
+                        )
+                    ),
+
+                    ticks: {
+
+                        precision: 0,
+
+                        color: "#6b7280",
+
+                        font: {
+                            size: 12
+                        }
+
+                    },
+
+                    grid: {
+
+                        color: "rgba(148,163,184,.15)",
+
+                        drawBorder: false
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+});
+
+</script>

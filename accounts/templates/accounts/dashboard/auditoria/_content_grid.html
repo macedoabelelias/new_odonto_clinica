@@ -1,0 +1,738 @@
+<style>
+
+/* =========================================
+   FILTROS DE AUDITORIA
+========================================= */
+
+.audit-filter-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+}
+
+.audit-filter-card .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.audit-filter-card .form-control,
+.audit-filter-card .form-select {
+    height: 40px;
+    border-radius: 8px;
+    border-color: #dfe3e8;
+    font-size: 13px;
+}
+
+.audit-filter-card .form-control:focus,
+.audit-filter-card .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.15rem rgba(59, 130, 246, 0.12);
+}
+
+.audit-filter-card .btn {
+    height: 40px;
+    border-radius: 8px;
+}
+
+
+/* =========================================
+   TABELA DE AUDITORIA
+========================================= */
+
+.audit-table {
+    width: 100%;
+    font-size: 13px;
+}
+
+.audit-table thead th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 8px;
+    white-space: nowrap;
+}
+
+.audit-table tbody td {
+    padding: 11px 8px;
+    border-bottom: 1px solid #eef0f3;
+    vertical-align: middle;
+}
+
+.audit-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.audit-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+
+/* =========================================
+   BADGES
+========================================= */
+
+.audit-table .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   DESCRIÇÃO
+========================================= */
+
+.audit-description {
+    display: inline-block;
+    max-width: 420px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+
+/* =========================================
+   RESPONSIVO
+========================================= */
+
+@media (max-width: 1200px) {
+
+    .audit-description {
+        max-width: 280px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .audit-table {
+        font-size: 12px;
+    }
+
+    .audit-table thead th {
+        font-size: 11px;
+    }
+
+    .audit-description {
+        max-width: 200px;
+    }
+
+}
+
+</style>
+
+
+<!-- =========================================
+     FILTROS DE AUDITORIA
+========================================= -->
+
+<div class="card dashboard-card audit-filter-card mb-4">
+
+    <div class="card-body">
+
+        <!-- CABEÇALHO -->
+
+        <div class="d-flex align-items-center mb-3">
+
+            <div
+                class="stats-icon blue me-3"
+                style="width:42px;height:42px;min-width:42px;"
+            >
+
+                <i class="bi bi-funnel-fill"></i>
+
+            </div>
+
+            <div>
+
+                <h5 class="mb-1">
+                    Filtros de Auditoria
+                </h5>
+
+                <small class="text-muted">
+                    Consulte os registros de auditoria.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             FORMULÁRIO
+        ========================================== -->
+
+        <form method="get" action="">
+
+            <div class="row g-3">
+
+                <!-- DATA INICIAL -->
+
+                <div class="col-xl-2 col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Data inicial
+                    </label>
+
+                    <input
+                        type="date"
+                        name="data_inicio"
+                        class="form-control"
+                        value="{{ request.GET.data_inicio|default:'' }}"
+                    >
+
+                </div>
+
+
+                <!-- DATA FINAL -->
+
+                <div class="col-xl-2 col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Data final
+                    </label>
+
+                    <input
+                        type="date"
+                        name="data_final"
+                        class="form-control"
+                        value="{{ request.GET.data_final|default:'' }}"
+                    >
+
+                </div>
+
+
+                <!-- USUÁRIO -->
+
+                <div class="col-xl-2 col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Usuário
+                    </label>
+
+                    <select
+                        name="usuario"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        {% for usuario in usuarios_auditoria %}
+
+                            <option
+                                value="{{ usuario.id }}"
+                                {% if request.GET.usuario == usuario.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {% if usuario.get_full_name %}
+                                    {{ usuario.get_full_name }}
+                                {% else %}
+                                    {{ usuario.username }}
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- MÓDULO -->
+
+                <div class="col-xl-2 col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Módulo
+                    </label>
+
+                    <input
+                        type="text"
+                        name="modulo"
+                        class="form-control"
+                        placeholder="Ex.: Pacientes"
+                        value="{{ request.GET.modulo|default:'' }}"
+                    >
+
+                </div>
+
+
+                <!-- AÇÃO -->
+
+                <div class="col-xl-2 col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Ação
+                    </label>
+
+                    <select
+                        name="acao"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todas
+                        </option>
+
+                        <option value="login"
+                            {% if request.GET.acao == "login" %}selected{% endif %}>
+                            Login
+                        </option>
+
+                        <option value="logout"
+                            {% if request.GET.acao == "logout" %}selected{% endif %}>
+                            Logout
+                        </option>
+
+                        <option value="cadastro"
+                            {% if request.GET.acao == "cadastro" %}selected{% endif %}>
+                            Cadastro
+                        </option>
+
+                        <option value="edicao"
+                            {% if request.GET.acao == "edicao" %}selected{% endif %}>
+                            Edição
+                        </option>
+
+                        <option value="exclusao"
+                            {% if request.GET.acao == "exclusao" %}selected{% endif %}>
+                            Exclusão
+                        </option>
+
+                        <option value="cancelamento"
+                            {% if request.GET.acao == "cancelamento" %}selected{% endif %}>
+                            Cancelamento
+                        </option>
+
+                        <option value="aprovacao"
+                            {% if request.GET.acao == "aprovacao" %}selected{% endif %}>
+                            Aprovação
+                        </option>
+
+                        <option value="recebimento"
+                            {% if request.GET.acao == "recebimento" %}selected{% endif %}>
+                            Recebimento
+                        </option>
+
+                        <option value="pagamento"
+                            {% if request.GET.acao == "pagamento" %}selected{% endif %}>
+                            Pagamento
+                        </option>
+
+                        <option value="impressao"
+                            {% if request.GET.acao == "impressao" %}selected{% endif %}>
+                            Impressão
+                        </option>
+
+                        <option value="pdf"
+                            {% if request.GET.acao == "pdf" %}selected{% endif %}>
+                            PDF
+                        </option>
+
+                        <option value="excel"
+                            {% if request.GET.acao == "excel" %}selected{% endif %}>
+                            Excel
+                        </option>
+
+                        <option value="backup"
+                            {% if request.GET.acao == "backup" %}selected{% endif %}>
+                            Backup
+                        </option>
+
+                        <option value="restauracao"
+                            {% if request.GET.acao == "restauracao" %}selected{% endif %}>
+                            Restauração
+                        </option>
+
+                        <option value="outro"
+                            {% if request.GET.acao == "outro" %}selected{% endif %}>
+                            Outro
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- NÍVEL -->
+
+                <div class="col-xl-2 col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Nível
+                    </label>
+
+                    <select
+                        name="nivel"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="info"
+                            {% if request.GET.nivel == "info" %}selected{% endif %}>
+                            Informação
+                        </option>
+
+                        <option value="atencao"
+                            {% if request.GET.nivel == "atencao" %}selected{% endif %}>
+                            Atenção
+                        </option>
+
+                        <option value="importante"
+                            {% if request.GET.nivel == "importante" %}selected{% endif %}>
+                            Importante
+                        </option>
+
+                        <option value="critico"
+                            {% if request.GET.nivel == "critico" %}selected{% endif %}>
+                            Crítico
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+
+                <div class="col-12">
+
+                    <div class="d-flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+
+                            <i class="bi bi-search me-1"></i>
+
+                            Filtrar
+
+                        </button>
+
+
+                        <a
+                            href="?"
+                            class="btn btn-outline-secondary"
+                        >
+
+                            <i class="bi bi-x-lg me-1"></i>
+
+                            Limpar
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     ÚLTIMAS ATIVIDADES DE AUDITORIA
+========================================= -->
+
+<div class="card dashboard-card mb-4">
+
+    <div class="card-body">
+
+        <!-- CABEÇALHO -->
+
+        <div class="d-flex align-items-center mb-3">
+
+            <div
+                class="stats-icon blue me-3"
+                style="width:42px;height:42px;min-width:42px;"
+            >
+
+                <i class="bi bi-shield-check"></i>
+
+            </div>
+
+            <div>
+
+                <h5 class="mb-1">
+                    Últimas Atividades de Auditoria
+                </h5>
+
+                <small class="text-muted">
+                    Registros mais recentes do sistema
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             TABELA
+        ========================================== -->
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0 audit-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="text-nowrap">
+                            Data / Hora
+                        </th>
+
+                        <th>
+                            Usuário
+                        </th>
+
+                        <th>
+                            Módulo
+                        </th>
+
+                        <th>
+                            Ação
+                        </th>
+
+                        <th>
+                            Nível
+                        </th>
+
+                        <th>
+                            Descrição
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for auditoria in ultimas_auditorias %}
+
+                    <tr>
+
+                        <!-- DATA / HORA -->
+
+                        <td class="text-nowrap text-muted">
+
+                            {{ auditoria.data_hora|date:"d/m/Y H:i" }}
+
+                        </td>
+
+
+                        <!-- USUÁRIO -->
+
+                        <td>
+
+                            {% if auditoria.usuario %}
+
+                                <strong>
+
+                                    {% if auditoria.usuario.get_full_name %}
+
+                                        {{ auditoria.usuario.get_full_name }}
+
+                                    {% else %}
+
+                                        {{ auditoria.usuario.username }}
+
+                                    {% endif %}
+
+                                </strong>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Sistema
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- MÓDULO -->
+
+                        <td>
+
+                            <strong>
+                                {{ auditoria.modulo|default:"Sistema" }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- AÇÃO -->
+
+                        <td>
+
+                            {% if auditoria.acao == "login" %}
+
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                                    {{ auditoria.get_acao_display }}
+                                </span>
+
+                            {% elif auditoria.acao == "logout" %}
+
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-box-arrow-right me-1"></i>
+                                    {{ auditoria.get_acao_display }}
+                                </span>
+
+                            {% elif auditoria.acao == "cadastro" %}
+
+                                <span class="badge bg-success">
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                    {{ auditoria.get_acao_display }}
+                                </span>
+
+                            {% elif auditoria.acao == "edicao" %}
+
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                    {{ auditoria.get_acao_display }}
+                                </span>
+
+                            {% elif auditoria.acao == "exclusao" %}
+
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-trash me-1"></i>
+                                    {{ auditoria.get_acao_display }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-activity me-1"></i>
+                                    {{ auditoria.get_acao_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- NÍVEL -->
+
+                        <td>
+
+                            {% if auditoria.nivel == "critico" or auditoria.nivel == "erro" %}
+
+                                <span class="badge bg-danger">
+
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
+                                    {% if auditoria.nivel == "erro" %}
+                                        Crítico
+                                    {% else %}
+                                        {{ auditoria.get_nivel_display }}
+                                    {% endif %}
+
+                                </span>
+
+                            {% elif auditoria.nivel == "importante" %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i>
+
+                                    {{ auditoria.get_nivel_display }}
+
+                                </span>
+
+                            {% elif auditoria.nivel == "atencao" or auditoria.nivel == "aviso" %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i>
+
+                                    {% if auditoria.nivel == "aviso" %}
+                                        Atenção
+                                    {% else %}
+                                        {{ auditoria.get_nivel_display }}
+                                    {% endif %}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-primary">
+
+                                    <i class="bi bi-info-circle-fill me-1"></i>
+
+                                    {{ auditoria.get_nivel_display }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- DESCRIÇÃO -->
+
+                        <td>
+
+                            <span
+                                class="text-muted audit-description"
+                                title="{{ auditoria.descricao }}"
+                            >
+
+                                {{ auditoria.descricao|default:"Sem descrição"|truncatechars:80 }}
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center text-muted py-5"
+                        >
+
+                            <i class="bi bi-shield-check fs-2 d-block mb-2"></i>
+
+                            Nenhuma atividade de auditoria registrada.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

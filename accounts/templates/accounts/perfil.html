@@ -1,0 +1,382 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}
+Perfil do Paciente | AM Systems
+{% endblock %}
+
+{% block content %}
+
+
+
+
+
+<!-- =========================================
+        HEADER PACIENTE
+        ========================================== -->
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+            <!-- ESQUERDA -->
+
+            <div class="d-flex align-items-center">
+
+
+                <!-- AVATAR -->
+
+                <div class="avatar-paciente me-4" style="
+        width:74px;
+        height:74px;
+        min-width:74px;
+        border-radius:50%;
+        overflow:hidden;
+        background:#2563eb;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    ">
+
+                    {% if paciente.foto %}
+
+                    <img src="{{ paciente.foto.url }}" alt="{{ paciente.nome }}" style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                border-radius:50%;
+                display:block;
+            ">
+
+                    {% else %}
+
+                    <span style="
+                color:#fff;
+                font-size:24px;
+                font-weight:700;
+            ">
+
+                        {{ paciente.nome|slice:":1" }}
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- INFO -->
+
+                <div>
+
+                    <h2 style="
+                                    font-size:24px;
+                                    font-weight:700;
+                                    margin-bottom:2px;
+                                    line-height:1.2;
+                                ">
+
+                        {{ paciente.nome }}
+
+                    </h2>
+
+                    <div style="
+                                    font-size:13px;
+                                    color:#64748b;
+                                    margin-bottom:2px;
+                                ">
+
+                        {{ paciente.telefone }}
+
+                    </div>
+                    <div style="
+                                    font-size:13px;
+                                    color:#64748b;
+                                    margin-bottom:2px;
+                                ">
+
+                        {{ paciente.email }}
+
+                    </div>
+
+                    <div style="
+                        font-size:13px;
+                        color:#64748b;
+                        margin-bottom:2px;
+                    ">
+
+                        Dentista:
+
+                        <strong>
+
+                            {% if paciente.dentista %}
+                                {{ paciente.dentista.get_full_name|default:paciente.dentista.username }}
+                            {% else %}
+                                Não definido
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        {% if paciente.ativo %}
+
+                        <span class="badge bg-success">
+
+                            Ativo
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger">
+
+                            Inativo
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOTÕES -->
+
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+
+                <a href="{% url 'pacientes' %}" class="btn btn-light rounded-pill px-4">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Voltar
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- =========================================
+        CARDS
+        ========================================== -->
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+
+                    Consultas
+
+                </small>
+
+                <h3 class="fw-bold">
+
+                    12
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+
+                    Orçamentos
+
+                </small>
+
+                <h3 class="fw-bold">
+
+                    R$ 4.500
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+
+                    Pago
+
+                </small>
+
+                <h3 class="fw-bold text-success">
+
+                    R$ 2.300
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+
+                    Pendente
+
+                </small>
+
+                <h3 class="fw-bold text-danger">
+
+                    R$ 2.200
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+
+    <div class="card-body">
+
+        {% include 'accounts/components/menu_paciente.html' %}
+
+    </div>
+
+</div>
+
+<!-- =========================================
+PRÓXIMOS AGENDAMENTOS
+========================================= -->
+
+<div class="px-4 mb-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h5 class="fw-bold mb-0">
+
+            <i class="bi bi-calendar-check me-2"></i>
+
+            Próximos Agendamentos
+
+        </h5>
+
+        <div class="d-flex gap-2 pe-1">
+
+            <a href="{% url 'novo_agendamento_paciente' paciente.id %}" class="btn btn-sm btn-primary rounded-pill">
+
+                <i class="bi bi-plus-circle"></i>
+
+                Novo Agendamento
+
+            </a>
+
+            <a href="{% url 'agenda' %}" class="btn btn-sm btn-outline-primary rounded-pill">
+
+                Ver Agenda
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4 justify-content-between">
+
+        {% for agendamento in agendamentos %}
+
+        <div class="col-xl-3 col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <div class="fw-bold mb-2">
+
+                        {{ agendamento.data|date:"d/m/Y" }}
+
+                    </div>
+
+                    <div class="text-primary fw-semibold mb-2">
+
+                        {{ agendamento.hora_inicio|time:"H:i" }}
+
+                    </div>
+
+                    <div class="small text-muted mb-3">
+
+                        {{ agendamento.procedimento }}
+
+                    </div>
+
+                    <span class="badge bg-primary">
+
+                        {{ agendamento.get_status_display }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body text-center text-muted">
+
+                    Nenhum agendamento encontrado.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

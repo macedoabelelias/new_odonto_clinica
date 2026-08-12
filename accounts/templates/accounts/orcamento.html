@@ -1,0 +1,1098 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+
+    <!-- TÍTULO -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Orçamento
+            </h2>
+
+            <p class="text-muted mb-0">
+                Paciente: {{ paciente.nome }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+    MENU CLÍNICO GLOBAL
+    ========================================= -->
+
+    {% include 'accounts/components/menu_paciente.html' %}
+
+    <!-- CARD ADICIONAR PROCEDIMENTO -->
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+        <div class="card-body p-4">
+
+            <!-- CABEÇALHO -->
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Procedimentos do Orçamento
+                    </h5>
+
+                    <small class="text-muted">
+                        Adicione procedimentos clínicos ao orçamento
+                    </small>
+
+                </div>
+
+            </div>
+
+           <!-- FORM PROCEDIMENTO -->
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <div class="row g-2 align-items-end">
+
+        <!-- PROCEDIMENTO -->
+
+        <div class="col-md-3">
+
+            <label class="form-label fw-semibold">
+                Procedimento
+            </label>
+
+            {{ item_form.procedimento }}
+
+        </div>
+
+        <!-- TIPO LOCAL -->
+
+        <div class="col-md-2">
+
+            <label class="form-label fw-semibold">
+                Tipo
+            </label>
+
+            <select
+                name="tipo_local"
+                id="id_tipo_local"
+                class="form-select rounded-3">
+
+                <option value="dente">
+                    Dente
+                </option>
+
+                <option value="hemiarcada">
+                    Hemi Arcada
+                </option>
+
+                <option value="geral">
+                    Geral
+                </option>
+
+            </select>
+
+        </div>
+
+        <!-- DENTE -->
+
+        <div
+            class="col-md-2"
+            id="campo-dente">
+
+            <label class="form-label fw-semibold">
+                Dente
+            </label>
+
+            <select
+                name="dente"
+                id="campo-dente-select"
+                class="form-select rounded-3">
+
+                <option value="">
+                    Selecione
+                </option>
+
+                <!-- DENTIÇÃO PERMANENTE -->
+
+                <optgroup label="Superior Direito">
+
+                    <option value="18">18</option>
+                    <option value="17">17</option>
+                    <option value="16">16</option>
+                    <option value="15">15</option>
+                    <option value="14">14</option>
+                    <option value="13">13</option>
+                    <option value="12">12</option>
+                    <option value="11">11</option>
+
+                </optgroup>
+
+                <optgroup label="Superior Esquerdo">
+
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+
+                </optgroup>
+
+                <optgroup label="Inferior Esquerdo">
+
+                    <option value="31">31</option>
+                    <option value="32">32</option>
+                    <option value="33">33</option>
+                    <option value="34">34</option>
+                    <option value="35">35</option>
+                    <option value="36">36</option>
+                    <option value="37">37</option>
+                    <option value="38">38</option>
+
+                </optgroup>
+
+                <optgroup label="Inferior Direito">
+
+                    <option value="41">41</option>
+                    <option value="42">42</option>
+                    <option value="43">43</option>
+                    <option value="44">44</option>
+                    <option value="45">45</option>
+                    <option value="46">46</option>
+                    <option value="47">47</option>
+                    <option value="48">48</option>
+
+                </optgroup>
+
+                <!-- DENTIÇÃO DECÍDUA -->
+
+                <optgroup label="Decídua Superior Direita">
+
+                    <option value="55">55</option>
+                    <option value="54">54</option>
+                    <option value="53">53</option>
+                    <option value="52">52</option>
+                    <option value="51">51</option>
+
+                </optgroup>
+
+                <optgroup label="Decídua Superior Esquerda">
+
+                    <option value="61">61</option>
+                    <option value="62">62</option>
+                    <option value="63">63</option>
+                    <option value="64">64</option>
+                    <option value="65">65</option>
+
+                </optgroup>
+
+                <optgroup label="Decídua Inferior Esquerda">
+
+                    <option value="81">81</option>
+                    <option value="82">82</option>
+                    <option value="83">83</option>
+                    <option value="84">84</option>
+                    <option value="85">85</option>
+
+                </optgroup>
+
+                <optgroup label="Decídua Inferior Direita">
+
+                    <option value="71">71</option>
+                    <option value="72">72</option>
+                    <option value="73">73</option>
+                    <option value="74">74</option>
+                    <option value="75">75</option>
+
+                </optgroup>
+
+            </select>
+
+        </div>
+
+        <!-- FACE -->
+
+        <div
+            class="col-md-2"
+            id="campo-face">
+
+            <label class="form-label fw-semibold">
+                Face
+            </label>
+
+            <select
+                name="face"
+                class="form-select rounded-3">
+
+                <option value="">
+                    --
+                </option>
+
+                <!-- SIMPLES -->
+
+                <option value="O">O</option>
+                <option value="M">M</option>
+                <option value="D">D</option>
+                <option value="V">V</option>
+                <option value="L">L</option>
+                <option value="P">P</option>
+
+                <!-- COMPOSTAS -->
+
+                <option value="MO">MO</option>
+                <option value="DO">DO</option>
+                <option value="MOD">MOD</option>
+
+                <option value="MV">MV</option>
+                <option value="DV">DV</option>
+
+                <option value="ML">ML</option>
+                <option value="DL">DL</option>
+
+                <option value="OV">OV</option>
+                <option value="OL">OL</option>
+
+                <option value="VP">VP</option>
+                <option value="LP">LP</option>
+
+                <option value="MD">MD</option>
+
+            </select>
+
+        </div>
+
+                    <!-- QUANTIDADE -->
+
+<div class="col-md-1">
+
+    <label class="form-label fw-semibold">
+        Quantidade
+    </label>
+
+    {{ item_form.quantidade }}
+
+</div>
+
+<!-- BOTÃO -->
+
+<div class="col-md-2">
+
+    <div class="h-100 d-flex align-items-end">
+
+        <button
+            type="submit"
+            name="adicionar_item"
+            class="btn btn-primary w-100 rounded-pill shadow-sm">
+
+            <i class="fas fa-plus me-2"></i>
+
+            Adicionar
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+</form>
+
+<!-- =========================================
+FORMULÁRIO FINANCEIRO
+========================================= -->
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <!-- TABELA -->
+
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body p-4">
+
+            <table class="table align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Dente</th>
+
+                        <th>Face</th>
+
+                        <th>Procedimento</th>
+
+                        <th>Quantidade</th>
+
+                        <th>Valor</th>
+
+                        <th>Total</th>
+
+                        <th class="text-center">Status</th>
+
+                        <th class="text-end">Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in orcamento.itens.all %}
+
+                    <tr>
+
+                        <!-- DENTE -->
+
+                        <td>
+
+                            <span class="badge bg-light text-dark border">
+
+                                {{ item.dente|default:"--" }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- FACE -->
+
+                        <td>
+
+                            <span class="badge bg-primary rounded-pill px-3">
+
+                                {{ item.face|default:"--" }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- PROCEDIMENTO -->
+
+                        <td>
+
+                            <div class="fw-semibold">
+
+                                {{ item.procedimento.nome }}
+
+                            </div>
+
+                            <small class="text-muted">
+
+                                {{ item.procedimento.codigo|default:"Sem código" }}
+
+                            </small>
+
+                        </td>
+
+                        <!-- QUANTIDADE -->
+
+                        <td>
+
+                            {{ item.quantidade }}
+
+                        </td>
+
+                        <!-- VALOR -->
+
+                        <td>
+
+                            R$ {{ item.valor_unitario }}
+
+                        </td>
+
+                        <!-- TOTAL -->
+
+                        <td>
+
+                            <span class="fw-bold text-success">
+
+                                R$ {{ item.total }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- STATUS -->
+
+                        <td class="text-center">
+
+                            <span class="badge bg-warning text-dark rounded-pill px-3">
+
+                                Planejado
+
+                            </span>
+
+                        </td>
+
+                                        <!-- AÇÕES -->
+
+<td class="text-end">
+
+    <div class="d-flex justify-content-end gap-2">
+
+        <!-- EDITAR -->
+
+        <a href="{% url 'editar_item_orcamento' item.id %}"
+           class="btn btn-sm btn-light border rounded-circle"
+           title="Editar">
+
+            <i class="fas fa-edit text-primary"></i>
+
+        </a>
+
+        <!-- EXCLUIR -->
+
+        <a href="{% url 'excluir_item_orcamento' item.id %}"
+           class="btn btn-sm btn-light border rounded-circle"
+           title="Excluir">
+
+            <i class="fas fa-trash text-danger"></i>
+
+        </a>
+
+    </div>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+    <td colspan="8" class="text-center text-muted py-4">
+
+        Nenhum item adicionado.
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<!-- ==========================================================
+RESUMO FINANCEIRO
+========================================================== -->
+
+<div class="card border-0 shadow-sm rounded-4 mt-4">
+
+    <div class="card-header bg-light">
+
+        <h5 class="mb-0 fw-bold">
+
+            <i class="fas fa-wallet me-2 text-primary"></i>
+
+            Resumo Financeiro
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row g-4">
+
+            <!-- ==========================================================
+            CARD NEGOCIAÇÃO
+            =========================================================== -->
+
+            <div class="col-lg-6">
+
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                    <div class="card-header bg-primary text-white rounded-top-4">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="fas fa-handshake me-2"></i>
+
+                            Negociação
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- DESCONTO -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+
+                                Desconto
+
+                            </label>
+
+                            <div class="input-group">
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    name="desconto"
+                                    class="form-control"
+                                    value="{{ orcamento.desconto|default:'0.00' }}">
+
+                                <span class="input-group-text">
+
+                                    %
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ACRÉSCIMO -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+
+                                Acréscimo
+
+                            </label>
+
+                            <div class="input-group">
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    name="acrescimo"
+                                    class="form-control"
+                                    value="{{ orcamento.acrescimo|default:'0.00' }}">
+
+                                <span class="input-group-text">
+
+                                    %
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Valor do Desconto
+
+                            </span>
+
+                            <strong class="text-danger">
+
+                                R$ {{ orcamento.valor_desconto }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <span>
+
+                                Valor do Acréscimo
+
+                            </span>
+
+                            <strong class="text-primary">
+
+                                R$ {{ orcamento.valor_acrescimo }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+                        <!-- ==========================================================
+            CARD CONDIÇÃO DE PAGAMENTO
+            =========================================================== -->
+
+            <div class="col-lg-6">
+
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                    <div class="card-header bg-success text-white rounded-top-4">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="fas fa-credit-card me-2"></i>
+
+                            Condição de Pagamento
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- ENTRADA -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Entrada
+
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                name="entrada"
+                                class="form-control"
+                                value="{{ orcamento.entrada|default:'0.00' }}">
+
+                        </div>
+
+                        <!-- PARCELAS -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Parcelas
+
+                            </label>
+
+                            <input
+                                type="number"
+                                min="1"
+                                name="parcelas"
+                                class="form-control"
+                                value="{{ orcamento.parcelas|default:'1' }}">
+
+                        </div>
+
+                        <!-- FORMA DE PAGAMENTO -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Forma de Pagamento
+
+                            </label>
+
+                            <select
+                                name="forma_pagamento"
+                                class="form-select">
+
+                                <option value="pix"
+                                    {% if orcamento.forma_pagamento == 'pix' %}
+                                    selected
+                                    {% endif %}>
+                                    PIX
+                                </option>
+
+                                <option value="credito"
+                                    {% if orcamento.forma_pagamento == 'credito' %}
+                                    selected
+                                    {% endif %}>
+                                    Cartão Crédito
+                                </option>
+
+                                <option value="debito"
+                                    {% if orcamento.forma_pagamento == 'debito' %}
+                                    selected
+                                    {% endif %}>
+                                    Cartão Débito
+                                </option>
+
+                                <option value="dinheiro"
+                                    {% if orcamento.forma_pagamento == 'dinheiro' %}
+                                    selected
+                                    {% endif %}>
+                                    Dinheiro
+                                </option>
+
+                                <option value="boleto"
+                                    {% if orcamento.forma_pagamento == 'boleto' %}
+                                    selected
+                                    {% endif %}>
+                                    Boleto
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Saldo
+
+                            </span>
+
+                            <strong class="text-danger">
+
+                                R$ {{ orcamento.saldo }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <span>
+
+                                Valor da Parcela
+
+                            </span>
+
+                            <strong class="text-success">
+
+                                R$ {{ orcamento.valor_parcela }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+                <!-- ==========================================================
+        CARD TOTAL DO ORÇAMENTO
+        =========================================================== -->
+
+        <div class="card border-0 shadow-sm rounded-4 mt-4">
+
+            <div class="card-header bg-dark text-white rounded-top-4">
+
+                <h5 class="mb-0 fw-bold">
+
+                    <i class="fas fa-calculator me-2"></i>
+
+                    Total do Orçamento
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Subtotal
+
+                            </span>
+
+                            <strong>
+
+                                R$ {{ orcamento.subtotal }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Desconto
+
+                            </span>
+
+                            <strong class="text-danger">
+
+                                - R$ {{ orcamento.valor_desconto }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Acréscimo
+
+                            </span>
+
+                            <strong class="text-primary">
+
+                                + R$ {{ orcamento.valor_acrescimo }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Entrada
+
+                            </span>
+
+                            <strong>
+
+                                R$ {{ orcamento.entrada }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Saldo
+
+                            </span>
+
+                            <strong class="text-danger">
+
+                                R$ {{ orcamento.saldo }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+
+                                Parcelas
+
+                            </span>
+
+                            <strong>
+
+                                {{ orcamento.parcelas }}x
+
+                            </strong>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <span>
+
+                                Valor da Parcela
+
+                            </span>
+
+                            <strong class="text-success">
+
+                                R$ {{ orcamento.valor_parcela }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <h4 class="mb-0 fw-bold">
+
+                        TOTAL DO ORÇAMENTO
+
+                    </h4>
+
+                    <h3 class="mb-0 text-success fw-bold">
+
+                        R$ {{ orcamento.total }}
+
+                    </h3>
+
+                </div>
+
+                <div class="text-end mt-4">
+
+                    <button
+                        type="submit"
+                        name="salvar_financeiro"
+                        value="1"
+                        class="btn btn-success rounded-pill px-4">
+
+                        <i class="fas fa-save me-2"></i>
+
+                        Salvar Financeiro
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================================
+BOTÕES
+========================================================== -->
+
+<div class="mt-4 pt-3 border-top">
+
+    <div class="d-flex justify-content-end gap-3">
+
+        <a href="{% url 'odontograma' paciente.id %}"
+           class="btn btn-secondary rounded-pill px-4">
+
+            <i class="fas fa-arrow-left me-2"></i>
+
+            Voltar
+
+        </a>
+
+        {% if orcamento.status != 'aprovado' %}
+
+        <a href="{% url 'aprovar_orcamento' orcamento.id %}"
+           class="btn btn-primary rounded-pill px-4"
+           onclick="return confirm('Deseja aprovar este orçamento?')">
+
+            <i class="fas fa-check me-2"></i>
+
+            Aprovar Orçamento
+
+        </a>
+
+        {% else %}
+
+        <span class="btn btn-success rounded-pill px-4 disabled">
+
+            <i class="fas fa-check-circle me-2"></i>
+
+            Orçamento Aprovado
+
+        </span>
+
+        {% endif %}
+
+        <a href="{% url 'gerar_pdf_orcamento' orcamento.id %}"
+           target="_blank"
+           class="btn btn-danger rounded-pill px-4">
+
+            <i class="fas fa-file-pdf me-2"></i>
+
+            PDF
+
+        </a>
+
+    </div>
+
+</div>
+
+    
+
+            <script>
+
+                document.addEventListener('DOMContentLoaded', function () {
+
+                    const tipo = document.getElementById('id_tipo_local');
+
+                    const denteSelect = document.getElementById('campo-dente-select');
+
+                    const campoFace = document.getElementById('campo-face');
+
+                    const dentesOriginais = denteSelect.innerHTML;
+
+                    const hemiOptions = `
+
+                        <option value="">Selecione</option>
+
+                        <option value="sup_dir">Superior Esquerdo (18 a 14)</option>
+
+                        <option value="sup_centro">Superior Anterior (13 a 23)</option>
+
+                        <option value="sup_esq">Superior Direito (24 a 28)</option>
+
+                        <option value="inf_dir">Inferior Esquerdo (48 a 44)</option>
+
+                        <option value="inf_centro">Inferior Anterior (43 a 33)</option>
+
+                        <option value="inf_esq">Inferior Direito (34 a 38)</option>
+
+                    `;
+
+                    function atualizarCampos(){
+
+                        if(tipo.value=="dente"){
+
+                            denteSelect.innerHTML=dentesOriginais;
+
+                            campoFace.style.display="block";
+
+                        }
+
+                        else if(tipo.value=="hemiarcada"){
+
+                            denteSelect.innerHTML=hemiOptions;
+
+                            campoFace.style.display="none";
+
+                        }
+
+                        else{
+
+                            denteSelect.innerHTML='<option value="">Não se aplica</option>';
+
+                            campoFace.style.display="none";
+
+                        }
+
+                    }
+
+                    atualizarCampos();
+
+                    tipo.addEventListener("change", atualizarCampos);
+
+                });
+
+            </script>
+
+{% endblock %}

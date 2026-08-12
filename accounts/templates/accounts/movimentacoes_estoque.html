@@ -1,0 +1,268 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>
+            Movimentações de Estoque
+        </h1>
+
+        <a
+            href="{% url 'nova_movimentacao_estoque' %}"
+            class="btn btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            Nova Movimentação
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm mb-3">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Produto
+                        </label>
+
+                        <select
+                            name="produto"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            {% for produto in produtos %}
+
+                            <option value="{{ produto.id }}">
+
+                                {{ produto.nome }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Tipo
+                        </label>
+
+                        <select
+                            name="tipo"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="COMPRA">
+                                Compra
+                            </option>
+
+                            <option value="ENTRADA">
+                                Entrada
+                            </option>
+
+                            <option value="SAIDA">
+                                Saída
+                            </option>
+
+                            <option value="AJUSTE">
+                                Ajuste
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Data Inicial
+                        </label>
+
+                        <input
+                            type="date"
+                            name="data_inicial"
+                            class="form-control"
+                            value="{{ data_inicial|default:'' }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Data Final
+                        </label>
+
+                        <input
+                            type="date"
+                            name="data_final"
+                            class="form-control"
+                            value="{{ data_final|default:'' }}"
+                        >
+
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary me-2"
+                        >
+                            Filtrar
+                        </button>
+
+                        <a
+                            href="{% url 'movimentacoes_estoque' %}"
+                            class="btn btn-secondary"
+                        >
+                            Limpar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                            <th>Antes</th>
+                            <th>Depois</th>
+                            <th>Usuário</th>
+                            <th>Observação</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for movimentacao in movimentacoes %}
+
+                        <tr>
+
+                            <td>
+                                {{ movimentacao.criado_em|date:"d/m/Y H:i" }}
+                            </td>
+
+                            <td>
+                                {{ movimentacao.produto.nome }}
+                            </td>
+
+                            <td>
+
+                                {% if movimentacao.tipo == 'COMPRA' %}
+
+                                <span class="badge bg-primary">
+                                    Compra
+                                </span>
+
+                                {% elif movimentacao.tipo == 'ENTRADA' %}
+
+                                <span class="badge bg-success">
+                                    Entrada
+                                </span>
+
+                                {% elif movimentacao.tipo == 'SAIDA' %}
+
+                                <span class="badge bg-danger">
+                                    Saída
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Ajuste
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ movimentacao.quantidade }}
+                            </td>
+
+                            <td>
+                                {{ movimentacao.estoque_anterior }}
+                            </td>
+
+                            <td>
+                                {{ movimentacao.estoque_atual }}
+                            </td>
+
+                            <td>
+                                {{ movimentacao.usuario.get_full_name|default:movimentacao.usuario.username }}
+                            </td>
+
+                            <td>
+                                {{ movimentacao.observacao|default:"-" }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="8" class="text-center text-muted">
+
+                                Nenhuma movimentação encontrada.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

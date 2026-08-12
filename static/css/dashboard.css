@@ -1,0 +1,868 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+
+    background:#f5f7fb;
+
+    overflow-x:hidden;
+
+    color:#101828;
+    
+
+}
+
+
+/* LOGO */
+
+.logo-area{
+
+   padding:8px 6px 24px;
+
+}
+
+.logo-area img{
+
+    width:155px;
+
+    border-radius:14px;
+
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.page-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:28px;
+
+}
+
+.page-header h5{
+
+    font-size:16px;
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
+    color:#0f172a;
+
+}
+
+.page-header p{
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+/* =========================================
+DATA
+========================================= */
+
+.date-btn{
+
+    height:54px;
+
+    border:none;
+
+    padding:0 20px;
+
+    border-radius:16px;
+
+    background:#fff;
+
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+
+    color:#667085;
+
+    box-shadow:
+        0 2px 10px rgba(15,23,42,.08);
+
+}
+
+/* =========================================
+STATS
+========================================= */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap:22px;
+
+    margin-bottom:28px;
+
+}
+
+/* CARD */
+
+.stats-card{
+
+    background:#fff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:22px;
+
+    padding:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    min-height:118px;
+
+    transition:.2s;
+
+}
+
+.stats-card:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 4px 16px rgba(15,23,42,.06);
+
+}
+
+.stats-icon{
+
+    width:58px;
+
+    height:58px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#fff;
+
+    font-size:24px;
+
+    flex-shrink:0;
+
+}
+
+.stats-icon.blue{
+
+    background:linear-gradient(
+        135deg,
+        #60a5fa,
+        #2563eb
+    );
+
+}
+
+.stats-icon.green{
+
+    background:linear-gradient(
+        135deg,
+        #34d399,
+        #059669
+    );
+
+}
+
+.stats-icon.purple{
+
+    background:linear-gradient(
+        135deg,
+        #a78bfa,
+        #7c3aed
+    );
+
+}
+
+.stats-icon.orange{
+
+    background:linear-gradient(
+        135deg,
+        #fb923c,
+        #ea580c
+    );
+
+}
+
+.stats-card small{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:14px;
+
+    margin-bottom:4px;
+
+}
+
+.stats-card h3{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin:0 0 4px 0;
+
+}
+
+.success{
+
+    color:#16a34a;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+/* =========================================
+CONTENT GRID
+========================================= */
+
+.content-grid{
+
+    display:grid;
+
+    grid-template-columns: 2fr 1fr;
+
+    gap:24px;
+
+}
+
+/* =========================================
+CHART CARD
+========================================= */
+
+.chart-card{
+
+    background:#fff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:28px;
+
+    padding:26px;
+
+    box-shadow:
+        0 4px 16px rgba(15,23,42,.06);
+
+}
+
+/* HEADER */
+
+.card-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+    padding:0;
+
+    background:none;
+
+    border:none;
+
+}
+
+.card-header h5{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:#0f172a;
+
+}
+
+.card-header button{
+
+    height:42px;
+
+    padding:0 16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#f4f7fb;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+/* =========================================
+APPOINTMENTS
+========================================= */
+
+.appointments-card{
+
+    background:#fff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:28px;
+
+    padding:26px;
+
+    box-shadow:
+        0 4px 16px rgba(15,23,42,.06);
+
+    height:460px;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+/* ITEM */
+
+.appointment-item{
+
+    display:grid;
+
+    grid-template-columns:70px 1fr auto;
+
+    align-items:center;
+
+    gap:16px;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #edf1f7;
+
+}
+
+.appointment-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.appointment-item h6{
+
+    margin:0;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#0f172a;
+
+}
+
+.appointment-item p{
+
+    margin:0;
+
+    font-size:13px;
+
+    color:#64748b;
+
+}
+
+/* BADGES */
+
+.badge-confirmed{
+
+    background:#dcfce7;
+
+    color:#16a34a;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.badge-pending{
+
+    background:#fef3c7;
+
+    color:#d97706;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+
+/* =========================================
+RESPONSIVIDADE
+========================================= */
+
+@media (max-width:1200px){
+
+    /* GRID */
+
+    .stats-grid{
+
+        grid-template-columns: repeat(2,1fr);
+
+    }
+
+    .content-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+/* =========================================
+TABLET
+========================================= */
+
+@media (max-width:900px){
+
+    /* HEADER */
+
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:14px;
+
+    }
+
+    /* CARDS */
+
+    .stats-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .stats-card{
+
+        min-height:100px;
+
+    }
+
+    /* PERFIL */
+
+    .perfil-header{
+
+        flex-direction:column;
+
+        align-items:flex-start !important;
+
+        gap:18px;
+
+    }
+
+}
+
+/* =========================================
+MOBILE
+========================================= */
+
+@media (max-width:700px){
+
+    body{
+
+        overflow-x:hidden;
+
+    }
+
+    /* TABELAS */
+
+    .table-responsive{
+
+        overflow-x:auto;
+
+    }
+
+    table{
+
+        min-width:720px;
+
+    }
+
+    /* PERFIL PACIENTE */
+
+    .perfil-header{
+
+        flex-direction:column;
+
+        align-items:flex-start !important;
+
+    }
+
+    .perfil-actions{
+
+        width:100%;
+
+        display:flex;
+
+        gap:10px;
+
+    }
+
+    .perfil-actions .btn{
+
+        flex:1;
+
+    }
+
+    /* ABAS */
+
+    .nav-tabs{
+
+        overflow-x:auto;
+
+        flex-wrap:nowrap;
+
+        padding-bottom:4px;
+
+    }
+
+    .nav-tabs::-webkit-scrollbar{
+
+        height:4px;
+
+    }
+
+}
+
+/* =========================================
+PERFIL PACIENTE
+========================================= */
+
+.avatar-paciente{
+
+    width:90px;
+    min-width:90px;
+    height:90px;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+
+    font-size:34px;
+    font-weight:700;
+
+    flex-shrink:0;
+
+}
+
+/* HEADER PERFIL */
+
+.perfil-header-info h2{
+
+    margin-bottom:6px;
+
+}
+
+.perfil-header-info .badge{
+
+    font-size:12px;
+
+    padding:7px 12px;
+
+    border-radius:999px;
+
+}
+
+/* =========================================
+ABAS PERFIL
+========================================= */
+
+.nav-tabs{
+
+    border:none;
+
+    gap:10px;
+
+}
+
+.nav-tabs .nav-link{
+
+    border:none;
+
+    background:#f8fafc;
+
+    color:#64748b;
+
+    border-radius:12px;
+
+    padding:10px 18px;
+
+    font-weight:500;
+
+}
+
+.nav-tabs .nav-link.active{
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    color:#fff;
+
+}
+
+.info-card{
+
+    background:#f8fafc;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    height:100%;
+
+}
+
+.info-card h6{
+
+    font-size:13px;
+
+    color:#64748b;
+
+    margin-bottom:8px;
+
+}
+
+.info-card p{
+
+    margin:0;
+
+    font-weight:500;
+
+    color:#0f172a;
+
+}
+
+.empty-state{
+
+    min-height:220px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    color:#94a3b8;
+
+}
+
+.empty-state i{
+
+    font-size:42px;
+
+    margin-bottom:16px;
+
+}
+
+
+/* =========================================
+CHART RESPONSIVO
+========================================= */
+
+.chart-container{
+
+    position:relative;
+
+    width:100%;
+
+    height:320px;
+
+}
+
+.chart-container canvas{
+
+    width:100% !important;
+
+    height:100% !important;
+
+}
+
+/* =========================================
+MENU CLÍNICO
+========================================= */
+
+.menu-clinico-wrapper{
+
+    background:#fff;
+
+    padding:18px;
+
+    border-radius:22px;
+
+    margin:24px 0;
+
+    border:1px solid #eef2f7;
+
+    box-shadow:
+    0 4px 18px rgba(15,23,42,.05);
+
+}
+
+.menu-clinico{
+
+    display:flex;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+
+}
+
+.menu-clinico-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:14px 22px;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    color:#334155 !important;
+
+    text-decoration:none !important;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.menu-clinico-btn.active{
+
+    background:#2563eb;
+
+    color:#fff !important;
+
+}
+
+/* HOVER */
+
+.menu-clinico-btn:hover{
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    color:#fff !important;
+
+    text-decoration:none;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 10px 24px rgba(37,99,235,.18);
+
+}
+
+
+/* BOTÃO ATIVO */
+
+.menu-clinico-btn.active{
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    color:#fff;
+
+}
+
+
+
+/* =========================================
+RESPONSIVO MENU CLÍNICO
+========================================= */
+
+@media(max-width:768px){
+
+    .menu-clinico{
+
+        overflow-x:auto;
+
+        flex-wrap:nowrap;
+
+        padding-bottom:6px;
+
+    }
+
+    .menu-clinico::-webkit-scrollbar{
+
+        height:5px;
+
+    }
+
+    .menu-clinico-btn{
+
+        min-width:max-content;
+
+    }    
+
+}
+

@@ -1,0 +1,143 @@
+<div class="row g-4 mb-4">
+
+    <!-- =========================================
+    CONTAS A RECEBER
+    ========================================== -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon green">
+
+                <i class="bi bi-cash-stack"></i>
+
+            </div>
+
+            <div class="stats-content">
+
+                <span class="stats-label">
+
+                    Contas a Receber
+
+                </span>
+
+                <h3>
+
+                    R$ {{ receber_pendente|floatformat:2 }}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+    CONTAS A PAGAR
+    ========================================== -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon red">
+
+                <i class="bi bi-wallet2"></i>
+
+            </div>
+
+            <div class="stats-content">
+
+                <span class="stats-label">
+
+                    Contas a Pagar
+
+                </span>
+
+                <h3>
+
+                    R$ {{ pagar_pendente|floatformat:2 }}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+    SALDO EM CAIXA
+    ========================================== -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon blue">
+
+                <i class="bi bi-bank"></i>
+
+            </div>
+
+            <div class="stats-content">
+
+                <span class="stats-label">
+
+                    Saldo em Caixa
+
+                </span>
+
+                <h3>
+
+                    R$ {{ saldo_caixa|floatformat:2 }}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+    RESULTADO DO DIA
+    ========================================== -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon purple">
+
+                <i class="bi bi-graph-up-arrow"></i>
+
+            </div>
+
+            <div class="stats-content">
+
+                <span class="stats-label">
+
+                    Resultado do Dia
+
+                </span>
+
+                <h3>
+
+                    {% if lucro_hoje >= 0 %}
+                        R$ {{ lucro_hoje|floatformat:2 }}
+                    {% else %}
+                        - R$ {{ lucro_hoje|floatformat:2|cut:"-" }}
+                    {% endif %}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

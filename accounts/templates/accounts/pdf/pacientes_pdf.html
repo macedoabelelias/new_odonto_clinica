@@ -1,0 +1,167 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Pacientes
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+    <div class="acoes-pdf">
+
+        <button onclick="window.print()">
+
+            🖨️ Imprimir
+
+        </button>
+
+    </div>
+
+    {% include 'accounts/pdf/header_pdf.html' %}
+
+    <div class="card">
+
+        <h4>
+
+            Resumo do Relatório
+
+        </h4>
+
+        <table>
+
+            <tr>
+
+                <td width="40%">
+
+                    <strong>
+
+                        Total de Pacientes
+
+                    </strong>
+
+                </td>
+
+                <td>
+
+                    {{ pacientes|length }}
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h4>
+
+            Pacientes Encontrados
+
+        </h4>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Paciente</th>
+
+                    <th>WhatsApp</th>
+
+                    <th>Convênio</th>
+
+                    <th>Dentista</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for paciente in pacientes %}
+
+                <tr>
+
+                    <td>
+
+                        {{ paciente.nome }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.whatsapp|default:paciente.telefone }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.convenio }}
+
+                    </td>
+
+                    <td>
+
+                        {% if paciente.dentista %}
+
+                        {{ paciente.dentista.get_full_name|default:paciente.dentista.username }}
+
+                        {% else %}
+
+                        —
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.status }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="5" style="text-align:center;">
+
+                        Nenhum paciente encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+   {% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

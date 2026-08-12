@@ -1,0 +1,1526 @@
+icone-hemi{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- =========================================
+TOPO PACIENTE
+========================================= -->
+
+<div class="page-header mb-4">
+
+    <div>
+
+        <h4 class="paciente-nome">
+
+            {{ paciente.nome }}
+
+        </h4>
+
+        <p class="paciente-info">
+
+            Prontuário odontológico • {{ paciente.telefone }}
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+MENU CLÍNICO GLOBAL
+========================================= -->
+
+{% include 'accounts/components/menu_paciente.html' %}
+
+<!-- =========================================
+LAYOUT
+========================================= -->
+
+<div class="odontograma-layout">
+
+    <!-- ODONTOGRAMA -->
+
+    <div class="odontograma-wrapper">
+
+        <div class="odontograma-card">
+
+            <div class="odontograma-header">
+
+                <h6>
+                    Odontograma Clínico
+                </h6>
+
+                <p>
+                    Clique sobre um dente ou no botão "+ Novo" para registrar tratamentos gerais.
+                </p>
+
+            </div>
+
+            <div class="odontograma-box">
+
+
+                <!-- =========================================
+                PROCEDIMENTOS GERAIS
+                ========================================= -->
+
+                <div class="procedimentos-header">
+
+                    <h6>
+
+                        Procedimentos Gerais
+
+                    </h6>
+
+                    <button type="button" class="btn-add-geral" data-bs-toggle="modal"
+                        data-bs-target="#modalProcedimentoGeral">
+                        <i class="fa-solid fa-plus"></i>
+                        Novo
+                    </button>
+
+                </div>
+
+                <div class="procedimentos-gerais-wrapper">
+
+                    {% for item in itens_orcamento %}
+
+                    {% if item.procedimento.tipo == 'geral' or item.procedimento.tipo == 'hemiarcada' %}
+
+                    <div class="procedimento-geral-chip status-{{ item.status }}" data-id="{{ item.id }}">
+
+                        <img src="{% static 'img/procedimentos/full/' %}{{ item.procedimento.arquivo_icone|default:'default.png' }}"
+                            class="icone-geral" alt="{{ item.procedimento.nome }}">
+
+                        <span>
+
+                            {{ item.procedimento.nome }}
+
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- DENTIÇÃO PERMANENTE -->
+
+                <div class="secao-titulo">
+                    Dentição Permanente
+                </div>
+
+                <!-- SUPERIOR -->
+
+                <div class="arcada">
+
+                    {% for numero in superiores %}
+
+                    <div class="dente-box dente-{{ numero }}">
+
+                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="dente-img"
+                            data-dente="{{ numero }}" alt="Dente {{ numero }}">
+
+                        <div class="procedimentos-dente">
+
+                            {% for item in itens_orcamento %}
+
+                            {% if item.dente == numero %}
+
+                            {% if item.procedimento.tipo == 'dente' %}
+
+                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                                class="
+                                icone-procedimento-dente
+                                status-{{ item.status }}
+                                posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
+
+                                {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
+                                    sem-rotacao
+                                {% endif %}
+                            " data-id="{{ item.id }}" data-status="{{ item.status }}" title="{{ item.procedimento.nome }}">
+
+                            {% if item.face %}
+
+                            <span class="face-badge status-{{ item.status }}">
+
+                                {{ item.face }}
+
+                            </span>
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- INFERIOR -->
+
+                <div class="arcada inferior">
+
+                    {% for numero in inferiores %}
+
+                    <div class="dente-box dente-{{ numero }}">
+
+                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="dente-img inferior"
+                            data-dente="{{ numero }}" alt="Dente {{ numero }}">
+
+
+                        <div class="procedimentos-dente">
+
+                            {% for item in itens_orcamento %}
+
+                            {% if item.dente == numero %}
+
+                            {% if item.procedimento.tipo == 'dente' %}
+
+                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                                class="
+                                    icone-procedimento-dente
+                                    status-{{ item.status }}
+                                    posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
+
+                                    {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
+                                        sem-rotacao
+                                    {% endif %}
+                                " data-id="{{ item.id }}" data-status="{{ item.status }}"
+                                title="{{ item.procedimento.nome }}">
+
+                            {% if item.face %}
+
+                            <span class="face-badge status-{{ item.status }}">
+
+                                {{ item.face }}
+
+                            </span>
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="linha-divisao"></div>
+
+
+                <!-- DENTIÇÃO DECÍDUA -->
+
+                <div class="secao-titulo">
+                    Dentição Decídua
+                </div>
+
+
+                <!-- SUPERIOR -->
+
+                <div class="arcada decidua">
+
+                    {% for numero in dec_superiores %}
+
+                    <div class="dente-box dente-{{ numero }}">
+
+                        <!-- DENTE -->
+
+                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="dente-img deciduo"
+                            data-dente="{{ numero }}" alt="Dente {{ numero }}">
+
+                        <!-- PROCEDIMENTOS -->
+
+                        <div class="procedimentos-dente">
+
+                            {% for item in itens_orcamento %}
+
+                            {% if item.dente == numero %}
+
+                            {% if item.procedimento.tipo == 'dente' %}
+
+                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                                class="
+                                    icone-procedimento-dente
+                                    status-{{ item.status }}
+                                    posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
+
+                                    {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
+                                        sem-rotacao
+                                    {% endif %}
+                                " data-id="{{ item.id }}" data-status="{{ item.status }}" title="{{ item.procedimento.nome }}">
+                            {% if item.face %}
+
+                            <span class="face-badge status-{{ item.status }}">
+
+                                {{ item.face }}
+
+                            </span>
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- INFERIOR -->
+
+                <div class="arcada decidua inferior">
+
+                    {% for numero in dec_inferiores %}
+
+                    <div class="dente-box dente-{{ numero }}">
+
+                        <!-- DENTE -->
+
+                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="dente-img deciduo inferior"
+                            data-dente="{{ numero }}" alt="Dente {{ numero }}">
+
+                        <!-- PROCEDIMENTOS -->
+
+                        <div class="procedimentos-dente">
+
+                            {% for item in itens_orcamento %}
+
+                            {% if item.dente == numero %}
+
+                            {% if item.procedimento.tipo == 'dente' %}
+
+                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                                class="
+                                    icone-procedimento-dente
+                                    status-{{ item.status }}
+                                    posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
+
+                                    {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
+                                        sem-rotacao
+                                    {% endif %}
+                                " data-id="{{ item.id }}" data-status="{{ item.status }}" title="{{ item.procedimento.nome }}">
+                                {% if item.face %}
+
+                            <span class="face-badge status-{{ item.status }}">
+
+                                {{ item.face }}
+
+                            </span>
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div> <!-- odontograma-box -->
+
+        </div> <!-- odontograma-card -->
+
+    </div> <!-- odontograma-wrapper -->
+
+
+
+<!-- ========================================= -->
+<!-- PROCEDIMENTOS CLÍNICOS -->
+<!-- ========================================= -->
+
+<div class="timeline-container">
+
+    <div class="tratamento-card">
+
+        <div class="tratamento-header">
+
+            <h5>
+                🦷 Tratamento Atual
+            </h5>
+
+            <p>
+                Informações do tratamento em andamento
+            </p>
+
+        </div>
+
+        <div class="tratamento-body">
+
+            {% if tratamento %}
+
+                <h6 class="tratamento-titulo">
+
+                    {{ tratamento.titulo }}
+
+                </h6>
+
+                <div class="tratamento-info">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                    <strong>Início:</strong>
+
+                    {{ tratamento.data_inicio|date:"d/m/Y" }}
+
+                </div>
+
+                <div class="tratamento-status ativo">
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    <strong>Status:</strong>
+
+                    {{ tratamento.get_status_display }}
+
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+
+                    <div class="w-50">
+
+                        <form
+                            method="POST"
+                            action="{% url 'encerrar_tratamento' tratamento.id %}">
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger w-100 btn-tratamento"
+                                onclick="return confirm('Deseja realmente encerrar este tratamento?')">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                Encerrar
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="w-50">
+
+                        <form
+                            method="POST"
+                            action="{% url 'cancelar_tratamento' tratamento.id %}">
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger w-100 btn-tratamento"
+                                onclick="return confirm('Deseja realmente cancelar este tratamento?')">
+
+                                <i class="fa-solid fa-ban"></i>
+
+                                Cancelar
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-2">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary w-100 btn-tratamento"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalNovoTratamento">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Novo Tratamento
+
+                    </button>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning mb-3">
+
+                    Nenhum tratamento ativo.
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary w-100 btn-tratamento"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalNovoTratamento">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Novo Tratamento
+
+                </button>
+
+            {% endif %}
+
+        </div> <!-- tratamento-body -->
+
+    </div> <!-- tratamento-card -->
+
+    <div class="timeline-card">
+
+        <div class="timeline-header">
+
+            <h5>
+                🦷 Procedimentos Clínicos
+            </h5>
+
+            <p>
+                Gerenciamento dos procedimentos do paciente
+            </p>
+
+        </div>
+
+        <div class="timeline-body">
+
+            {% for item in itens_orcamento %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-top">
+
+                        <div class="timeline-procedimento">
+
+                            {% if item.procedimento.arquivo_icone %}
+
+                                <img
+                                    src="{% if item.procedimento.tipo == 'geral' or item.procedimento.tipo == 'hemiarcada' %}{% static 'img/procedimentos/full/' %}{{ item.procedimento.arquivo_icone }}{% else %}{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}{% endif %}"
+                                    class="timeline-icone"
+                                    alt="{{ item.procedimento.nome }}"
+                                >
+
+                            {% endif %}
+
+                            <strong>
+                                {{ item.procedimento.nome }}
+                            </strong>
+
+                        </div>
+
+                        <span>
+
+                            {% if item.orcamento.criado_em %}
+                                {{ item.orcamento.criado_em|date:"d/m/Y" }}
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    {% if item.dente %}
+
+                    <div class="timeline-dente">
+
+                        🦷 Dente {{ item.dente }}
+
+                    </div>
+
+                    {% endif %}
+
+                    {% if item.face %}
+
+                    <div class="timeline-dente">
+
+                        📍 Face {{ item.face }}
+
+                    </div>
+
+                    {% endif %}
+
+                    <div class="mt-3">
+
+                        <label class="timeline-label">
+
+                            Status
+
+                        </label>
+
+                        <select
+                            class="form-select form-select-sm status-procedimento"
+                            data-item="{{ item.id }}"
+                        >
+
+                            <option value="planejado"
+                                {% if item.status == 'planejado' %}selected{% endif %}>
+                                Planejado
+                            </option>
+
+                            <option value="existente"
+                                {% if item.status == 'existente' %}selected{% endif %}>
+                                Existente
+                            </option>
+
+                            <option value="andamento"
+                                {% if item.status == 'andamento' %}selected{% endif %}>
+                                Em andamento
+                            </option>
+
+                            <option value="realizado"
+                                {% if item.status == 'realizado' %}selected{% endif %}>
+                                Realizado
+                            </option>
+
+                            <option value="urgencia"
+                                {% if item.status == 'urgencia' %}selected{% endif %}>
+                                Urgência
+                            </option>
+
+                            <option value="cancelado"
+                                {% if item.status == 'cancelado' %}selected{% endif %}>
+                                Cancelado
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-timeline">
+
+                Nenhum procedimento cadastrado.
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <div class="historico-card">
+
+    <div class="historico-header">
+
+        <h5>
+
+            📚 Histórico
+
+        </h5>
+
+    </div>
+
+    <div class="historico-body">
+
+    {% for tratamento in historico_tratamentos %}
+
+        <div class="historico-item">
+
+            <strong>
+
+                {{ tratamento.titulo }}
+
+            </strong>
+
+            <br>
+
+            <small>
+
+                Início:
+                {{ tratamento.data_inicio|date:"d/m/Y" }}
+
+            </small>
+
+            <br>
+
+            <small>
+
+                Encerrado:
+                {{ tratamento.data_encerramento|date:"d/m/Y" }}
+
+            </small>
+
+        </div>
+
+    {% empty %}
+
+        <div class="historico-item">
+
+            Nenhum tratamento encerrado.
+
+        </div>
+
+        {% endfor %}
+
+</div>   <!-- historico-body -->
+
+</div>   <!-- historico-card -->
+
+</div>   <!-- timeline-container -->
+
+
+<!-- =========================================
+MODAL EVOLUÇÃO CLÍNICA
+========================================= -->
+
+<div class="modal fade" id="modalEvolucao" tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-evolucao">
+
+            <div class="modal-header border-0">
+
+                <div>
+
+                    <h5 class="modal-title">
+                        Cadastro de Procedimentos no Odontograma
+                    </h5>
+
+                    <p class="modal-subtitle">
+                        Registro clínico do odontograma
+                    </p>
+
+                </div>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+            </div>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+                    <!-- DENTE / FACE / STATUS -->
+
+                    <div class="row mb-4">
+
+                        <div class="col-md-3">
+
+                            <label class="anamnese-label">
+                                Dente
+                            </label>
+
+                            <input type="text" id="denteSelecionado" name="dente" class="anamnese-input" readonly>
+
+                        </div>
+
+                        <div class="col-md-5">
+
+                            <label class="anamnese-label">
+                                Face do Dente
+                            </label>
+
+                            <select name="face" class="anamnese-input">
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option value="V">
+                                    Vestibular (V)
+                                </option>
+
+                                <option value="L">
+                                    Lingual / Palatina (L)
+                                </option>
+
+                                <option value="M">
+                                    Mesial (M)
+                                </option>
+
+                                <option value="D">
+                                    Distal (D)
+                                </option>
+
+                                <option value="O">
+                                    Oclusal (O)
+                                </option>
+
+                                <option value="MV">
+                                    Mesio-Vestibular (MV)
+                                </option>
+
+                                <option value="DV">
+                                    Disto-Vestibular (DV)
+                                </option>
+
+                                <option value="ML">
+                                    Mesio-Lingual (ML)
+                                </option>
+
+                                <option value="DL">
+                                    Disto-Lingual (DL)
+                                </option>
+
+                                <option value="MO">
+                                    Mesio-Oclusal (MO)
+                                </option>
+
+                                <option value="DO">
+                                    Disto-Oclusal (DO)
+                                </option>
+
+                                <option value="MOD">
+                                    Mésio-Ocluso-Distal (MOD)
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="anamnese-label">
+                                Status
+                            </label>
+
+                            <select name="status" class="anamnese-input" required>
+
+                                <option value="planejado">
+                                    Planejado
+                                </option>
+
+                                <option value="existente">
+                                    Existente
+                                </option>
+
+                                <option value="andamento">
+                                    Em andamento
+                                </option>
+
+                                <option value="realizado">
+                                    Realizado
+                                </option>
+
+                                <option value="urgencia">
+                                    Urgência
+                                </option>
+
+                                <option value="cancelado">
+                                    Cancelado
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PROCEDIMENTO -->
+
+                    <!-- POSIÇÃO DO ÍCONE -->
+
+                    <div class="mb-4">
+
+                        <label class="anamnese-label">
+                            Posição do Ícone
+                        </label>
+
+                        <select name="posicao_icone" class="anamnese-input">                        
+
+                                <option value="">
+                                    Automático
+
+                                </option>
+
+                                <option value="coroa">
+                                    Coroa
+                                </option>
+
+                                <option value="raiz">
+                                    Raiz
+                                </option>
+
+                                <option value="centro">
+                                    Centro
+                                </option>
+
+                                <option value="oclusal">
+                                    Oclusal
+                                </option>
+
+                            </select>
+
+
+
+                        </select>
+
+                    </div>
+
+                    <!-- PROCEDIMENTO -->
+
+                    <div class="mb-4">
+
+                        <label class="anamnese-label">
+                            Procedimento
+                        </label>
+
+                        <select name="procedimento" class="anamnese-input" required>
+
+                            <option value="">
+                                Selecione um procedimento
+                            </option>
+
+                            {% regroup procedimentos by categoria as categorias %}
+
+                            {% for categoria in categorias %}
+
+                            <optgroup label="{{ categoria.grouper }}">
+
+                                {% for procedimento in categoria.list %}
+
+                                <option value="{{ procedimento.id }}">
+                                    {{ procedimento.nome }}
+                                </option>
+
+                                {% endfor %}
+
+                            </optgroup>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- DESCRIÇÃO -->
+
+                    <div>
+
+                        <label class="anamnese-label">
+                            Descrição
+                        </label>
+
+                        <textarea name="descricao" class="anamnese-textarea" rows="4"
+                            placeholder="Descreva o procedimento"></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0">
+
+                    <button type="button" class="btn-anamnese-outline" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-anamnese">
+                        Salvar Evolução
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+MODAL PROCEDIMENTO GERAL
+========================================= -->
+
+<div class="modal fade" id="modalProcedimentoGeral" tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-evolucao">
+
+            <div class="modal-header border-0">
+
+                <div>
+
+                    <h5 class="modal-title">
+                        Novo Procedimento Geral
+                    </h5>
+
+                    <p class="modal-subtitle">
+                        Procedimentos sem associação a um dente específico
+                    </p>
+
+                </div>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+            </div>
+
+            <form method="POST" action="{% url 'salvar_procedimento_geral' paciente.id %}">
+
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+                    <!-- STATUS -->
+
+                    <div class="mb-3">
+
+                        <label class="anamnese-label">
+                            Status
+                        </label>
+
+                        <select name="status" class="anamnese-input" required>
+
+                            <option value="planejado">
+                                Planejado
+                            </option>
+
+                            <option value="existente">
+                                Existente
+                            </option>
+
+                            <option value="andamento">
+                                Em andamento
+                            </option>
+
+                            <option value="realizado">
+                                Realizado
+                            </option>
+
+                            <option value="urgencia">
+                                Urgência
+                            </option>
+
+                            <option value="cancelado">
+                                Cancelado
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- PROCEDIMENTO -->
+
+                    <div class="mb-3">
+
+                        <label class="anamnese-label">
+                            Procedimento
+                        </label>
+
+                        <select name="procedimento" class="anamnese-input" required>
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            {% for procedimento in procedimentos %}
+
+                            {% if procedimento.tipo == 'geral' or procedimento.tipo == 'hemiarcada' %}
+
+                            <option value="{{ procedimento.id }}">
+                                {{ procedimento.nome }}
+                            </option>
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- DESCRIÇÃO -->
+
+                    <div>
+
+                        <label class="anamnese-label">
+                            Descrição
+                        </label>
+
+                        <textarea name="descricao" class="anamnese-textarea" rows="4"
+                            placeholder="Observações do procedimento"></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0">
+
+                    <button type="button" class="btn-anamnese-outline" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-anamnese">
+                        Salvar Procedimento
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- MENU STATUS PREMIUM -->
+
+<div id="menuStatus" class="menu-status">
+
+    <div class="status-item status-existente" data-status="existente">
+        Existente
+    </div>
+
+    <div class="status-item status-planejado" data-status="planejado">
+        Planejado
+    </div>
+
+    <div class="status-item status-andamento" data-status="andamento">
+        Em Andamento
+    </div>
+
+    <div class="status-item status-realizado" data-status="realizado">
+        Realizado
+    </div>
+
+    <div class="status-item status-cancelado" data-status="cancelado">
+        Cancelado
+    </div>
+
+</div>
+
+<!-- =========================================
+MODAL - NOVO TRATAMENTO
+========================================= -->
+
+<div class="modal fade"
+     id="modalNovoTratamento"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-white">
+
+                <h5 class="modal-title">
+
+                    <i class="fa-solid fa-notes-medical"></i>
+
+                    Novo Tratamento
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form
+                method="POST"
+                action="{% url 'novo_tratamento' paciente.id %}">
+
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Nome do Tratamento
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="titulo"
+                            class="form-control"
+                            placeholder="Ex.: Implantes Superiores"
+                            required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Observações
+
+                        </label>
+
+                        <textarea
+                            name="observacoes"
+                            rows="4"
+                            class="form-control"
+                            placeholder="Descrição inicial do tratamento..."></textarea>
+
+                    </div>
+
+                    <div class="alert alert-info mb-0">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        Ao salvar, este tratamento será definido como
+                        <strong>ATIVO</strong> e um novo orçamento será criado automaticamente.
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Salvar Tratamento
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    /* =========================================
+    SELEÇÃO DO DENTE
+    ========================================= */
+
+    document
+        .querySelectorAll('.dente-img')
+        .forEach(dente => {
+
+            dente.addEventListener('click', function () {
+
+                const numero = this.dataset.dente;
+
+                document.getElementById(
+                    'denteSelecionado'
+                ).value = numero;
+
+                const modal = new bootstrap.Modal(
+
+                    document.getElementById(
+                        'modalEvolucao'
+                    )
+
+                );
+
+                modal.show();
+
+            });
+
+        });
+
+
+    /* =========================================
+    PREVIEW DOS ÍCONES
+    ========================================= */
+
+    function atualizarPreviewIcone() {
+
+        const input =
+            document.getElementById('id_icone');
+
+        const preview =
+            document.getElementById('preview-icone');
+
+        if (!input || !preview) return;
+
+        const nomeIcone = input.value;
+
+        if (nomeIcone) {
+
+            preview.src =
+                `/static/img/procedimentos/full/${nomeIcone}`;
+
+            preview.style.display = 'block';
+
+            preview.onerror = function () {
+
+                preview.src =
+                    `/static/img/procedimentos/mini/${nomeIcone}`;
+
+            };
+
+        } else {
+
+            preview.style.display = 'none';
+
+        }
+
+    }
+
+    window.onload = atualizarPreviewIcone;
+
+
+    /* =========================================
+    MENU STATUS PREMIUM
+    ========================================= */
+
+    const menuStatus =
+        document.getElementById('menuStatus');
+
+    let procedimentoAtual = null;
+
+    document.addEventListener(
+        'contextmenu',
+        function (e) {
+
+            const elemento = e.target.closest(
+                '.icone-procedimento-dente, .procedimento-geral-chip'
+            );
+
+            if (!elemento) return;
+
+            e.preventDefault();
+
+            procedimentoAtual = elemento.dataset.id;
+
+            menuStatus.style.display = 'block';
+
+            const larguraMenu = 190;
+            const alturaMenu = 230;
+
+            let posX = e.pageX - (larguraMenu / 2);
+            let posY = e.pageY + 15;
+
+            if (
+                posY + alturaMenu >
+                window.innerHeight + window.scrollY
+            ) {
+                posY = e.pageY - alturaMenu - 15;
+            }
+
+            if (posX < 10) posX = 10;
+
+            if (
+                posX + larguraMenu >
+                window.innerWidth
+            ) {
+                posX =
+                    window.innerWidth -
+                    larguraMenu -
+                    10;
+            }
+
+            if (posY < 10) posY = 10;
+
+            menuStatus.style.left = posX + 'px';
+            menuStatus.style.top = posY + 'px';
+
+        }
+    );
+
+
+    /* ALTERAR STATUS */
+
+    document
+        .querySelectorAll('.status-item')
+        .forEach(item => {
+
+            item.addEventListener(
+                'click',
+                function () {
+
+                    const status =
+                        this.dataset.status;
+
+                    fetch(
+
+                        `/procedimento/${procedimentoAtual}/status/`,
+
+                        {
+
+                            method: 'POST',
+
+                            headers: {
+
+                                'Content-Type': 'application/json',
+
+                                'X-CSRFToken':
+                                    '{{ csrf_token }}'
+
+                            },
+
+                            body: JSON.stringify({
+
+                                status: status
+
+                            })
+
+                        }
+
+                    )
+
+                    .then(response => response.json())
+
+                    .then(data => {
+
+                        location.reload();
+
+                    });
+
+                }
+
+            );
+
+        });
+
+
+    /* FECHAR MENU */
+
+    document.addEventListener(
+        'click',
+        function () {
+
+            menuStatus.style.display = 'none';
+
+        }
+    );
+
+
+    /* =========================================
+    IGUALAR ALTURA DOS CARDS
+    ========================================= */
+
+    function igualarAlturaCards() {
+
+        const odontograma =
+            document.querySelector('.odontograma-card');
+
+        const timeline =
+            document.querySelector('.timeline-card');
+
+        if (!odontograma || !timeline) return;
+
+        // timeline.style.height =
+        //     odontograma.offsetHeight + 'px';
+
+    }
+
+    window.addEventListener(
+        'load',
+        igualarAlturaCards
+    );
+
+    window.addEventListener(
+        'resize',
+        igualarAlturaCards
+    );
+
+    /* =========================================
+ALTERAÇÃO DE STATUS PELO CARD
+========================================= */
+
+document.querySelectorAll('.status-procedimento').forEach(select => {
+
+    select.addEventListener('change', function () {
+
+        const itemId = this.dataset.item;
+
+        const status = this.value;
+
+        fetch(`/procedimento/${itemId}/status/`, {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type': 'application/json',
+
+                'X-CSRFToken': '{{ csrf_token }}'
+
+            },
+
+            body: JSON.stringify({
+
+                status: status
+
+            })
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if(data.sucesso){
+
+                location.reload();
+
+            }else{
+
+                alert('Erro ao atualizar o status.');
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

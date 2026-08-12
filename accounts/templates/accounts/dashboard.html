@@ -1,0 +1,520 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+
+<style>
+
+    .stats-icon.red {
+
+        background: linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+        color: #fff;
+
+    }
+
+
+/* =========================================
+   ÚLTIMAS MOVIMENTAÇÕES
+========================================= */
+
+.caixa-table {
+
+    width: 100%;
+    font-size: 11px;
+
+}
+
+.caixa-table thead th {
+
+    font-size: 11px;
+    font-weight: 600;
+    padding: 8px 6px;
+
+}
+
+.caixa-table tbody td {
+
+    font-size: 11px;
+    padding: 8px 6px;
+    vertical-align: middle;
+
+}
+
+.caixa-table .badge {
+
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 20px;
+
+}
+
+.caixa-table .valor {
+
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+
+}
+
+.caixa-table .descricao {
+
+    white-space: nowrap;
+
+}
+
+.caixa-table .data {
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================
+   TABELAS DO DASHBOARD
+========================================= */
+
+.dashboard-table {
+
+    font-size: 13px;
+
+}
+
+.dashboard-table thead th {
+
+    font-size: 13px;
+    font-weight: 600;
+
+}
+
+.dashboard-table tbody td {
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================
+   SCROLL DOS CARDS
+========================================= */
+
+.dashboard-scroll {
+
+    max-height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+}
+
+
+/* =========================================
+   SEGUNDA LINHA DO DASHBOARD
+========================================= */
+
+.content-grid-bottom {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 24px;
+
+    align-items: stretch;
+
+}
+
+
+/* =========================================
+   TERCEIRA LINHA DO DASHBOARD
+========================================= */
+
+.dashboard-row-3 {
+
+    display: grid;
+
+    grid-template-columns: 2fr 1fr 1fr;
+
+    gap: 24px;
+
+    align-items: start;
+
+}
+
+.dashboard-row-3 > div {
+
+    height: auto;
+
+}
+
+
+/* =========================================
+   CARD DE ANIVERSARIANTES
+========================================= */
+
+.birthday-card {
+
+    background: #fff;
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.birthday-card .card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+}
+
+.birthday-card .card-header h5 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #111827;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+.birthday-card .card-header i {
+
+    color: #f59e0b;
+
+    font-size: 18px;
+
+}
+
+.birthday-empty {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 120px;
+
+    color: #6c757d;
+
+    font-size: 14px;
+
+    text-align: center;
+
+}
+
+
+/* =========================================
+   ANIVERSARIANTES
+========================================= */
+
+.birthday-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+.birthday-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid #edf2f7;
+
+}
+
+.birthday-item:last-child {
+
+    border-bottom: none;
+
+}
+
+.birthday-date {
+
+    width: 55px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+}
+
+.birthday-info {
+
+    flex: 1;
+
+    margin-left: 10px;
+
+}
+
+.birthday-info strong {
+
+    display: block;
+
+    font-size: 14px;
+
+    color: #111827;
+
+}
+
+.birthday-info small {
+
+    font-size: 12px;
+
+    color: #6b7280;
+
+}
+
+.birthday-icon {
+
+    font-size: 18px;
+
+}
+
+</style>
+
+
+<!-- =========================================
+     CSS PRINCIPAL
+========================================= -->
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/dashboard.css' %}"
+>
+
+
+<!-- =========================================
+     CSS POR PERFIL
+========================================= -->
+
+{% if dashboard_tipo == "secretaria" %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/secretaria.css' %}"
+>
+
+{% elif dashboard_tipo == "dentista" %}
+
+<!-- Futuramente:
+<link
+    rel="stylesheet"
+    href="{% static 'css/dentista.css' %}"
+>
+-->
+
+{% elif dashboard_tipo == "acd" %}
+
+<!-- Futuramente:
+<link
+    rel="stylesheet"
+    href="{% static 'css/acd.css' %}"
+>
+-->
+
+{% endif %}
+
+
+<!-- =========================================
+     CHART.JS
+========================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =========================================
+     DASHBOARD DO DENTISTA
+========================================= -->
+
+{% if dashboard_tipo == "dentista" %}
+
+    {% include "accounts/dashboard/dentista/_cards.html" %}
+
+    {% include "accounts/dashboard/dentista/_content_grid.html" %}
+
+    {% include "accounts/dashboard/dentista/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD DA SECRETÁRIA
+========================================= -->
+
+{% elif dashboard_tipo == "secretaria" %}
+
+    {% include "accounts/dashboard/secretaria/_cards.html" %}
+
+    {% include "accounts/dashboard/secretaria/_content_grid.html" %}
+
+    {% include "accounts/dashboard/secretaria/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD DA ACD
+========================================= -->
+
+{% elif dashboard_tipo == "acd" %}
+
+    {% include "accounts/dashboard/acd/_cards.html" %}
+
+    {% include "accounts/dashboard/acd/_content_grid.html" %}
+
+    {% include "accounts/dashboard/acd/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD DA CONTABILIDADE
+========================================= -->
+
+{% elif dashboard_tipo == "contabilidade" %}
+
+    {% include "accounts/dashboard/contabilidade/_cards.html" %}
+
+    {% include "accounts/dashboard/contabilidade/_content_grid.html" %}
+
+    {% include "accounts/dashboard/contabilidade/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD DO MARKETING
+========================================= -->
+
+{% elif dashboard_tipo == "marketing" %}
+
+    {% include "accounts/dashboard/marketing/_cards.html" %}
+
+    {% include "accounts/dashboard/marketing/_charts.html" %}
+
+    {% include "accounts/dashboard/marketing/_content_grid.html" %}
+
+    {% include "accounts/dashboard/marketing/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD DO GESTOR
+========================================= -->
+
+{% elif dashboard_tipo == "gestor" %}
+
+    {% include "accounts/dashboard/gestor/_cards.html" %}
+
+    {% include "accounts/dashboard/gestor/_charts.html" %}
+
+    {% include "accounts/dashboard/gestor/_content_grid.html" %}
+
+    {% include "accounts/dashboard/gestor/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD DA AUDITORIA
+========================================= -->
+
+{% elif dashboard_tipo == "auditoria" %}
+
+    {% include "accounts/dashboard/auditoria/_cards.html" %}
+
+    {% include "accounts/dashboard/auditoria/_content_grid.html" %}
+
+    {% include "accounts/dashboard/auditoria/_content_bottom.html" %}
+
+
+
+<!-- =========================================
+     DASHBOARD ADMINISTRADOR
+     / PERFIL PADRÃO
+========================================= -->
+
+{% else %}
+
+    {% include "accounts/dashboard/ativos/_cards.html" %}
+
+    {% include "accounts/dashboard/ativos/_content_grid.html" %}
+
+    {% include "accounts/dashboard/ativos/_content_bottom.html" %}
+
+{% endif %}
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+
+<!-- =========================================
+     GRÁFICOS - CONTABILIDADE
+========================================= -->
+
+{% if dashboard_tipo == "contabilidade" %}
+
+    {% include "accounts/dashboard/contabilidade/_charts.html" %}
+
+
+<!-- =========================================
+     GRÁFICOS - MARKETING
+========================================= -->
+
+{% elif dashboard_tipo == "marketing" %}
+
+    {% include "accounts/dashboard/marketing/_charts_js.html" %}
+
+
+<!-- =========================================
+     GRÁFICOS - GESTOR
+========================================= -->
+
+{% elif dashboard_tipo == "gestor" %}
+
+    {% include "accounts/dashboard/gestor/_charts_js.html" %}
+
+{% endif %}
+
+
+{% endblock %}

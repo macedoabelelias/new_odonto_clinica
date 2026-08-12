@@ -1,0 +1,121 @@
+<div class="stats-grid">
+
+    {% if dashboard.mostrar_pacientes %}
+    <div class="stats-card">
+        <div class="stats-icon blue">
+            <i class="bi bi-people-fill"></i>
+        </div>
+
+        <div>
+            <small>Pacientes Ativos</small>
+            <h3>{{ total_pacientes }}</h3>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if dashboard.mostrar_receber %}
+<div class="stats-card">
+    <div class="stats-icon green">
+        <i class="bi bi-cash-coin"></i>
+    </div>
+
+    <div>
+        <small>Minha Comissão</small>
+        <h3>R$ {{ minha_comissao|floatformat:2 }}</h3>
+    </div>
+</div>
+{% endif %}
+
+    <!-- Minha Produção -->
+<div class="stats-card">
+
+    <div class="stats-icon orange">
+        <i class="bi bi-graph-up-arrow"></i>
+    </div>
+
+    <div class="w-100">
+
+        <small>Minha Produção</small>
+
+        <h3>R$ {{ minha_producao|floatformat:2 }}</h3>
+
+        <small class="text-muted">
+
+    Meta: R$ {{ minha_meta|floatformat:2 }}
+     {{ meu_percentual }}%
+
+</small>
+
+<div class="progress mt-2" style="height:6px;">
+
+    <div
+
+        class="progress-bar
+
+        {% if meu_percentual < 40 %}
+
+            bg-danger
+
+        {% elif meu_percentual < 80 %}
+
+            bg-warning
+
+        {% else %}
+
+            bg-success
+
+        {% endif %}"
+
+        role="progressbar"
+
+        style="width:{{ meu_percentual }}%;"
+
+        aria-valuenow="{{ meu_percentual }}"
+
+        aria-valuemin="0"
+
+        aria-valuemax="100">
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+    <!-- Minha Posição -->
+    <div class="stats-card">
+        <div class="stats-icon purple">
+            <i class="bi bi-trophy-fill"></i>
+        </div>
+
+        <div>
+            <small>Minha Posição</small>
+
+            <h3>
+                {% if minha_posicao %}
+                    {{ minha_posicao }}º Lugar
+                {% else %}
+                    -
+                {% endif %}
+            </h3>
+
+            <small class="text-muted">
+                Entre {{ total_dentistas }} dentistas
+            </small>
+
+            <div class="progress mt-2" style="height:6px;">
+                <div
+                    class="progress-bar bg-warning"
+                    role="progressbar"
+                    style="width:{{ barra_percentual }}%;"
+                    aria-valuenow="{{ barra_percentual }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

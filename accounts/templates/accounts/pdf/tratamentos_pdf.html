@@ -1,0 +1,215 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Tratamentos
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+{% include 'accounts/pdf/header_pdf.html' %}
+    
+<div class="card">
+
+    <h4>
+
+        Resumo do Relatório
+
+    </h4>
+
+    <table>
+
+        <tr>
+
+            <td width="40%">
+
+                <strong>
+
+                    Total de Tratamentos
+
+                </strong>
+
+            </td>
+
+            <td>
+
+                {{ total_tratamentos }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>
+
+                    Tratamentos Ativos
+
+                </strong>
+
+            </td>
+
+            <td>
+
+                {{ tratamentos_ativos }}
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                <strong>
+
+                    Tratamentos Encerrados
+
+                </strong>
+
+            </td>
+
+            <td>
+
+                {{ tratamentos_encerrados }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+    <div class="card">
+
+    <h4>
+
+        Tratamentos Encontrados
+
+    </h4>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Paciente</th>
+
+                <th>Tratamento</th>
+
+                <th>Data Início</th>
+
+                <th>Data Encerramento</th>
+
+                <th>Status</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for tratamento in tratamentos %}
+
+            <tr>
+
+                <td>
+
+                    {{ tratamento.paciente.nome }}
+
+                </td>
+
+                <td>
+
+                    {{ tratamento.titulo }}
+
+                </td>
+
+                <td>
+
+                    {{ tratamento.data_inicio|date:"d/m/Y" }}
+
+                </td>
+
+                <td>
+
+                    {% if tratamento.data_encerramento %}
+
+                        {{ tratamento.data_encerramento|date:"d/m/Y" }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if tratamento.status == "ATIVO" %}
+
+                        Ativo
+
+                    {% else %}
+
+                        Encerrado
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="5" style="text-align:center;">
+
+                    Nenhum tratamento encontrado.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+   {% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

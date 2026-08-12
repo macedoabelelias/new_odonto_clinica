@@ -1,0 +1,133 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Funcionários do Perfil
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4 class="mb-0">
+
+                <i class="bi bi-people-fill me-2"></i>
+
+                Funcionários do Perfil
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <h5>
+
+                Perfil:
+
+                <strong>{{ perfil.nome }}</strong>
+
+            </h5>
+
+            <hr>
+
+            <table class="table table-hover">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Nome</th>
+
+                        <th>Usuário</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for funcionario in funcionarios %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ funcionario.usuario.get_full_name|default:funcionario.usuario.username }}
+
+                        </td>
+
+                        <td>
+
+                            {{ funcionario.usuario.username }}
+
+                        </td>
+
+                        <td>
+
+                            {% if funcionario.ativo %}
+
+                                <span class="badge bg-success">
+
+                                    Ativo
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Inativo
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="3" class="text-center text-muted">
+
+                            Nenhum funcionário vinculado a este perfil.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="card-footer text-end">
+
+            <a
+
+                href="{% url 'editar_perfil' perfil.id %}"
+
+                class="btn btn-secondary">
+
+                Voltar
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

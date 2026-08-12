@@ -1,0 +1,124 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="mb-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Receitas
+            </h2>
+
+            <p class="text-muted mb-0">
+                Receitas emitidas para {{ paciente.nome }}
+            </p>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'perfil_paciente' paciente.id %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Voltar
+            </a>
+
+            <a
+                href="{% url 'nova_receita' paciente.id %}"
+                class="btn btn-primary"
+            >
+                Nova Receita
+            </a>
+
+            <a
+                href="{% url 'modelos_receita' %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-journal-medical"></i>
+                Modelos de Receita
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<table class="table">
+
+    <thead>
+
+        <tr>
+
+            <th>Medicamento</th>
+            <th>Quantidade</th>
+            <th>Data</th>
+            <th width="220">Ações</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for receita in receitas %}
+
+        <tr>
+
+            <td>{{ receita.medicamento }}</td>
+
+            <td>{{ receita.quantidade }}</td>
+
+            <td>{{ receita.criado_em|date:"d/m/Y" }}</td>
+
+            <td>
+
+                <a
+                    href="{% url 'editar_receita' receita.id %}"
+                    target="_blank"
+                    class="btn btn-sm btn-primary"
+                >
+                    Editar
+                </a>
+
+                <a
+                    href="{% url 'imprimir_receita' receita.id %}"
+                    target="_blank"
+                    class="btn btn-sm btn-success"
+                >
+                    PDF
+                </a>
+
+                <a
+                    href="{% url 'excluir_receita' receita.id %}"
+                    class="btn btn-sm btn-danger"
+                >
+                    Excluir
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="4">
+                Nenhuma receita cadastrada.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

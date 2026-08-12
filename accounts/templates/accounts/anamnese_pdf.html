@@ -1,0 +1,513 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+<meta charset="utf-8">
+
+<title>Ficha de Anamnese</title>
+
+<style>
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    max-width:820px;
+
+    margin:0 auto;
+
+    padding:20px;
+
+    color:#333;
+
+}
+
+.header{
+
+    display:grid;
+
+    grid-template-columns:
+        180px
+        1fr
+        240px;
+
+    gap:20px;
+
+    align-items:center;
+
+    border-bottom:3px solid #0d6efd;
+
+    padding-bottom:15px;
+
+    margin-bottom:20px;
+
+}
+
+.logo{
+
+    width:170px;
+
+    max-height:90px;
+
+    object-fit:contain;
+
+}
+
+.header-centro{
+
+    text-align:center;
+
+}
+
+.header-centro h2{
+
+    margin:0;
+
+    color:#0d6efd;
+
+    font-size:24px;
+
+}
+
+.header-centro p{
+
+    margin-top:8px;
+
+    color:#64748b;
+
+    font-size:13px;
+
+}
+
+.header-direita{
+
+    font-size:12px;
+
+    text-align:right;
+
+    line-height:1.6;
+
+}
+
+.card{
+
+    border:1px solid #dbe2ea;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+}
+
+.card h4{
+
+    margin-top:0;
+
+    margin-bottom:12px;
+
+    color:#0f172a;
+
+}
+
+.dados-paciente{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:12px;
+
+}
+
+.campo{
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:8px;
+
+    padding:10px;
+
+}
+
+.campo strong{
+
+    display:block;
+
+    font-size:11px;
+
+    color:#64748b;
+
+    text-transform:uppercase;
+
+    margin-bottom:4px;
+
+}
+
+.resumo{
+
+    background:#eff6ff;
+
+    border-left:4px solid #2563eb;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    line-height:1.6;
+
+}
+
+.assinaturas{
+
+    margin-top:50px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:40px;
+
+}
+
+.assinatura{
+
+    width:45%;
+
+    text-align:center;
+
+}
+
+.linha{
+
+    border-top:1px solid #000;
+
+    margin-bottom:6px;
+
+}
+
+.rodape{
+
+    margin-top:30px;
+
+    border-top:1px solid #e5e7eb;
+
+    padding-top:10px;
+
+    text-align:center;
+
+    font-size:11px;
+
+    color:#64748b;
+
+}
+
+.acoes-pdf{
+
+    position:fixed;
+
+    top:15px;
+
+    right:15px;
+
+    z-index:999;
+
+}
+
+.acoes-pdf button{
+
+    background:#0d6efd;
+
+    color:#fff;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.acoes-pdf button:hover{
+
+    opacity:.9;
+
+}
+
+@media print{
+
+    .acoes-pdf{
+
+        display:none;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- CABEÇALHO -->
+
+<div class="header">
+
+<div>
+
+    {% if config.logo %}
+
+        <img
+            src="{{ config.logo.url }}"
+            class="logo"
+        >
+
+    {% endif %}
+
+</div>
+
+<div class="header-centro">
+
+    <h2>
+
+        FICHA DE ANAMNESE
+
+    </h2>
+
+    <p>
+
+        Documento Clínico Odontológico
+
+    </p>
+
+</div>
+
+<div class="header-direita">
+
+    <strong>
+
+        {{ config.nome_clinica }}
+
+    </strong>
+
+    <br>
+
+    CNPJ:
+    {{ config.cnpj }}
+
+    <br>
+
+    CRO:
+    {{ config.cro }}
+
+</div>
+
+</div>
+
+<!-- DADOS PACIENTE -->
+
+<div class="card">
+
+<h4>
+
+    Dados do Paciente
+
+</h4>
+
+<div class="dados-paciente">
+
+    <div class="campo">
+
+        <strong>Nome</strong>
+
+        {{ paciente.nome }}
+
+    </div>
+
+    <div class="campo">
+
+        <strong>CPF</strong>
+
+        {{ paciente.cpf }}
+
+    </div>
+
+    <div class="campo">
+
+        <strong>Telefone</strong>
+
+        {{ paciente.telefone }}
+
+    </div>
+
+    <div class="campo">
+
+        <strong>Convênio</strong>
+
+        {{ paciente.convenio }}
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- RESUMO CLÍNICO -->
+
+<div class="card">
+
+<h4>
+
+    Resumo Clínico
+
+</h4>
+
+<div class="resumo">
+
+    {{ resumo_clinico|default:"Nenhuma condição clínica relevante informada." }}
+
+</div>
+
+</div>
+
+<!-- QUEIXA PRINCIPAL -->
+
+<div class="card">
+
+<h4>
+
+    Queixa Principal
+
+</h4>
+
+{{ anamnese.queixa_principal|linebreaks }}
+
+</div>
+
+<!-- OBSERVAÇÕES -->
+
+<div class="card">
+
+<h4>
+
+    Observações Gerais
+
+</h4>
+
+{{ anamnese.observacoes|linebreaks }}
+
+</div>
+
+<!-- ASSINATURAS -->
+
+<div class="assinaturas">
+
+<div class="assinatura">
+
+    <div class="linha"></div>
+
+    <strong>
+
+        {{ paciente.nome }}
+
+    </strong>
+
+    <br>
+
+    Paciente / Responsável
+
+</div>
+
+<div class="assinatura">
+
+    <div class="linha"></div>
+
+    <strong>
+
+        Cirurgião Dentista
+
+    </strong>
+
+    <br>
+
+    CRO:
+    {{ config.cro }}
+
+</div>
+
+</div>
+
+<!-- RODAPÉ -->
+
+<div class="rodape">
+
+<strong>
+
+    {{ config.nome_clinica }}
+
+</strong>
+
+<br>
+
+{{ config.endereco }},
+{{ config.numero }}
+
+{% if config.bairro %}
+    - {{ config.bairro }}
+{% endif %}
+
+<br>
+
+{{ config.cidade }}/{{ config.estado }}
+
+{% if config.cep %}
+    - CEP {{ config.cep }}
+{% endif %}
+
+<br>
+
+{{ config.telefone }}
+
+{% if config.whatsapp %}
+    | WhatsApp: {{ config.whatsapp }}
+{% endif %}
+
+{% if config.email %}
+    | {{ config.email }}
+{% endif %}
+
+</div>
+
+<div class="acoes-pdf">
+
+    <button onclick="window.print()">
+
+        🖨️ Imprimir
+
+    </button>
+
+</div>
+
+</body>
+
+</html>

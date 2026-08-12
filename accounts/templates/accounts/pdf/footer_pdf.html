@@ -1,0 +1,34 @@
+<div class="rodape-pdf">
+
+    <div>
+
+        <strong>
+
+            {{ config.nome_clinica }}
+
+        </strong>
+
+    </div>
+
+    <div>
+
+        {% if config.email %}
+
+            {{ config.email }}
+
+        {% endif %}
+
+    </div>
+
+    <div>
+
+        {% if config.whatsapp %}
+
+            WhatsApp:
+            {{ config.whatsapp }}
+
+        {% endif %}
+
+    </div>
+
+</div>

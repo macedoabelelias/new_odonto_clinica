@@ -1,0 +1,436 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+
+    width:100%;
+    min-height:100vh;
+
+    background:#edf2f8;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+
+}
+
+/* =========================================
+   CONTAINER
+========================================= */
+
+.login-container{
+
+    width:1180px;
+    height:600px;
+
+    background:#fff;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    display:flex;
+
+    box-shadow:
+    0 15px 45px rgba(15,23,42,.08);
+
+}
+
+/* =========================================
+   LADO ESQUERDO
+========================================= */
+.login-left{
+
+    width:52%;
+
+    position:relative;
+
+    background:url('/static/img/bg-dental.jpg');
+
+    background-size:cover;
+    background-position:center;
+
+    padding:38px;
+
+    display:flex;
+    align-items:center;
+
+}
+
+/* OVERLAY */
+
+.overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:linear-gradient(
+        135deg,
+        rgba(7,35,88,.78),
+        rgba(24,94,224,.62)
+    );
+
+}
+
+/* CONTEÚDO */
+
+.left-content{
+
+    position:relative;
+
+    z-index:10;
+
+    max-width:460px;
+
+    color:#fff;
+
+}
+
+/* LOGO */
+
+.logo{
+
+    width:240px;
+
+    margin-bottom:30px;
+
+    border-radius:22px;
+
+    padding:8px;
+
+    background:rgba(255,255,255,.06);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    overflow:hidden;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.25);
+
+}
+
+/* TITULO */
+
+.hero-text h1{
+
+    font-size:42px;
+
+    line-height:1.15;
+
+    font-weight:700;
+
+    margin-bottom:18px;
+
+}
+
+.hero-text span{
+
+    color:#66A3FF;
+
+}
+
+.hero-text p{
+
+    font-size:15px;
+
+    line-height:1.7;
+
+    color:rgba(255,255,255,.85);
+
+    margin-bottom:30px;
+
+}
+
+/* FEATURES */
+
+.features{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.feature-item{
+
+    display:flex;
+    gap:18px;
+
+}
+
+.feature-icon{
+
+    width:48px;
+    height:48px;
+
+    min-width:48px;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.08);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:18px;
+
+    color:#7EB6FF;
+
+}
+
+.feature-item h5{
+
+    font-size:17px;
+
+    margin-bottom:4px;
+
+    font-weight:600;
+
+}
+
+.feature-item p{
+
+    color:rgba(255,255,255,.78);
+
+    font-size:13px;
+
+}
+
+/* =========================================
+   LADO DIREITO
+========================================= */
+
+.login-right{
+
+    width:48%;
+
+    background:#f7f9fc;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px;
+
+}
+
+/* CARD */
+
+.login-card{
+
+    width:100%;
+    max-width:430px;
+
+    background:#fff;
+
+    border-radius:28px;
+
+    padding:42px;
+
+    box-shadow:
+    0 8px 30px rgba(0,0,0,.05);
+
+}
+
+/* LOGO MOBILE */
+
+.logo-mobile{
+
+    width:170px;
+
+    display:block;
+
+    margin:auto auto 26px;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.12);
+
+}
+
+/* TITULO */
+
+.login-card h2{
+
+    font-size:34px;
+
+    line-height:1.1;
+
+    text-align:center;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:8px;
+
+}
+.login-card h2 span{
+
+    color:#246BFF;
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    color:#4D8DFF;
+
+    font-size:15px;
+
+    margin-bottom:28px;
+
+}
+
+/* INPUTS */
+
+.input-group{
+
+    margin-bottom:22px;
+
+}
+
+.input-group-text{
+
+    background:#fff;
+
+    border-right:none;
+
+    border-radius:16px 0 0 16px;
+
+    border-color:#d0d5dd;
+
+    padding-left:22px;
+
+}
+
+.input-group-text i{
+
+    color:#667085;
+
+}
+
+.form-control{
+
+    height:54px;
+
+    border-left:none;
+
+    border-radius:0 14px 14px 0;
+
+    border-color:#d0d5dd;
+
+    font-size:15px;
+
+}
+
+.form-control:focus{
+
+    box-shadow:none;
+
+    border-color:#246BFF;
+
+}
+
+/* OPÇÕES */
+
+.login-options{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:28px;
+
+}
+
+.login-options a{
+
+    text-decoration:none;
+
+    color:#246BFF;
+
+    font-weight:500;
+
+}
+
+/* BOTÃO */
+
+.btn-login{
+
+    width:100%;
+    height:56px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:linear-gradient(
+    135deg,
+    #4D8DFF,
+    #2563EB
+);
+
+    color:#fff;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.btn-login:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 10px 25px rgba(0,71,255,.30);
+
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1200px){
+
+    .login-left{
+
+        display:none;
+
+    }
+
+    .login-right{
+
+        width:100%;
+
+    }
+
+    .left-content{
+
+    position:relative;
+
+    z-index:10;
+
+    max-width:360px;
+
+    color:#fff;
+
+}
+
+}

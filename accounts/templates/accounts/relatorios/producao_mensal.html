@@ -1,0 +1,364 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Produção Mensal
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-info text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h4 class="mb-0">
+                    <i class="bi bi-graph-up"></i>
+                    Produção Mensal
+                </h4>
+
+                <div>
+
+                    <a href="{% url 'pdf_producao_mensal' %}"
+                       target="_blank"
+                       class="btn btn-light btn-sm me-2">
+
+                        <i class="bi bi-file-earmark-pdf text-danger"></i>
+                        PDF
+
+                    </a>
+
+                  
+
+                       <a href="{% url 'excel_producao_mensal' %}?{{ request.GET.urlencode }}"
+                    class="btn btn-success">
+
+                        <i class="bi bi-file-earmark-excel"></i>
+
+                        Excel
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-2 align-items-end">
+
+                    <!-- Ano -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Ano
+                        </label>
+
+                        <select
+                            name="ano"
+                            class="form-select">
+
+                            {% for ano in anos %}
+
+                                <option
+                                    value="{{ ano }}"
+                                    {% if ano == ano_selecionado %}selected{% endif %}>
+
+                                    {{ ano }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Mês -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Mês
+                        </label>
+
+                        <select
+                            name="mes"
+                            class="form-select">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            {% for numero, nome in meses_lista %}
+
+                                <option
+                                    value="{{ numero }}"
+                                    {% if numero|stringformat:"s" == mes_selecionado|stringformat:"s" %}selected{% endif %}>
+
+                                    {{ nome }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Profissional -->
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Profissional
+                        </label>
+
+                        <select
+                            name="profissional"
+                            class="form-select">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            {% for profissional in profissionais %}
+
+                                <option
+                                    value="{{ profissional.id }}"
+                                    {% if profissional.id|stringformat:"s" == profissional_id %}selected{% endif %}>
+
+                                    {{ profissional.get_full_name|default:profissional.username }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Botão -->
+
+                    <div class="col-md-3 d-grid">
+
+                        <button
+                            type="submit"
+                            class="btn btn-info">
+
+                            <i class="bi bi-search"></i>
+                            Pesquisar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <hr class="my-4">
+
+            <!-- INDICADORES -->
+
+            <div class="row justify-content-center">
+
+                <div class="col-md-3 mb-3">
+
+                    <div class="card border-primary">
+
+                        <div class="card-body text-center">
+
+                            <h6 class="text-muted">
+                                Produção Total
+                            </h6>
+
+                            <h4 class="text-primary" style="white-space: nowrap;">
+                                R$ {{ total_producao|floatformat:2 }}
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <div class="card border-success">
+
+                        <div class="card-body text-center">
+
+                            <h6 class="text-muted">
+                                Procedimentos
+                            </h6>
+
+                            <h4 class="text-success">
+                                {{ total_procedimentos }}
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <div class="card border-warning">
+
+                        <div class="card-body text-center">
+
+                            <h6 class="text-muted">
+                                Pacientes
+                            </h6>
+
+                            <h4 class="text-warning">
+                                {{ total_pacientes }}
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% if not mes_selecionado %}
+
+                <div class="col-md-2 mb-3">
+
+                    <div class="card border-danger">
+
+                        <div class="card-body text-center">
+
+                            <h6 class="text-muted">
+                                Melhor Mês
+                            </h6>
+
+                            <h4 class="text-danger">
+                                {{ melhor_mes }}
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <div class="col-md-3 mb-3">
+
+                    <div class="card border-info">
+
+                        <div class="card-body text-center">
+
+                            <h6 class="text-muted">
+                                Ticket Médio
+                            </h6>
+
+                            <h4 class="text-info" style="white-space: nowrap;">
+                                R$ {{ ticket_medio|floatformat:2 }}
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- EVOLUÇÃO -->
+
+            <div class="card shadow-sm mt-4">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        Evolução Mensal
+                    </h5>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Mês</th>
+                                <th class="text-center">Procedimentos</th>
+                                <th class="text-center">Pacientes</th>
+                                <th class="text-end">Produção</th>
+                                <th class="text-end">Ticket Médio</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for mes in meses %}
+
+                            <tr>
+
+                                <td>{{ mes.nome }}</td>
+
+                                <td class="text-center">
+                                    {{ mes.procedimentos }}
+                                </td>
+
+                                <td class="text-center">
+                                    {{ mes.pacientes }}
+                                </td>
+
+                                <td class="text-end">
+                                    R$ {{ mes.producao|floatformat:2 }}
+                                </td>
+
+                                <td class="text-end">
+                                    R$ {{ mes.ticket_medio|floatformat:2 }}
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="5" class="text-center">
+
+                                    Nenhum registro encontrado.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

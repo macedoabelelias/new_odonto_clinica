@@ -1,0 +1,167 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+
+        Relatório de Aniversariantes
+
+    </title>
+
+    {% include 'accounts/pdf/estilos_pdf.html' %}
+
+</head>
+
+<body>
+
+    <div class="acoes-pdf">
+
+        <button onclick="window.print()">
+
+            🖨️ Imprimir
+
+        </button>
+
+    </div>
+
+    {% include 'accounts/pdf/header_pdf.html' %}
+
+    <div class="card">
+
+        <h4>
+
+            Resumo do Relatório
+
+        </h4>
+
+        <table>
+
+            <tr>
+
+                <td width="40%">
+
+                    <strong>
+
+                        Total de Aniversariantes
+
+                    </strong>
+
+                </td>
+
+                <td>
+
+                    {{ pacientes|length }}
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h4>
+
+            Aniversariantes Encontrados
+
+        </h4>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Data</th>
+
+                    <th>Paciente</th>
+
+                    <th>Telefone</th>
+
+                    <th>WhatsApp</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for paciente in pacientes %}
+
+                <tr>
+
+                    <td>
+
+                        {{ paciente.nascimento|date:"d/m" }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.nome }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.telefone }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.whatsapp|default:paciente.telefone }}
+
+                    </td>
+
+                    <td>
+
+                        {% if paciente.ativo %}
+
+                            Ativo
+
+                        {% else %}
+
+                            Inativo
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="5" style="text-align:center;">
+
+                        Nenhum aniversariante encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% include 'accounts/pdf/footer_pdf.html' %}
+
+</body>
+
+</html>

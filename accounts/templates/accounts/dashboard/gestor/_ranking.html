@@ -1,0 +1,264 @@
+<style>
+
+/* =========================================
+RANKING DOS DENTISTAS
+========================================= */
+
+.ranking-card{
+
+    height:340px;
+
+}
+
+.ranking-card .card-body{
+
+    display:flex;
+    flex-direction:column;
+
+}
+
+.ranking-scroll{
+
+    flex:1;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:6px;
+
+}
+
+.ranking-scroll::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.ranking-scroll::-webkit-scrollbar-track{
+
+    background:#f1f5f9;
+    border-radius:10px;
+
+}
+
+.ranking-scroll::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+    border-radius:10px;
+
+}
+
+.ranking-scroll::-webkit-scrollbar-thumb:hover{
+
+    background:#94a3b8;
+
+}
+
+.ranking-item{
+
+    margin-bottom:14px;
+
+}
+
+.ranking-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:5px;
+
+}
+
+.ranking-left{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+}
+
+.ranking-nome{
+
+    font-size:16px;
+    font-weight:600;
+    color:#111827;
+
+}
+
+.ranking-info{
+
+    text-align:right;
+
+}
+
+.ranking-info strong{
+
+    display:block;
+    font-size:22px;
+    color:#2563eb;
+    line-height:1;
+
+}
+
+.ranking-info small{
+
+    color:#6b7280;
+    font-size:12px;
+
+}
+
+.ranking-bar{
+
+    height:8px;
+    width:100%;
+    background:#edf2f7;
+    border-radius:20px;
+    overflow:hidden;
+
+}
+
+.ranking-fill{
+
+    height:100%;
+    border-radius:20px;
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+
+}
+
+.badge-ranking{
+
+    margin-left:12px;
+    background:#2563eb;
+    color:#fff;
+    border-radius:20px;
+    padding:4px 10px;
+    font-size:12px;
+    font-weight:600;
+
+}
+
+.progress{
+
+    height:10px;
+    border-radius:20px;
+    background:#e9edf5;
+
+}
+
+.progress-bar{
+
+    border-radius:20px;
+    transition:.5s;
+
+}
+
+</style>
+
+
+<div class="card dashboard-card stats-card h-100 ranking-card">
+
+    <div class="card-body">
+
+        <h5 class="mb-4">
+
+            <i class="bi bi-trophy-fill text-warning me-2"></i>
+
+            Ranking dos Dentistas
+
+        </h5>
+
+        <div class="ranking-scroll">
+
+            {% if ranking_dentistas %}
+
+                {% with lider=ranking_dentistas.0.procedimentos %}
+
+                    {% for dentista in ranking_dentistas %}
+
+                        <div class="ranking-item">
+
+                            <div class="ranking-top">
+
+                                <div class="ranking-left">
+
+                                    {% if forloop.counter == 1 %}
+                                        🥇
+                                    {% elif forloop.counter == 2 %}
+                                        🥈
+                                    {% elif forloop.counter == 3 %}
+                                        🥉
+                                    {% else %}
+                                        <strong>{{ forloop.counter }}º</strong>
+                                    {% endif %}
+
+                                    <span class="ranking-nome">
+
+                                        {{ dentista.get_full_name|default:dentista.username }}
+
+                                    </span>
+
+                                </div>
+
+                                <div class="ranking-info">
+
+                                    <strong>
+
+                                        {{ dentista.procedimentos }}
+
+                                    </strong>
+
+                                    <small>
+
+                                        procedimentos
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="ranking-bar flex-grow-1">
+
+                                    <div class="ranking-fill"
+
+                                         style="width:{% widthratio dentista.procedimentos lider 100 %}%">
+
+                                    </div>
+
+                                </div>
+
+                                <span class="badge-ranking">
+
+                                    {% widthratio dentista.procedimentos lider 100 %}%
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endwith %}
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <i class="bi bi-trophy fs-1 text-warning"></i>
+
+                    <p class="text-muted mt-3">
+
+                        Nenhum procedimento realizado.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>

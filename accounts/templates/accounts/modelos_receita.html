@@ -1,0 +1,170 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+
+<div class="card border-0 shadow-sm rounded-4">
+
+    <div class="card-body p-4">
+
+        <h2 class="fw-bold">
+            Modelos de Receita
+        </h2>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <input
+                        type="text"
+                        name="nome"
+                        class="form-control"
+                        placeholder="Nome do modelo"
+                        required
+                    >
+                </div>
+
+                <div class="col-md-3">
+                    <input
+                        type="text"
+                        name="medicamento"
+                        class="form-control"
+                        placeholder="Medicamento"
+                        required
+                    >
+                </div>
+
+                <div class="col-md-2">
+                    <input
+                        type="text"
+                        name="quantidade"
+                        class="form-control"
+                        placeholder="Quantidade"
+                    >
+                </div>
+
+                <div class="col-md-4">
+                    <input
+                        type="text"
+                        name="posologia"
+                        class="form-control"
+                        placeholder="Posologia"
+                    >
+                </div>
+
+                <div class="col-12">
+
+                    <div class="form-check">
+
+                        <input
+                            type="checkbox"
+                            name="ativo"
+                            class="form-check-input"
+                            checked
+                        >
+
+                        <label class="form-check-label">
+                            Modelo ativo
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button class="btn btn-primary mt-3">
+
+                Salvar Modelo
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mt-4">
+
+    <div class="card-body">
+
+        <table class="table align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Nome</th>
+                    <th>Medicamento</th>
+                    <th>Quantidade</th>
+                    <th>Posologia</th>
+                    <th width="140">Ações</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for modelo in modelos %}
+
+                <tr>
+
+                    <td>{{ modelo.nome }}</td>
+                    <td>{{ modelo.medicamento }}</td>
+                    <td>{{ modelo.quantidade }}</td>
+                    <td>{{ modelo.posologia }}</td>
+
+                    <td>
+
+                        <a
+                            href="{% url 'editar_modelo_receita' modelo.id %}"
+                            class="btn btn-sm btn-light border"
+                        >
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+
+                        <a
+                            href="{% url 'excluir_modelo_receita' modelo.id %}"
+                            class="btn btn-sm btn-light border"
+                            onclick="return confirm('Excluir modelo?')"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="5">
+
+                        Nenhum modelo cadastrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

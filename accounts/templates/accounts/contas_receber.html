@@ -1,0 +1,223 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>
+            Contas a Receber
+        </h1>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-warning">
+
+                <div class="card-body">
+
+                    <h6>
+                        Total Pendente
+                    </h6>
+
+                    <h4>
+                        R$ {{ total_pendente }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card border-success">
+
+                <div class="card-body">
+
+                    <h6>
+                        Total Recebido
+                    </h6>
+
+                    <h4>
+                        R$ {{ total_recebido }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card border-danger">
+
+                <div class="card-body">
+
+                    <h6>
+                        Total Vencido
+                    </h6>
+
+                    <h4>
+                        R$ {{ total_vencido }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Paciente</th>
+                            <th>Descrição</th>
+                            <th>Vencimento</th>
+                            <th>Recebimento</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for conta in contas %}
+
+                        <tr>
+
+                            <td>
+                                {{ conta.paciente.nome }}
+                            </td>
+
+                            <td>
+                                {{ conta.descricao }}
+                            </td>
+
+                            <td>
+                                {{ conta.vencimento|date:"d/m/Y" }}
+                            </td>
+
+                            <td>
+
+                                {% if conta.data_recebimento %}
+
+                                    {{ conta.data_recebimento|date:"d/m/Y" }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                R$ {{ conta.valor }}
+                            </td>
+
+                            <td>
+
+                                {% if conta.status == 'PENDENTE' %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pendente
+                                    </span>
+
+                                {% elif conta.status == 'RECEBIDO' %}
+
+                                    <span class="badge bg-success">
+                                        Recebido
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Vencido
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- <td>
+
+                                {% if conta.status != 'RECEBIDO' %}
+
+                                    <a
+                                        href="{% url 'receber_conta' conta.id %}"
+                                        class="btn btn-success btn-sm"
+                                        onclick="return confirm('Confirmar recebimento?')"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                    </a>
+
+                                {% endif %}
+
+                            </td> -->
+
+                            <td>
+
+   {% if conta.status != 'RECEBIDO' %}
+
+    <a
+        href="{% url 'receber_conta' conta.id %}"
+        class="btn btn-success btn-sm"
+        onclick="return confirm('Confirmar recebimento?')"
+    >
+        <i class="fa-solid fa-check"></i>
+    </a>
+
+{% endif %}
+
+</td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="7" class="text-center">
+
+                                Nenhuma conta encontrada.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

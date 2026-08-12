@@ -1,0 +1,1279 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Detalhes da Campanha
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =========================================
+    LINK DA CAMPANHA
+    ========================================= -->
+
+    {% url 'captacao_campanha' campanha.pk as link_campanha %}
+
+
+    <!-- =========================================
+    CABEÇALHO
+    ========================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h4 class="fw-semibold mb-1">
+
+                <i class="bi bi-megaphone-fill text-primary me-2"></i>
+
+                Detalhes da Campanha
+
+            </h4>
+
+            <p class="text-muted mb-0">
+
+                Acompanhe o desempenho e os leads da campanha.
+
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2">
+
+            <!-- =========================================
+            DIVULGAR CAMPANHA
+            ========================================= -->
+
+            {% if campanha.ativa and campanha.status == "ATIVA" %}
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalDivulgarCampanha"
+                >
+
+                    <i class="bi bi-share-fill me-1"></i>
+
+                    Divulgar Campanha
+
+                </button>
+
+
+                <!-- =========================================
+                PÁGINA PÚBLICA
+                ========================================= -->
+
+                <a
+                    href="{% url 'captacao_campanha' campanha.pk %}"
+                    target="_blank"
+                    class="btn btn-primary"
+                    title="Abrir página pública da campanha"
+                >
+
+                    <i class="bi bi-box-arrow-up-right me-1"></i>
+
+                    Página Pública
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- =========================================
+            EDITAR
+            ========================================= -->
+
+            <a
+                href="{% url 'editar_campanha_marketing' campanha.pk %}"
+                class="btn btn-outline-primary"
+            >
+
+                <i class="bi bi-pencil me-1"></i>
+
+                Editar
+
+            </a>
+
+
+            <!-- =========================================
+            VOLTAR
+            ========================================= -->
+
+            <a
+                href="{% url 'campanhas_marketing' %}"
+                class="btn btn-outline-secondary"
+            >
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Voltar
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    INFORMAÇÕES DA CAMPANHA
+    ========================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <!-- =========================================
+                INFORMAÇÕES
+                ========================================= -->
+
+                <div class="{% if campanha.imagem %}col-lg-8{% else %}col-lg-7{% endif %}">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="me-3">
+
+                            <span
+                                class="d-flex align-items-center justify-content-center
+                                       bg-primary bg-opacity-10 rounded-circle"
+                                style="width: 55px; height: 55px;"
+                            >
+
+                                <i class="bi bi-megaphone-fill text-primary fs-4"></i>
+
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <h4 class="fw-semibold mb-1">
+
+                                {{ campanha.nome }}
+
+                            </h4>
+
+                            <div class="text-muted">
+
+                                {{ campanha.get_canal_display }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                IMAGEM DA CAMPANHA
+                ========================================= -->
+
+                {% if campanha.imagem %}
+
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+
+                        <div class="text-center">
+
+                            <img
+                                src="{{ campanha.imagem.url }}"
+                                alt="{{ campanha.nome }}"
+                                class="img-fluid rounded shadow-sm"
+                                style="
+                                    max-height: 180px;
+                                    width: 100%;
+                                    object-fit: cover;
+                                "
+                            >
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================================
+            STATUS
+            ========================================= -->
+
+            <div class="d-flex justify-content-end mt-3">
+
+                {% if campanha.status == "ATIVA" %}
+
+                    <span class="badge bg-success fs-6 px-3 py-2">
+                        Ativa
+                    </span>
+
+                {% elif campanha.status == "PAUSADA" %}
+
+                    <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                        Pausada
+                    </span>
+
+                {% elif campanha.status == "FINALIZADA" %}
+
+                    <span class="badge bg-secondary fs-6 px-3 py-2">
+                        Finalizada
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-secondary fs-6 px-3 py-2">
+                        {{ campanha.get_status_display }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================================
+            DESCRIÇÃO
+            ========================================= -->
+
+            {% if campanha.descricao %}
+
+                <hr>
+
+                <p class="text-muted mb-0">
+
+                    {{ campanha.descricao }}
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    DADOS DA CAMPANHA
+    ========================================= -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Data de início
+                    </small>
+
+                    <h5 class="fw-semibold mt-2 mb-0">
+
+                        {{ campanha.data_inicio|date:"d/m/Y" }}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Data de término
+                    </small>
+
+                    <h5 class="fw-semibold mt-2 mb-0">
+
+                        {% if campanha.data_fim %}
+
+                            {{ campanha.data_fim|date:"d/m/Y" }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Investimento
+                    </small>
+
+                    <h5 class="fw-semibold mt-2 mb-0">
+
+                        R$ {{ campanha.investimento|floatformat:2 }}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Total de Leads
+                    </small>
+
+                    <h5 class="fw-semibold mt-2 mb-0">
+
+                        {{ total_leads }}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    INDICADORES DOS LEADS
+    ========================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex align-items-center mb-3">
+
+                <i class="bi bi-bar-chart-fill text-primary me-2"></i>
+
+                <h5 class="fw-semibold mb-0">
+
+                    Desempenho dos Leads
+
+                </h5>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- NOVOS -->
+
+                <div class="col-md-4 col-lg">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Novos
+                        </small>
+
+                        <h4 class="fw-semibold mt-2 mb-0">
+
+                            {{ leads_novos }}
+
+                        </h4>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTATADOS -->
+
+                <div class="col-md-4 col-lg">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Contatados
+                        </small>
+
+                        <h4 class="fw-semibold mt-2 mb-0">
+
+                            {{ leads_contatados }}
+
+                        </h4>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AGENDADOS -->
+
+                <div class="col-md-4 col-lg">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Agendados
+                        </small>
+
+                        <h4 class="fw-semibold mt-2 mb-0">
+
+                            {{ leads_agendados }}
+
+                        </h4>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONVERTIDOS -->
+
+                <div class="col-md-4 col-lg">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Convertidos
+                        </small>
+
+                        <h4 class="fw-semibold mt-2 mb-0">
+
+                            {{ leads_convertidos }}
+
+                        </h4>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PERDIDOS -->
+
+                <div class="col-md-4 col-lg">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Perdidos
+                        </small>
+
+                        <h4 class="fw-semibold mt-2 mb-0">
+
+                            {{ leads_perdidos }}
+
+                        </h4>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TAXA DE CONVERSÃO -->
+
+                <div class="col-md-4 col-lg">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Conversão
+                        </small>
+
+                        <h4 class="fw-semibold mt-2 mb-0">
+
+                            {{ taxa_conversao|floatformat:1 }}%
+
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    LISTA DE LEADS
+    ========================================= -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+
+                    <h5 class="fw-semibold mb-1">
+
+                        <i class="bi bi-people-fill text-primary me-2"></i>
+
+                        Leads da Campanha
+
+                    </h5>
+
+                    <small class="text-muted">
+
+                        Contatos vinculados a esta campanha.
+
+                    </small>
+
+                </div>
+
+
+                <span class="badge bg-primary">
+
+                    {{ total_leads }} Leads
+
+                </span>
+
+            </div>
+
+
+            {% if leads %}
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Nome</th>
+
+                                <th>Telefone</th>
+
+                                <th>Origem</th>
+
+                                <th>Status</th>
+
+                                <th>Cadastro</th>
+
+                                <th class="text-center">
+                                    Ação
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for lead in leads %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            {{ lead.nome }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if lead.telefone %}
+
+                                            {{ lead.telefone }}
+
+                                        {% elif lead.whatsapp %}
+
+                                            {{ lead.whatsapp }}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ lead.get_origem_display }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if lead.status == "NOVO" %}
+
+                                            <span class="badge bg-success">
+                                                Novo
+                                            </span>
+
+                                        {% elif lead.status == "CONTATADO" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Contatado
+                                            </span>
+
+                                        {% elif lead.status == "AGENDADO" %}
+
+                                            <span class="badge bg-info">
+                                                Agendado
+                                            </span>
+
+                                        {% elif lead.status == "CONVERTIDO" %}
+
+                                            <span class="badge bg-primary">
+                                                Convertido
+                                            </span>
+
+                                        {% elif lead.status == "PERDIDO" %}
+
+                                            <span class="badge bg-secondary">
+                                                Perdido
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ lead.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ lead.data_cadastro|date:"d/m/Y H:i" }}
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{% url 'detalhe_lead' lead.pk %}"
+                                            class="btn btn-sm btn-outline-info"
+                                            title="Detalhes do lead"
+                                        >
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <i class="bi bi-people display-5 text-muted"></i>
+
+                    <h6 class="mt-3">
+
+                        Nenhum lead vinculado
+
+                    </h6>
+
+                    <p class="text-muted mb-0">
+
+                        Ainda não existem leads associados a esta campanha.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+MODAL — DIVULGAR CAMPANHA
+===================================================== -->
+
+{% if campanha.ativa and campanha.status == "ATIVA" %}
+
+<div
+    class="modal fade"
+    id="modalDivulgarCampanha"
+    tabindex="-1"
+    aria-labelledby="modalDivulgarCampanhaLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- CABEÇALHO -->
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title fw-semibold"
+                    id="modalDivulgarCampanhaLabel"
+                >
+
+                    <i class="bi bi-share-fill text-success me-2"></i>
+
+                    Divulgar Campanha
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar"
+                ></button>
+
+            </div>
+
+
+            <!-- CORPO -->
+
+            <div class="modal-body">
+
+                <div class="text-center mb-4">
+
+                    <h5 class="fw-semibold mb-1">
+
+                        {{ campanha.nome }}
+
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        Escolha uma forma de divulgar esta campanha.
+
+                    </p>
+
+                </div>
+
+
+                <!-- =========================================
+                LINK PÚBLICO
+                ========================================= -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        <i class="bi bi-link-45deg me-1"></i>
+
+                        Link público da campanha
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <input
+                            type="text"
+                            id="linkCampanha"
+                            class="form-control"
+                            readonly
+                            value=""
+                        >
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary"
+                            onclick="copiarLinkCampanha()"
+                        >
+
+                            <i class="bi bi-copy me-1"></i>
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="mensagemCopiado"
+                        class="text-success small mt-2 d-none"
+                    >
+
+                        <i class="bi bi-check-circle-fill me-1"></i>
+
+                        Link copiado com sucesso!
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                CANAIS
+                ========================================= -->
+
+                <div class="row g-3">
+
+
+                    <!-- WHATSAPP -->
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center mb-2">
+
+                                <i
+                                    class="bi bi-whatsapp text-success fs-3 me-2"
+                                ></i>
+
+                                <div>
+
+                                    <h6 class="fw-semibold mb-0">
+                                        WhatsApp
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        Compartilhe a campanha
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-success w-100 mt-2"
+                                onclick="compartilharWhatsApp()"
+                            >
+
+                                <i class="bi bi-whatsapp me-1"></i>
+
+                                Compartilhar no WhatsApp
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- QR CODE -->
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3 h-100 text-center">
+
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+
+                                <i
+                                    class="bi bi-qr-code text-primary fs-3 me-2"
+                                ></i>
+
+                                <h6 class="fw-semibold mb-0">
+                                    QR Code
+                                </h6>
+
+                            </div>
+
+
+                            <div
+                                id="qrcodeCampanha"
+                                class="d-flex justify-content-center mt-3"
+                            ></div>
+
+
+                            <small class="text-muted d-block mt-2">
+
+                                Aponte a câmera do celular para acessar a campanha.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INSTAGRAM -->
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center mb-2">
+
+                                <i
+                                    class="bi bi-instagram text-danger fs-3 me-2"
+                                ></i>
+
+                                <div>
+
+                                    <h6 class="fw-semibold mb-0">
+                                        Instagram
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        Prepare o conteúdo da publicação
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-danger w-100 mt-2"
+                                onclick="prepararInstagram()"
+                            >
+
+                                <i class="bi bi-instagram me-1"></i>
+
+                                Copiar texto para Instagram
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FACEBOOK -->
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center mb-2">
+
+                                <i
+                                    class="bi bi-facebook text-primary fs-3 me-2"
+                                ></i>
+
+                                <div>
+
+                                    <h6 class="fw-semibold mb-0">
+                                        Facebook
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        Compartilhe a página pública
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary w-100 mt-2"
+                                onclick="compartilharFacebook()"
+                            >
+
+                                <i class="bi bi-facebook me-1"></i>
+
+                                Compartilhar no Facebook
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RODAPÉ -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                >
+
+                    Fechar
+
+                </button>
+
+                <a
+                    href="{% url 'captacao_campanha' campanha.pk %}"
+                    target="_blank"
+                    class="btn btn-primary"
+                >
+
+                    <i class="bi bi-box-arrow-up-right me-1"></i>
+
+                    Abrir Página Pública
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+JAVASCRIPT — DIVULGAÇÃO
+===================================================== -->
+
+{% if campanha.ativa and campanha.status == "ATIVA" %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /*
+    =====================================================
+    LINK PÚBLICO
+    =====================================================
+    */
+
+    const caminhoCampanha = "{% url 'captacao_campanha' campanha.pk %}";
+
+    const linkCampanha =
+        window.location.origin + caminhoCampanha;
+
+
+    const campoLink =
+        document.getElementById("linkCampanha");
+
+
+    if (campoLink) {
+
+        campoLink.value = linkCampanha;
+
+    }
+
+
+    /*
+    =====================================================
+    QR CODE
+    =====================================================
+    */
+
+    const areaQRCode =
+        document.getElementById("qrcodeCampanha");
+
+
+    if (
+        areaQRCode &&
+        typeof QRCode !== "undefined"
+    ) {
+
+        new QRCode(
+            areaQRCode,
+            {
+                text: linkCampanha,
+                width: 180,
+                height: 180
+            }
+        );
+
+    }
+
+});
+
+
+/*
+=========================================================
+COPIAR LINK
+=========================================================
+*/
+
+function copiarLinkCampanha() {
+
+    const campo =
+        document.getElementById("linkCampanha");
+
+    if (!campo) {
+        return;
+    }
+
+
+    navigator.clipboard.writeText(
+        campo.value
+    ).then(function () {
+
+        const mensagem =
+            document.getElementById("mensagemCopiado");
+
+
+        if (mensagem) {
+
+            mensagem.classList.remove("d-none");
+
+
+            setTimeout(function () {
+
+                mensagem.classList.add("d-none");
+
+            }, 2500);
+
+        }
+
+    });
+
+}
+
+
+/*
+=========================================================
+WHATSAPP
+=========================================================
+*/
+
+function compartilharWhatsApp() {
+
+    const caminhoCampanha =
+        "{% url 'captacao_campanha' campanha.pk %}";
+
+
+    const linkCampanha =
+        window.location.origin + caminhoCampanha;
+
+
+    const mensagem =
+        "🦷 {{ campanha.nome|escapejs }}\n\n" +
+        "{{ campanha.descricao|default:'Confira nossa campanha especial.'|escapejs }}\n\n" +
+        "Saiba mais e entre em contato conosco:\n" +
+        linkCampanha;
+
+
+    const urlWhatsApp =
+        "https://wa.me/?text=" +
+        encodeURIComponent(mensagem);
+
+
+    window.open(
+        urlWhatsApp,
+        "_blank"
+    );
+
+}
+
+
+/*
+=========================================================
+INSTAGRAM
+=========================================================
+*/
+
+function prepararInstagram() {
+
+    const caminhoCampanha =
+        "{% url 'captacao_campanha' campanha.pk %}";
+
+
+    const linkCampanha =
+        window.location.origin + caminhoCampanha;
+
+
+    const texto =
+        "🦷 {{ campanha.nome|escapejs }}\n\n" +
+        "{{ campanha.descricao|default:'Confira nossa campanha especial.'|escapejs }}\n\n" +
+        "Saiba mais:\n" +
+        linkCampanha;
+
+
+    navigator.clipboard.writeText(
+        texto
+    ).then(function () {
+
+        alert(
+            "Texto da campanha copiado!\n\n" +
+            "Agora você pode abrir o Instagram e utilizar o texto na publicação."
+        );
+
+    });
+
+}
+
+
+/*
+=========================================================
+FACEBOOK
+=========================================================
+*/
+
+function compartilharFacebook() {
+
+    const caminhoCampanha =
+        "{% url 'captacao_campanha' campanha.pk %}";
+
+
+    const linkCampanha =
+        window.location.origin + caminhoCampanha;
+
+
+    const urlFacebook =
+        "https://www.facebook.com/sharer/sharer.php?u=" +
+        encodeURIComponent(linkCampanha);
+
+
+    window.open(
+        urlFacebook,
+        "_blank",
+        "width=700,height=600"
+    );
+
+}
+
+</script>
+
+{% endif %}
+
+{% endblock %}

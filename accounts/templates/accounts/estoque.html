@@ -1,0 +1,215 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>Controle de Estoque</h1>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted mb-2">
+
+                        Produtos Cadastrados
+
+                    </h6>
+
+                    <h3>
+
+                        {{ total_produtos }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-danger">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted mb-2">
+
+                        Abaixo do Estoque Mínimo
+
+                    </h6>
+
+                    <h3 class="text-danger">
+
+                        {{ total_produtos_baixos }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted mb-2">
+
+                        Valor Total em Estoque
+
+                    </h6>
+
+                    <h3 class="text-success">
+
+                        R$ {{ valor_total_estoque }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if total_produtos_baixos > 0 %}
+
+    <div class="alert alert-danger">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        Existem
+
+        <strong>
+
+            {{ total_produtos_baixos }}
+
+        </strong>
+
+        produto(s) abaixo do estoque mínimo.
+
+    </div>
+
+    {% endif %}
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Produto</th>
+
+                            <th>Estoque</th>
+
+                            <th>Mínimo</th>
+
+                            <th>Valor Compra</th>
+
+                            <th>Valor em Estoque</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+    {% for produto in produtos %}
+
+   <tr {% if produto.estoque <= produto.estoque_minimo %}class="estoque-baixo"{% endif %}>
+
+        <td>
+
+            {{ produto.nome }}
+
+        </td>
+
+        <td>
+
+            {% if produto.estoque <= produto.estoque_minimo %}
+
+            <span class="badge bg-danger">
+
+                {{ produto.estoque }}
+
+            </span>
+
+            {% else %}
+
+            {{ produto.estoque }}
+
+            {% endif %}
+
+        </td>
+
+        <td>
+
+            {{ produto.estoque_minimo }}
+
+        </td>
+
+        <td>
+
+            R$ {{ produto.valor_compra }}
+
+        </td>
+
+        <td>
+
+            <strong class="text-success">
+
+                R$ {{ produto.valor_estoque }}
+
+            </strong>
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="5" class="text-center">
+
+            Nenhum produto cadastrado.
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

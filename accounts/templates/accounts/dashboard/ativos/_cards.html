@@ -1,0 +1,239 @@
+<!-- =========================================
+CARDS
+========================================== -->
+
+<div class="stats-grid">
+
+    <!-- Pacientes Ativos -->
+
+    {% if dashboard.mostrar_pacientes %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon blue">
+
+            <i class="bi bi-calendar-check"></i>
+
+        </div>
+
+        <div>
+
+            <small>Pacientes Ativos</small>
+
+            <h3>{{ total_pacientes }}</h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Minha Comissão -->
+
+{% if dashboard.mostrar_receber %}
+
+<div class="stats-card">
+
+    <div class="stats-icon green">
+
+        <i class="bi bi-cash-coin"></i>
+
+    </div>
+
+    <div>
+
+        <small>Minha Comissão</small>
+
+        <h3>R$ {{ minha_comissao|floatformat:2 }}</h3>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+    <!-- Contas a Pagar -->
+
+    {% if dashboard.mostrar_pagar %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon purple">
+
+            <i class="bi bi-wallet2"></i>
+
+        </div>
+
+        <div>
+
+            <small>Contas a Pagar</small>
+
+            <h3>R$ {{ pagar_pendente|floatformat:2 }}</h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Saldo em Caixa -->
+
+    {% if dashboard.mostrar_saldo_caixa %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon orange">
+
+            <i class="bi bi-graph-up-arrow"></i>
+
+        </div>
+
+        <div>
+
+            <small>Saldo em Caixa</small>
+
+            <h3>R$ {{ saldo_caixa|floatformat:2 }}</h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<!-- =========================================
+MOVIMENTAÇÃO HOJE
+========================================== -->
+
+<div class="stats-grid mt-4">
+
+    <!-- Recebimentos Hoje -->
+
+    {% if dashboard.mostrar_recebimentos %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon green">
+
+            <i class="bi bi-arrow-down-circle"></i>
+
+        </div>
+
+        <div>
+
+            <small>
+
+                Recebimentos Hoje
+
+            </small>
+
+            <h3>
+
+                R$ {{ entradas_hoje|floatformat:2 }}
+
+            </h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Pagamentos Hoje -->
+
+    {% if dashboard.mostrar_pagamentos %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon red">
+
+            <i class="bi bi-arrow-up-circle"></i>
+
+        </div>
+
+        <div>
+
+            <small>
+
+                Pagamentos Hoje
+
+            </small>
+
+            <h3>
+
+                R$ {{ saidas_hoje|floatformat:2 }}
+
+            </h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Lucro Hoje -->
+
+    {% if dashboard.mostrar_lucro %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon blue">
+
+            <i class="bi bi-currency-dollar"></i>
+
+        </div>
+
+        <div>
+
+            <small>
+
+                Lucro Hoje
+
+            </small>
+
+            <h3>
+
+                R$ {{ lucro_hoje|floatformat:2 }}
+
+            </h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Fornecedores Ativos -->
+
+    {% if dashboard.mostrar_fornecedores %}
+
+    <div class="stats-card">
+
+        <div class="stats-icon purple">
+
+            <i class="bi bi-truck"></i>
+
+        </div>
+
+        <div>
+
+            <small>
+
+                Fornecedores Ativos
+
+            </small>
+
+            <h3>
+
+                {{ fornecedores_ativos }}
+
+            </h3>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>

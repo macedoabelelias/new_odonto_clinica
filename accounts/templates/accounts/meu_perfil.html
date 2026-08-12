@@ -1,0 +1,460 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="mb-1">Meu Perfil</h1>
+
+            <p class="text-muted mb-0">
+                Atualize suas informações pessoais.
+            </p>
+
+        </div>
+
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+
+                    <i class="fa-solid fa-user me-2"></i>
+
+                    Dados Pessoais
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-3 text-center mb-4">
+
+                        {% if perfil.foto %}
+
+                        <img src="{{ perfil.foto.url }}" class="rounded-circle border shadow-sm" style="
+                                width:140px;
+                                height:140px;
+                                object-fit:cover;
+                            ">
+
+                        {% else %}
+
+                        <div style="
+                            width:140px;
+                            height:140px;
+                            border-radius:50%;
+                            background:#e5e7eb;
+                            margin:auto;
+                        ">
+                        </div>
+
+                        {% endif %}
+
+                        <div class="mt-3">
+
+                            <input type="file" name="foto" class="form-control">
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-9">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Nome
+                                </label>
+
+                                <input type="text" name="nome" class="form-control"
+                                    value="{{ usuario.first_name }}">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    E-mail
+                                </label>
+
+                                <input type="email" name="email" class="form-control" value="{{ usuario.email }}">
+
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+
+                                <label class="form-label">
+                                    Telefone
+                                </label>
+
+                                <input type="text" id="telefone" name="telefone" class="form-control" maxlength="14"
+                                    value="{{ perfil.telefone|default:'' }}">
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+
+                                <label class="form-label">
+                                    Celular
+                                </label>
+
+                                <input type="text" id="celular" name="celular" class="form-control" maxlength="15"
+                                    value="{{ perfil.celular|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+
+                                <label class="form-label">
+                                    CPF
+                                </label>
+
+                                <input type="text" id="cpf" name="cpf" class="form-control" maxlength="14"
+                                    value="{{ perfil.cpf|default:'' }}">
+                            </div>
+                            <div id="cpf-erro" class="text-danger small mt-1" style="display:none;">
+
+                                CPF inválido.
+
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+
+                                <label class="form-label">
+                                    RG
+                                </label>
+
+                                <input type="text" name="rg" class="form-control" value="{{ perfil.rg|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    CEP
+                                </label>
+
+                                <input type="text" id="cep" name="cep" class="form-control" maxlength="9"
+                                    value="{{ perfil.cep|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Cidade
+                                </label>
+
+                                <input type="text" name="cidade" class="form-control"
+                                    value="{{ perfil.cidade|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+
+                                <label class="form-label">
+                                    UF
+                                </label>
+
+                                <input type="text" name="uf" class="form-control" value="{{ perfil.uf|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Logradouro
+                                </label>
+
+                                <input type="text" id="logradouro" name="logradouro" class="form-control"
+                                    value="{{ perfil.logradouro|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+
+                                <label class="form-label">
+                                    Número
+                                </label>
+
+                                <input type="text" name="numero" class="form-control"
+                                    value="{{ perfil.numero|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Complemento
+                                </label>
+
+                                <input type="text" name="complemento" class="form-control"
+                                    value="{{ perfil.complemento|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Bairro
+                                </label>
+
+                                <input type="text" id="bairro" name="bairro" class="form-control"
+                                    value="{{ perfil.bairro|default:'' }}">
+
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Data de Nascimento
+                                </label>
+
+                                <input type="date" name="data_nascimento" class="form-control"
+                                    value="{% if perfil.data_nascimento %}{{ perfil.data_nascimento|date:'Y-m-d' }}{% endif %}">
+
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Sexo
+                                </label>
+
+                                <select name="sexo" class="form-select">
+
+                                    <option value="">Selecione</option>
+                                    <option value="M">Cis Masculino</option>
+                                    <option value="F">Cis Feminino</option>
+                                    <option value="T">Transgênero</option>
+                                    <option value="O">Outros</option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="card shadow-sm border-0 mt-4">
+
+                                <div class="card-header bg-white">
+
+                                    <h5 class="mb-0">
+
+                                        <i class="fa-solid fa-briefcase me-2"></i>
+
+                                        Dados Profissionais
+
+                                    </h5>
+
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="row">
+
+                                        <div class="col-md-3 mb-3">
+
+                                            <label class="form-label">
+                                                Perfil
+                                            </label>
+
+                                            <input type="text" class="form-control"
+                                                value="{{ perfil.get_tipo_usuario_display }}" readonly>
+
+                                        </div>
+
+                                        <div class="col-md-2 mb-3">
+
+                                            <label class="form-label">
+                                                CRO
+                                            </label>
+
+                                            <input type="text" name="cro" class="form-control"
+                                                value="{{ perfil.cro|default:'' }}">
+
+                                        </div>
+
+                                        <div class="col-md-2 mb-3">
+
+                                            <label class="form-label">
+                                                UF CRO
+                                            </label>
+
+                                            <input type="text" name="cro_uf" class="form-control"
+                                                value="{{ perfil.cro_uf|default:'' }}">
+
+                                        </div>
+
+                                        <div class="col-md-5 mb-3">
+
+                                            <label class="form-label">
+                                                Especialidade
+                                            </label>
+
+                                            <input type="text" name="especialidade" class="form-control"
+                                                value="{{ perfil.especialidade|default:'' }}">
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="text-end mt-4">
+
+            <button type="submit" class="btn btn-primary">
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                Salvar Alterações
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+    const cpf = document.getElementById('cpf');
+
+    if (cpf) {
+
+        cpf.addEventListener('input', function () {
+
+            let valor = this.value.replace(/\D/g, '');
+
+            valor = valor.substring(0, 11);
+
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+            this.value = valor;
+
+        });
+
+    }
+
+    const telefone = document.getElementById('telefone');
+
+    if (telefone) {
+
+        telefone.addEventListener('input', function () {
+
+            let valor = this.value.replace(/\D/g, '');
+
+            valor = valor.substring(0, 10);
+
+            valor = valor.replace(
+                /^(\d{2})(\d{4})(\d{0,4}).*/,
+                '($1) $2-$3'
+            );
+
+            this.value = valor;
+
+        });
+
+    }
+
+    const celular = document.getElementById('celular');
+
+    if (celular) {
+
+        celular.addEventListener('input', function () {
+
+            let valor = this.value.replace(/\D/g, '');
+
+            valor = valor.substring(0, 11);
+
+            if (valor.length > 10) {
+
+                valor = valor.replace(
+                    /^(\d{2})(\d{5})(\d{4}).*/,
+                    '($1) $2-$3'
+                );
+
+            } else {
+
+                valor = valor.replace(
+                    /^(\d{2})(\d{4})(\d{0,4}).*/,
+                    '($1) $2-$3'
+                );
+
+            }
+
+            this.value = valor;
+
+        });
+
+    }
+
+    const cepCampo = document.getElementById('cep');
+
+    if (cepCampo) {
+
+        cepCampo.addEventListener('input', function () {
+
+            let valor = this.value.replace(/\D/g, '');
+
+            valor = valor.replace(
+                /^(\d{5})(\d)/,
+                '$1-$2'
+            );
+
+            this.value = valor;
+
+        });
+
+    }
+
+    document.getElementById('cep').addEventListener('blur', function () {
+
+        let cep = this.value.replace(/\D/g, '');
+
+        if (cep.length !== 8) {
+            return;
+        }
+
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById('cidade').value =
+                    data.localidade || '';
+
+                document.getElementById('uf').value =
+                    data.uf || '';
+
+            });
+
+    });
+</script>
+
+{% endblock %}

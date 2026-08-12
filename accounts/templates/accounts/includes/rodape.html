@@ -1,0 +1,23 @@
+<hr class="linha-documento">
+
+<div class="documento-rodape">
+
+    {% if configuracao.endereco %}
+        <p>
+            {{ configuracao.endereco }}
+        </p>
+    {% endif %}
+
+    {% if configuracao.whatsapp %}
+        <p>
+            WhatsApp: {{ configuracao.whatsapp }}
+        </p>
+    {% endif %}
+
+    {% if configuracao.email %}
+        <p>
+            {{ configuracao.email }}
+        </p>
+    {% endif %}
+
+</div>

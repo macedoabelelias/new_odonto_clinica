@@ -1,0 +1,72 @@
+<div class="row g-3 mb-4">
+
+    <!-- Pacientes Hoje -->
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card">
+
+            <div class="stats-icon blue">
+                <i class="fas fa-user-check"></i>
+            </div>
+
+            <div class="stats-info">
+                <h3>{{ dashboard.pacientes_hoje|default:"0" }}</h3>
+                <p>Pacientes Hoje</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Consultas Hoje -->
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card">
+
+            <div class="stats-icon green">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+
+            <div class="stats-info">
+                <h3>{{ dashboard.consultas_hoje|default:"0" }}</h3>
+                <p>Consultas Hoje</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Próxima Consulta -->
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card">
+
+            <div class="stats-icon orange">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <div class="stats-info">
+                <h3>{{ dashboard.proxima_consulta_hora|default:"--:--" }}</h3>
+                <p>Próxima Consulta</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Profissional de Plantão -->
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card">
+
+            <div class="stats-icon purple">
+                <i class="fas fa-user-md"></i>
+            </div>
+
+            <div class="stats-info profissional-plantao">
+
+                <h5 class="profissional-nome">
+                    {{ dashboard.profissional_plantao|default:"-" }}
+                </h5>
+
+                <p>Profissional de Plantão</p>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

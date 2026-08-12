@@ -1,0 +1,616 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Relatório de Pacientes
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <div>
+
+                    <h4 class="mb-1">
+
+                        <i class="bi bi-people-fill me-2"></i>
+
+                        Relatório de Pacientes
+
+                    </h4>
+
+                    <p class="mb-0 text-white-50">
+
+                        Visualização completa dos pacientes cadastrados no sistema.
+
+                    </p>
+
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <!-- PDF -->
+
+                    <a href="{% url 'pdf_relatorio_pacientes' %}" class="btn btn-light btn-sm border">
+
+                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>
+
+                        PDF
+
+                    </a>
+
+                    <!-- Excel -->
+
+                    <a href="{% url 'exportar_excel_relatorio_pacientes' %}?{{ request.GET.urlencode }}"
+                    class="btn btn-success">
+
+                        <i class="bi bi-file-earmark-excel"></i>
+                        Excel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- Indicadores -->
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+                                        Total de Pacientes
+                                    </small>
+
+                                    <h2 class="fw-bold text-primary mb-0">
+                                        {{ total_pacientes }}
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-people-fill fs-1 text-primary opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+                                        Pacientes Ativos
+                                    </small>
+
+                                    <h2 class="fw-bold text-success mb-0">
+                                        {{ pacientes_ativos }}
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-person-check-fill fs-1 text-success opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+                                        Pacientes Inativos
+                                    </small>
+
+                                    <h2 class="fw-bold text-danger mb-0">
+                                        {{ pacientes_inativos }}
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-person-x-fill fs-1 text-danger opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <small class="text-muted text-uppercase">
+                                        Convênios
+                                    </small>
+
+                                    <h2 class="fw-bold text-info mb-0">
+                                        {{ total_convenios }}
+                                    </h2>
+
+                                </div>
+
+                                <i class="bi bi-hospital fs-1 text-info opacity-50"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Filtros -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-light">
+
+                    <h6 class="mb-0">
+
+                        <i class="bi bi-funnel-fill text-primary me-2"></i>
+
+                        Filtros de Pesquisa
+
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form method="GET">
+
+                        <div class="row g-3 align-items-end">
+
+                            <!-- Nome -->
+
+                            <div class="col-lg-5">
+
+                                <label class="form-label fw-semibold">
+
+                                    Nome
+
+                                </label>
+
+                                <input type="text" name="q" class="form-control"
+                                    placeholder="Digite o nome do paciente..." value="{{ request.GET.q }}">
+
+                            </div>
+
+                            <!-- Convênio -->
+
+                            <div class="col-lg-2">
+
+                                <label class="form-label fw-semibold">
+
+                                    Convênio
+
+                                </label>
+
+                                <select name="convenio" class="form-select">
+
+                                    <option value="">Todos</option>
+
+                                    {% for convenio in convenios %}
+
+                                    <option value="{{ convenio.id }}">
+
+                                        {{ convenio.nome }}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                            <!-- Status -->
+
+                            <div class="col-lg-2">
+
+                                <label class="form-label fw-semibold">
+
+                                    Status
+
+                                </label>
+
+                                <select name="status" class="form-select">
+
+                                    <option value="">Todos</option>
+                                    <option value="1">Ativos</option>
+                                    <option value="0">Inativos</option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- Botão -->
+
+                            <div class="col-lg-3">
+
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+
+                                    <i class="bi bi-search me-2"></i>
+
+                                    Pesquisar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                </div>
+
+                </form>
+
+            </div>
+
+        </div>
+        <!-- Tabela -->
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-light">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div>
+
+                        <h6 class="mb-1">
+
+                            <i class="bi bi-table me-2 text-primary"></i>
+
+                            Pacientes Encontrados
+
+                        </h6>
+
+                        <small class="text-muted">
+
+                            Total de registros encontrados
+
+                        </small>
+
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+
+                            {{ pacientes|length }} paciente(s)
+
+                        </span>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-primary">
+
+                            <tr>
+
+                                <th>Paciente</th>
+
+                                <th>
+                                    <i class="bi bi-whatsapp text-success me-1"></i>
+                                    WhatsApp
+                                </th>
+
+                                <th>Convênio</th>
+
+                                <th>Dentista</th>
+
+                                <th>Status</th>
+
+                                <th class="text-center">
+                                    Ações
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for paciente in pacientes %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="fw-semibold text-dark">
+
+                                        {{ paciente.nome }}
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <i class="bi bi-whatsapp me-1 text-success"></i>
+
+                                    {{ paciente.whatsapp|default:paciente.telefone }}
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge bg-info-subtle text-dark border">
+
+                                        {{ paciente.convenio|default:"Particular" }}
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    {% if paciente.dentista %}
+
+                                    <i class="bi bi-person-badge me-1 text-primary"></i>
+
+                                    {{ paciente.dentista.get_full_name|default:paciente.dentista.username }}
+
+                                    {% else %}
+
+                                    —
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <td>
+
+                                    {% if paciente.ativo %}
+
+                                    <span class="badge rounded-pill bg-success">
+
+                                        Ativo
+
+                                    </span>
+
+                                    {% else %}
+
+                                    <span class="badge rounded-pill bg-danger">
+
+                                        Inativo
+
+                                    </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="text-center">
+
+                                    <div class="btn-group btn-group-sm">
+
+                                        <a href="{% url 'odontograma' paciente.id %}" class="btn btn-outline-primary"
+                                            title="Odontograma">
+
+                                            <i class="bi bi-grid-3x3-gap-fill"></i>
+
+                                        </a>
+
+                                        <a href="{% url 'editar_paciente' paciente.id %}"
+                                            class="btn btn-outline-warning" title="Editar">
+
+                                            <i class="bi bi-pencil-fill"></i>
+
+                                        </a>
+
+                                        <a href="https://wa.me/55{{ paciente.telefone|cut:'('|cut:')'|cut:'-'|cut:' ' }}"
+                                            target="_blank" class="btn btn-outline-success btn-sm" title="WhatsApp">
+
+                                            <i class="bi bi-whatsapp"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="5" class="text-center text-muted">
+
+                                    Nenhum paciente encontrado.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="card-footer bg-white">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <!-- Paginação -->
+
+                        <nav>
+
+                            <ul class="pagination pagination-sm mb-0">
+
+                                <!-- Anterior -->
+
+                                {% if pacientes.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a class="page-link"
+                                        href="?page={{ pacientes.previous_page_number }}&q={{ request.GET.q }}&convenio={{ request.GET.convenio }}&status={{ request.GET.status }}">
+
+                                        Anterior
+
+                                    </a>
+
+                                </li>
+
+                                {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+
+                                        Anterior
+
+                                    </span>
+
+                                </li>
+
+                                {% endif %}
+
+                                <!-- Páginas -->
+
+                                {% for num in pacientes.paginator.page_range %}
+
+                                {% if pacientes.number == num %}
+
+                                <li class="page-item active">
+
+                                    <span class="page-link">
+
+                                        {{ num }}
+
+                                    </span>
+
+                                </li>
+
+                                {% else %}
+
+                                <li class="page-item">
+
+                                    <a class="page-link"
+                                        href="?page={{ num }}&q={{ request.GET.q }}&convenio={{ request.GET.convenio }}&status={{ request.GET.status }}">
+
+                                        {{ num }}
+
+                                    </a>
+
+                                </li>
+
+                                {% endif %}
+
+                                {% endfor %}
+
+                                <!-- Próxima -->
+
+                                {% if pacientes.has_next %}
+
+                                <li class="page-item">
+
+                                    <a class="page-link"
+                                        href="?page={{ pacientes.next_page_number }}&q={{ request.GET.q }}&convenio={{ request.GET.convenio }}&status={{ request.GET.status }}">
+
+                                        Próxima
+
+                                    </a>
+
+                                </li>
+
+                                {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+
+                                        Próxima
+
+                                    </span>
+
+                                </li>
+
+                                {% endif %}
+
+                            </ul>
+
+                        </nav>
+
+                        <!-- Botões -->
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endblock %}

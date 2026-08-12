@@ -1,0 +1,192 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Tratamentos
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+    <div>
+
+        <h4 class="mb-1">
+
+            Tratamentos do Paciente
+
+        </h4>
+
+        <small>
+
+            Gerenciamento completo dos tratamentos clínicos
+
+        </small>
+
+    </div>
+
+    <a
+        href="#"
+        class="btn btn-primary">
+
+        <i class="fa-solid fa-plus"></i>
+
+        Novo Tratamento
+
+    </a>
+
+</div>
+
+        </div>
+
+        <div class="card-body">
+
+            <h5 class="mb-4">
+
+                Paciente:
+                <strong>{{ paciente.nome }}</strong>
+
+            </h5>
+
+            {% if tratamentos %}
+
+                <div class="list-group">
+
+                    {% for tratamento in tratamentos %}
+
+                        <div class="list-group-item mb-3 rounded">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <div class="d-flex justify-content-between">
+
+    <div>
+
+        <h5 class="mb-1">
+
+            {{ tratamento.titulo }}
+
+        </h5>
+
+        <small>
+
+            Início:
+            {{ tratamento.data_inicio|date:"d/m/Y" }}
+
+        </small>
+
+        {% if tratamento.data_encerramento %}
+
+        <br>
+
+        <small>
+
+            Encerrado em:
+            {{ tratamento.data_encerramento|date:"d/m/Y" }}
+
+        </small>
+
+        {% endif %}
+
+    </div>
+
+    <div class="text-end">
+
+        {% if tratamento.status == 'ATIVO' %}
+
+            <span class="badge bg-success">
+
+                Tratamento Ativo
+
+            </span>
+
+        {% else %}
+
+            <span class="badge bg-secondary">
+
+                Encerrado
+
+            </span>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+                                    <small>
+
+                                        Início:
+                                        {{ tratamento.data_inicio|date:"d/m/Y" }}
+
+                                    </small>
+
+                                    <br>
+
+                                    {% if tratamento.data_encerramento %}
+
+                                        <small>
+
+                                            Encerramento:
+                                            {{ tratamento.data_encerramento|date:"d/m/Y" }}
+
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div>
+
+                                    {% if tratamento.status == 'ATIVO' %}
+
+                                        <span class="badge bg-success">
+
+                                            ATIVO
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+
+                                            ENCERRADO
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+
+                    Nenhum tratamento encontrado.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

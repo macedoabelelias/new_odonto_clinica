@@ -1,0 +1,77 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h3 class="mb-4">
+        Nova Solicitação de Exame
+    </h3>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Título
+            </label>
+
+            <input
+                type="text"
+                name="titulo"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Exames Solicitados
+            </label>
+
+            <textarea
+                name="exames_solicitados"
+                rows="8"
+                class="form-control"
+                required
+            ></textarea>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Observações
+            </label>
+
+            <textarea
+                name="observacoes"
+                rows="4"
+                class="form-control"
+            ></textarea>
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Salvar Solicitação
+        </button>
+
+        <a
+            href="{% url 'solicitacoes_exames' paciente.id %}"
+            class="btn btn-secondary"
+        >
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

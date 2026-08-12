@@ -1,0 +1,298 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h3>
+
+        {% if receita %}
+
+            Editar Receita
+
+        {% else %}
+
+            Nova Receita
+
+        {% endif %}
+
+    </h3>
+
+</div>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <!-- MODELO DE RECEITA -->
+
+<div class="mb-3">
+
+    <label class="form-label">
+
+        Modelo de Receita
+
+    </label>
+
+    <select
+        id="modelo_receita"
+        class="form-select"
+    >
+
+        <option value="">
+
+            Selecione um modelo
+
+        </option>
+
+        {% for modelo in modelos_receita %}
+
+            <option value="{{ modelo.id }}">
+
+                {{ modelo.nome }}
+
+            </option>
+
+        {% endfor %}
+
+    </select>
+
+</div>
+
+    <!-- MEDICAMENTO -->
+
+<div class="mb-3">
+
+
+<label class="form-label">
+
+    Medicamento
+
+</label>
+
+<input
+    id="medicamento"
+    type="text"
+    name="medicamento"
+    class="form-control"
+    value="{{ receita.medicamento|default:'' }}"
+    placeholder="Ex.: Amoxicilina 500 mg"
+    required
+>
+
+
+</div>
+
+
+    <!-- TIPO DE RECEITA -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Tipo de Receita
+
+        </label>
+
+        <select
+            id="tipo_receita"
+            name="tipo_receita"
+            class="form-select"
+        >
+
+            <option
+                value="simples"
+                {% if receita and receita.tipo_receita == 'simples' %}selected{% endif %}
+            >
+                Receituário Simples
+            </option>
+
+            <option
+                value="controle"
+                {% if receita and receita.tipo_receita == 'controle' %}selected{% endif %}
+            >
+                Receita de Controle Especial
+            </option>
+
+        </select>
+
+    </div>
+
+    <!-- QUANTIDADE -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Quantidade
+
+        </label>
+
+        <input
+            id="quantidade"
+            type="text"
+            name="quantidade"
+            class="form-control"
+            placeholder="Ex.: 1 caixa"
+            value="{{ receita.quantidade|default:'' }}"
+            required
+        >
+
+    </div>
+
+    <!-- POSOLOGIA -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Posologia
+
+        </label>
+
+        <textarea
+            id="posologia"
+            name="posologia"
+            rows="4"
+            class="form-control"
+            required
+        >{{ receita.posologia|default:'' }}</textarea>
+
+    </div>
+
+    <!-- OBSERVAÇÕES -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Observações
+
+        </label>
+
+        <textarea
+            id="observacoes"
+            name="observacoes"
+            rows="3"
+            class="form-control"
+        >{{ receita.observacoes|default:'' }}</textarea>
+
+    </div>
+
+    <!-- BOTÕES -->
+
+    <div class="d-flex gap-2">
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+
+            <i class="bi bi-check-circle"></i>
+
+            Salvar Receita
+
+        </button>
+
+        <a
+            href="{% url 'receitas' paciente.id %}"
+            class="btn btn-secondary"
+        >
+
+            Cancelar
+
+        </a>
+
+    </div>
+
+</form>
+
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    const modelo = document.getElementById(
+        'modelo_receita'
+    );
+
+    modelo.addEventListener(
+        'change',
+        function(){
+
+            if(!this.value)
+                return;
+
+            console.log(
+                'Modelo selecionado:',
+                this.value
+            );
+
+            fetch(
+                `/modelo-receita/${this.value}/`
+            )
+
+            .then(
+                response => response.json()
+            )
+
+            .then(
+    data => {
+
+        console.log('Preenchendo...');
+
+        const medicamento =
+            document.getElementById(
+                'medicamento'
+            );
+
+        const quantidade =
+            document.getElementById(
+                'quantidade'
+            );
+
+        const posologia =
+            document.getElementById(
+                'posologia'
+            );
+
+        medicamento.value =
+            data.medicamento;
+
+        quantidade.value =
+            data.quantidade;
+
+        posologia.value =
+            data.posologia;
+
+        console.log(
+            medicamento.value,
+            quantidade.value,
+            posologia.value
+        );
+
+    }
+)
+
+            .catch(
+                error => {
+
+                    console.error(
+                        error
+                    );
+
+                }
+            );
+
+        }
+    );
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,464 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>Nova Compra</h1>
+
+        <a href="{% url 'compras' %}" class="btn btn-secondary">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Voltar
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="POST" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <!-- DADOS DA COMPRA -->
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+
+            <label class="form-label">
+
+                Fornecedor
+
+            </label>
+
+            <select
+                name="fornecedor"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+
+                    Selecione
+
+                </option>
+
+                {% for fornecedor in fornecedores %}
+
+                <option value="{{ fornecedor.id }}">
+
+                    {{ fornecedor.nome }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="col-md-2 mb-3">
+
+            <label class="form-label">
+
+                Data da Compra
+
+            </label>
+
+            <input
+                type="date"
+                name="data_compra"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <label class="form-label">
+
+                Vencimento
+
+            </label>
+
+            <input
+                type="date"
+                name="vencimento"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <label class="form-label">
+
+                Número da NF
+
+            </label>
+
+            <input
+                type="text"
+                name="numero_nf"
+                class="form-control"
+            >
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+
+                Arquivo da NF
+
+            </label>
+
+            <input
+                type="file"
+                name="arquivo_nf"
+                class="form-control"
+            >
+
+            <small class="text-muted">
+
+                PDF ou XML da nota fiscal
+
+            </small>
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+
+                Observações
+
+            </label>
+
+            <textarea
+                name="observacoes"
+                class="form-control"
+                rows="3"
+            ></textarea>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- PRODUTOS DA COMPRA -->
+
+    <h5 class="mb-3">
+
+        <i class="fa-solid fa-cart-shopping"></i>
+
+        Produtos da Compra
+
+    </h5>
+
+    <!-- ITENS DA COMPRA -->
+
+    <div class="mb-3">
+
+        <button
+            type="button"
+            class="btn btn-success"
+            onclick="adicionarItem()"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            Adicionar Produto
+
+        </button>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered">
+
+            <thead>
+
+                <tr>
+
+                    <th>Produto</th>
+
+                    <th width="120">
+                        Quantidade
+                    </th>
+
+                    <th width="180">
+                        Valor Unitário
+                    </th>
+
+                    <th width="180">
+                        Subtotal
+                    </th>
+
+                    <th width="80">
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="itens-compra">
+
+            </tbody>
+
+        </table>
+
+</div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-3 offset-md-9">
+
+                        <label class="form-label fw-bold">
+
+                            Total da Compra
+
+                        </label>
+
+                        <input type="text" id="total_compra" class="form-control fw-bold" readonly>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <!-- OBSERVAÇÕES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Observações
+
+                    </label>
+
+                    <textarea name="observacoes" rows="4" class="form-control"></textarea>
+
+                </div>
+
+                <div class="alert alert-warning">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    Nesta primeira versão será possível adicionar
+                    um produto por compra. Na próxima etapa
+                    implementaremos múltiplos itens e cálculo
+                    automático do total.
+
+                </div>
+
+                <div class="d-flex justify-content-end">
+
+                    <button type="submit" class="btn btn-primary">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Salvar Compra
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function adicionarItem() {
+
+    const linha = `
+
+    <tr>
+
+        <td>
+
+            <select
+                name="produto[]"
+                class="form-control"
+                required>
+
+                <option value="">
+                    Selecione
+                </option>
+
+                {% for produto in produtos %}
+
+                <option value="{{ produto.id }}">
+
+                    {{ produto.nome }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="quantidade[]"
+                class="form-control quantidade"
+                value="1"
+                min="1">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                step="0.01"
+                name="valor_unitario[]"
+                class="form-control valor"
+                value="0">
+
+        </td>
+
+        <td>
+
+            <input
+                type="text"
+                class="form-control subtotal"
+                readonly>
+
+        </td>
+
+        <td>
+
+            <button
+                type="button"
+                class="btn btn-danger"
+                onclick="removerItem(this)">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </button>
+
+        </td>
+
+    </tr>
+
+    `;
+
+    document
+        .getElementById(
+            'itens-compra'
+        )
+        .insertAdjacentHTML(
+            'beforeend',
+            linha
+        );
+
+    configurarEventos();
+
+    calcularTotal();
+
+}
+
+function removerItem(botao){
+
+    botao.closest('tr').remove();
+
+    calcularTotal();
+
+}
+
+function configurarEventos(){
+
+    document
+        .querySelectorAll(
+            '.quantidade, .valor'
+        )
+        .forEach(campo => {
+
+            campo.oninput =
+                calcularTotal;
+
+        });
+
+}
+
+function calcularTotal(){
+
+    let total = 0;
+
+    document
+        .querySelectorAll(
+            '#itens-compra tr'
+        )
+        .forEach(linha => {
+
+            const qtd =
+                parseFloat(
+                    linha.querySelector('.quantidade').value
+                ) || 0;
+
+            const valor =
+                parseFloat(
+                    linha.querySelector('.valor').value
+                ) || 0;
+
+            const subtotal =
+                qtd * valor;
+
+            linha.querySelector(
+                '.subtotal'
+            ).value =
+                subtotal.toFixed(2);
+
+            total += subtotal;
+
+        });
+
+    document
+        .getElementById(
+            'total_compra'
+        )
+        .value =
+        total.toFixed(2);
+
+}
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function(){
+
+        adicionarItem();
+
+    }
+);
+
+</script>
+
+{% endblock %}

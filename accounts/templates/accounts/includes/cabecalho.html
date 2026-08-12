@@ -1,0 +1,23 @@
+<div class="documento-cabecalho">
+
+    {% if configuracao.logo %}
+        <img
+            src="{{ configuracao.logo.url }}"
+            class="logo-clinica"
+            alt="Logo"
+        >
+    {% endif %}
+
+    <h1>
+        {{ configuracao.nome_clinica }}
+    </h1>
+
+    {% if configuracao.cro %}
+        <p class="cro">
+            CRO: {{ configuracao.cro }}
+        </p>
+    {% endif %}
+
+</div>
+
+<hr class="linha-documento">

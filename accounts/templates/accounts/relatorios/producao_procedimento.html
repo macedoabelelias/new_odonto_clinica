@@ -1,0 +1,419 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Produção por Procedimento
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-success text-white">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h4 class="mb-0">
+
+            <i class="bi bi-clipboard2-pulse"></i>
+
+            Produção por Procedimento
+
+        </h4>
+
+        <div>
+
+   <a href="{% url 'pdf_producao_procedimento' %}?procedimento={{ procedimento_id|default_if_none:'' }}&data_inicio={{ data_inicio|default_if_none:'' }}&data_final={{ data_final|default_if_none:'' }}"
+   target="_blank"
+   class="btn btn-light btn-sm me-2">
+
+    <i class="bi bi-file-earmark-pdf text-danger"></i>
+
+    PDF
+
+</a>
+
+            <a
+                href="{% url 'excel_producao_procedimento' %}?{{ request.GET.urlencode }}"
+                class="btn btn-success btn-sm me-2">
+
+                <i class="bi bi-file-earmark-excel"></i>
+
+                Excel
+
+            </a>
+
+           
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card-body">
+
+    <form method="get">
+
+        <div class="row g-3 align-items-end">
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Procedimento
+
+                </label>
+
+                <select
+                    name="procedimento"
+                    class="form-select">
+
+                    <option value="">
+
+                        Todos
+
+                    </option>
+
+                    {% for procedimento in procedimentos %}
+
+                        <option
+                            value="{{ procedimento.id }}"
+                            {% if procedimento.id|stringformat:"s" == procedimento_id %}selected{% endif %}>
+
+                            {{ procedimento.nome }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Data Inicial
+
+                </label>
+
+                <input
+                    type="date"
+                    name="data_inicio"
+                    value="{{ data_inicio }}"
+                    class="form-control">
+
+            </div>
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Data Final
+
+                </label>
+
+                <input
+                    type="date"
+                    name="data_final"
+                    value="{{ data_final }}"
+                    class="form-control">
+
+            </div>
+
+            <div class="col-md-2 d-grid">
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    <i class="bi bi-search"></i>
+
+                    Filtrar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+
+            <hr class="my-4">
+
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card border-success shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+                    Produção Total
+                </h6>
+
+                <h3 class="text-success">
+                    R$ {{ total_producao|floatformat:2 }}
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card border-primary shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+                    Procedimentos
+                </h6>
+
+                <h3 class="text-primary">
+                    {{ total_procedimentos }}
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card border-warning shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+                    Pacientes
+                </h6>
+
+                <h3 class="text-warning">
+                    {{ total_pacientes }}
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card border-info shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6 class="text-muted">
+                    Média por Paciente
+                </h6>
+
+                <h3 class="text-info">
+
+                    R$ {{ media_paciente|floatformat:2 }}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<hr class="my-4">
+
+{% if procedimento_id %}
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-success text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-person-badge-fill"></i>
+
+            Produção por Profissional
+
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>Profissional</th>
+
+                    <th class="text-center">Procedimentos</th>
+
+                    <th class="text-center">Pacientes</th>
+
+                    <th class="text-end">Produção</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in ranking_profissionais %}
+
+                <tr>
+
+                    <td>
+
+                        {{ item.orcamento__paciente__dentista__first_name }}
+                        {{ item.orcamento__paciente__dentista__last_name }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        {{ item.quantidade }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        {{ item.pacientes }}
+
+                    </td>
+
+                    <td class="text-end">
+
+                        R$ {{ item.total|floatformat:2 }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" class="text-center text-muted py-4">
+
+                        Nenhum profissional encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-success text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-bar-chart-fill"></i>
+
+            Ranking de Procedimentos
+
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>Procedimento</th>
+
+                    <th class="text-center">Qtd.</th>
+
+                    <th class="text-center">Pacientes</th>
+
+                    <th class="text-end">Produção</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in ranking %}
+
+                <tr>
+
+                    <td>
+
+                        {{ item.procedimento__nome }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        {{ item.quantidade }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        {{ item.pacientes }}
+
+                    </td>
+
+                    <td class="text-end">
+
+                        R$ {{ item.total|floatformat:2 }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" class="text-center text-muted py-4">
+
+                        Nenhum procedimento encontrado.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

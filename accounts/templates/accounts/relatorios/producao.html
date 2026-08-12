@@ -1,0 +1,241 @@
+{% extends 'accounts/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Central de Produção
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h4 class="mb-1">
+
+                        <i class="bi bi-graph-up-arrow me-2"></i>
+
+                        Central de Produção
+
+                    </h4>
+
+                    <p class="mb-0 text-white-50">
+
+                        Relatórios gerenciais da produção clínica.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <!-- PRODUÇÃO POR PROFISSIONAL -->
+
+                <div class="col-lg-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <i class="bi bi-person-badge-fill fs-2 text-primary me-3"></i>
+
+                                <div>
+
+                                    <h5 class="mb-1">
+
+                                        Produção por Profissional
+
+                                    </h5>
+
+                                    <small class="text-muted">
+
+                                        Análise individual da produção de cada profissional.
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="text-end">
+
+                                <a href="{% url 'relatorio_producao_profissional' %}"
+                                   class="btn btn-outline-primary">
+
+                                    Acessar
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PRODUÇÃO POR PROCEDIMENTO -->
+
+                <div class="col-lg-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <i class="bi bi-clipboard2-pulse-fill fs-2 text-success me-3"></i>
+
+                                <div>
+
+                                    <h5 class="mb-1">
+
+                                        Produção por Procedimento
+
+                                    </h5>
+
+                                    <small class="text-muted">
+
+                                        Ranking dos procedimentos mais realizados.
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="text-end">
+
+                                <a href="{% url 'relatorio_producao_procedimento' %}"
+                                   class="btn btn-outline-success">
+
+                                    Acessar
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PRODUÇÃO MENSAL -->
+
+                <div class="col-lg-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <i class="bi bi-graph-up fs-2 text-info me-3"></i>
+
+                                <div>
+
+                                    <h5 class="mb-1">
+
+                                        Produção Mensal
+
+                                    </h5>
+
+                                    <small class="text-muted">
+
+                                        Evolução mensal da produção da clínica.
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="text-end">
+
+                                <a href="{% url 'relatorio_producao_mensal' %}"
+                                class="btn btn-outline-info">
+
+                                    Acessar
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PRODUÇÃO POR CONVÊNIO -->
+
+                <div class="col-lg-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <i class="bi bi-building fs-2 text-warning me-3"></i>
+
+                                <div>
+
+                                    <h5 class="mb-1">
+
+                                        Produção por Convênio
+
+                                    </h5>
+
+                                    <small class="text-muted">
+
+                                        Comparativo de produção entre convênios.
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="text-end">
+
+                                <a href="{% url 'relatorio_producao_convenio' %}"
+                                class="btn btn-outline-warning">
+
+                                    Acessar
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

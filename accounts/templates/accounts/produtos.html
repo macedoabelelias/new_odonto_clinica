@@ -1,0 +1,230 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>Produtos</h1>
+
+        <a href="{% url 'novo_produto' %}" class="btn btn-primary">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Novo Produto
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                {% if total_produtos_baixos > 0 %}
+
+<div class="alert alert-danger mb-3">
+
+    <i class="fa-solid fa-triangle-exclamation"></i>
+
+    Existem
+
+    <strong>
+
+        {{ total_produtos_baixos }}
+
+    </strong>
+
+    produto(s) abaixo do estoque mínimo.
+
+</div>
+
+{% endif %}
+
+                <table class="table table-hover align-middle">
+
+    <thead>
+
+        <tr>
+
+            <th width="30%">Nome</th>
+
+            <th width="12%">Código</th>
+
+            <th width="10%">Estoque</th>
+
+            <th width="10%">Mínimo</th>
+
+            <th width="12%">Compra</th>
+
+            <th width="12%">Venda</th>
+
+            <th width="8%">Status</th>
+
+            <th width="16%">Ações</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for produto in produtos %}
+
+        <tr>
+
+            <td
+                class="produto-nome"
+                title="{{ produto.nome }}">
+
+                <strong>
+
+                    {{ produto.nome|truncatechars:45 }}
+
+                </strong>
+
+            </td>
+
+            <td>
+
+                {{ produto.codigo|default:"—" }}
+
+            </td>
+
+            <td>
+
+                {% if produto.estoque <= produto.estoque_minimo %}
+
+                    <span class="badge bg-danger">
+
+                        {{ produto.estoque }}
+
+                    </span>
+
+                {% else %}
+
+                    {{ produto.estoque }}
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                {{ produto.estoque_minimo }}
+
+            </td>
+
+            <td>
+
+                R$ {{ produto.valor_compra }}
+
+            </td>
+
+            <td>
+
+                R$ {{ produto.valor_venda }}
+
+            </td>
+
+            <td>
+
+                {% if produto.ativo %}
+
+                    <span class="badge bg-success">
+
+                        Ativo
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-danger">
+
+                        Inativo
+
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <div class="d-flex gap-2">
+
+                    <a href="{% url 'editar_produto' produto.id %}"
+                       class="btn btn-sm btn-primary"
+                       title="Editar">
+
+                        <i class="fa-solid fa-pen"></i>
+
+                    </a>
+
+                    {% if produto.ativo %}
+
+                    <a href="{% url 'alterar_status_produto' produto.id %}"
+                       class="btn btn-sm btn-warning"
+                       title="Inativar">
+
+                        <i class="fa-solid fa-toggle-off"></i>
+
+                    </a>
+
+                    {% else %}
+
+                    <a href="{% url 'alterar_status_produto' produto.id %}"
+                       class="btn btn-sm btn-success"
+                       title="Ativar">
+
+                        <i class="fa-solid fa-toggle-on"></i>
+
+                    </a>
+
+                    {% endif %}
+
+                    <a href="{% url 'excluir_produto' produto.id %}"
+                       class="btn btn-sm btn-danger"
+                       title="Excluir"
+                       onclick="return confirm('Deseja excluir este produto?')">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </a>
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="8" class="text-center">
+
+                Nenhum produto cadastrado.
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

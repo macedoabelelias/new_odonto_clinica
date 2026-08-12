@@ -1,0 +1,219 @@
+{% load static %}
+
+<style>
+
+.arcada-pdf{
+    text-align:center;
+    margin:8px 0;
+}
+
+.titulo-arcada{
+    font-size:14px;
+    font-weight:700;
+    margin:4px 0;
+    color:#1f2937;
+}
+
+.arcada-row{
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    gap:2px;
+    margin:6px 0;
+}
+
+.dente-pdf{
+    text-align:center;
+}
+
+.numero-dente{
+    font-size:9px;
+    font-weight:600;
+    color:#475569;
+    margin-bottom:2px;
+}
+
+.numero-dente-inferior{
+    font-size:9px;
+    font-weight:600;
+    color:#475569;
+    margin-top:2px;
+}
+
+.dente-img-pdf{
+    width:28px;
+    height:52px;
+    object-fit:contain;
+}
+
+.separador-arcada{
+    height:15px;
+}
+
+/* =========================================
+DENTE COM PROCEDIMENTO
+========================================= */
+
+.dente-selecionado{
+
+    background:#dbeafe;
+
+    border:2px solid #2563eb;
+
+    border-radius:6px;
+
+    padding:2px;
+
+}
+
+</style>
+
+<!-- ========================================= -->
+<!-- DENTIÇÃO PERMANENTE -->
+<!-- ========================================= -->
+
+{% if tem_permanente %}
+
+<div class="arcada-pdf">
+
+    <div class="titulo-arcada">
+        Dentição Permanente
+    </div>
+
+    <!-- SUPERIOR -->
+
+    <div class="arcada-row">
+
+        {% for numero in superiores_permanentes %}
+
+        <div class="dente-pdf">
+
+    <div class="numero-dente">
+
+        {{ numero }}
+
+    </div>
+
+    <div
+        {% if numero in dentes_com_procedimento %}
+            class="dente-selecionado"
+        {% endif %}
+    >
+
+        <img
+            src="{% static 'img/dentes/' %}{{ numero }}.png"
+            class="dente-img-pdf"
+            alt="{{ numero }}"
+        >
+
+    </div>
+
+</div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- INFERIOR -->
+
+    <div class="arcada-row">
+
+        {% for numero in inferiores_permanentes %}
+
+        <div class="dente-pdf">
+
+    <div
+        {% if numero in dentes_com_procedimento %}
+            class="dente-selecionado"
+        {% endif %}
+    >
+
+        <img
+            src="{% static 'img/dentes/' %}{{ numero }}.png"
+            class="dente-img-pdf"
+            alt="{{ numero }}"
+        >
+
+    </div>
+
+    <div class="numero-dente-inferior">
+
+        {{ numero }}
+
+    </div>
+
+</div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- ========================================= -->
+<!-- DENTIÇÃO DECÍDUA -->
+<!-- ========================================= -->
+
+{% if tem_deciduo %}
+
+<div class="separador-arcada"></div>
+
+<div class="arcada-pdf">
+
+    <div class="titulo-arcada">
+        Dentição Decídua
+    </div>
+
+    <!-- SUPERIOR -->
+
+    <div class="arcada-row">
+
+        {% for numero in superiores_deciduos %}
+
+        <div
+    {% if numero in dentes_com_procedimento %}
+        class="dente-selecionado"
+    {% endif %}
+>
+
+    <img
+        src="{% static 'img/dentes/' %}{{ numero }}.png"
+        class="dente-img-pdf"
+        alt="{{ numero }}"
+    >
+
+</div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- INFERIOR -->
+
+    <div class="arcada-row">
+
+        {% for numero in inferiores_deciduos %}
+
+        <div
+    {% if numero in dentes_com_procedimento %}
+        class="dente-selecionado"
+    {% endif %}
+>
+
+    <img
+        src="{% static 'img/dentes/' %}{{ numero }}.png"
+        class="dente-img-pdf"
+        alt="{{ numero }}"
+    >
+
+</div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}

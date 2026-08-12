@@ -1,0 +1,94 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h3 class="mb-4">
+        Novo Exame
+    </h3>
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Nome do exame
+            </label>
+
+            <input
+                type="text"
+                name="nome"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Data do exame
+            </label>
+
+            <input
+                type="date"
+                name="data_exame"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Arquivo
+            </label>
+
+            <input
+                type="file"
+                name="arquivo"
+                class="form-control"
+            >
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Observações
+            </label>
+
+            <textarea
+                name="observacoes"
+                rows="4"
+                class="form-control"
+            ></textarea>
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Salvar Exame
+        </button>
+
+        <a
+            href="{% url 'exames' paciente.id %}"
+            class="btn btn-secondary"
+        >
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
