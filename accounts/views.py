@@ -344,6 +344,12 @@ def dashboard_view(request):
     ranking_gestor = {}
     meta_clinica = {}
 
+    # =========================================
+    # META DA CLÍNICA
+    # =========================================
+
+    meta_clinica = obter_meta_clinica()
+
     if dashboard_tipo == "gestor":
 
         indicadores_gestor = (
@@ -362,6 +368,14 @@ def dashboard_view(request):
             obter_meta_clinica()
         )
 
+
+    # =========================================
+    # META DA CLÍNICA
+    # =========================================
+
+    if dashboard_tipo in ["admin", "gestor"]:
+
+        meta_clinica = obter_meta_clinica()
 
     # =========================================
     # DASHBOARD MARKETING
@@ -679,19 +693,35 @@ def dashboard_view(request):
 
     dashboard_config = {
 
-        # Cards Superiores
+        # =========================================
+        # CARDS SUPERIORES
+        # =========================================
+
         "mostrar_pacientes": True,
         "mostrar_receber": True,
         "mostrar_pagar": True,
         "mostrar_saldo_caixa": True,
 
-        # Segunda Linha
+        # =========================================
+        # CARDS ESPECIAIS
+        # =========================================
+
+        "mostrar_meta_clinica": False,
+        "mostrar_comissao": False,
+
+        # =========================================
+        # SEGUNDA LINHA
+        # =========================================
+
         "mostrar_recebimentos": True,
         "mostrar_pagamentos": True,
         "mostrar_lucro": True,
         "mostrar_fornecedores": True,
 
-        # Conteúdo
+        # =========================================
+        # CONTEÚDO
+        # =========================================
+
         "mostrar_faturamento": True,
         "mostrar_consultas": True,
         "mostrar_aniversariantes": True,
@@ -705,6 +735,41 @@ def dashboard_view(request):
     # =========================================
 
     # Administrador e Gestor utilizam o Dashboard completo.
+
+
+    # =========================================
+    # ADMINISTRADOR
+    # =========================================
+
+    if dashboard_tipo == "admin":
+
+        dashboard_config.update({
+
+            # Cards Superiores
+            "mostrar_pacientes": True,
+            "mostrar_receber": False,
+            "mostrar_pagar": True,
+            "mostrar_saldo_caixa": True,
+
+            # Meta da Clínica
+            "mostrar_meta_clinica": True,
+            "mostrar_comissao": False,
+
+            # Segunda Linha
+            "mostrar_recebimentos": True,
+            "mostrar_pagamentos": True,
+            "mostrar_lucro": True,
+            "mostrar_fornecedores": True,
+
+            # Conteúdo
+            "mostrar_faturamento": True,
+            "mostrar_consultas": True,
+            "mostrar_aniversariantes": True,
+            "mostrar_ranking": True,
+            "mostrar_movimentacoes": True,
+
+        })
+
 
     # =========================================
     # DENTISTA
@@ -11836,26 +11901,44 @@ def fechar_caixa(request):
     if request.method != "POST":
         return redirect("caixa")
 
+    # =========================================
+    # IDENTIFICA QUAL CAIXA SERÁ FECHADO
+    # =========================================
 
-    caixa = CaixaDiario.objects.filter(
+    caixa_id = request.POST.get("caixa_id")
 
-        data=timezone.localdate(),
+    if caixa_id:
 
-        status="ABERTO"
+        # Fechar caixa pendente específico
+        caixa = CaixaDiario.objects.filter(
+            id=caixa_id,
+            status="ABERTO"
+        ).first()
 
-    ).first()
+    else:
+
+        # Fechamento normal do caixa de hoje
+        caixa = CaixaDiario.objects.filter(
+            data=timezone.localdate(),
+            status="ABERTO"
+        ).first()
+
+    # =========================================
+    # VERIFICAÇÃO
+    # =========================================
 
     if not caixa:
 
         messages.warning(
-
             request,
-
-             "Não existe um Caixa aberto para hoje."
-
+            "Não existe um Caixa aberto para fechamento."
         )
 
         return redirect("caixa")
+
+    # =========================================
+    # CALCULA ENTRADAS
+    # =========================================
 
     entradas = Caixa.objects.filter(
 
@@ -11869,6 +11952,10 @@ def fechar_caixa(request):
 
     )["total"] or Decimal("0.00")
 
+    # =========================================
+    # CALCULA SAÍDAS
+    # =========================================
+
     saidas = Caixa.objects.filter(
 
         data=caixa.data,
@@ -11881,11 +11968,21 @@ def fechar_caixa(request):
 
     )["total"] or Decimal("0.00")
 
+    # =========================================
+    # DEBUG
+    # =========================================
+
     print("=" * 60)
+    print("FECHANDO CAIXA:", caixa.id)
+    print("DATA:", caixa.data)
     print("SALDO INICIAL:", caixa.saldo_inicial)
     print("ENTRADAS:", entradas)
     print("SAÍDAS:", saidas)
     print("=" * 60)
+
+    # =========================================
+    # CALCULA SALDO FINAL
+    # =========================================
 
     caixa.saldo_final = (
 
@@ -11898,7 +11995,10 @@ def fechar_caixa(request):
     )
 
     print("SALDO FINAL:", caixa.saldo_final)
-    print("=" * 60)
+
+    # =========================================
+    # FECHA CAIXA
+    # =========================================
 
     caixa.data_fechamento = timezone.now()
 
@@ -11906,11 +12006,15 @@ def fechar_caixa(request):
 
     caixa.save()
 
+    # =========================================
+    # MENSAGEM
+    # =========================================
+
     messages.success(
 
         request,
 
-        "Caixa fechado com sucesso."
+        f"Caixa de {caixa.data.strftime('%d/%m/%Y')} fechado com sucesso."
 
     )
 
@@ -11977,20 +12081,77 @@ def reabrir_caixa(request):
 @permissao_required("livro_caixa", "visualizar")
 def livro_caixa(request):
 
+    # =========================================
+    # FILTROS
+    # =========================================
+
     data_inicio = request.GET.get("data_inicio")
     data_final = request.GET.get("data_final")
 
-    lancamentos = LivroCaixa.objects.all()
+    # =========================================
+    # LANÇAMENTOS
+    # =========================================
+
+    lancamentos = (
+        LivroCaixa.objects
+        .all()
+        .order_by(
+            "-data",
+            "-id"
+        )
+    )
+
+    # =========================================
+    # FILTRO - DATA INICIAL
+    # =========================================
 
     if data_inicio:
+
         lancamentos = lancamentos.filter(
             data__gte=data_inicio
         )
 
+    # =========================================
+    # FILTRO - DATA FINAL
+    # =========================================
+
     if data_final:
+
         lancamentos = lancamentos.filter(
             data__lte=data_final
         )
+
+    # =========================================
+    # TOTAIS
+    # =========================================
+
+    resumo = lancamentos.aggregate(
+
+        total_entradas=Sum("entrada"),
+
+        total_saidas=Sum("saida"),
+
+    )
+
+    total_entradas = (
+        resumo["total_entradas"]
+        or Decimal("0.00")
+    )
+
+    total_saidas = (
+        resumo["total_saidas"]
+        or Decimal("0.00")
+    )
+
+    # =========================================
+    # SALDO
+    # =========================================
+
+    saldo = total_entradas - total_saidas
+
+    # =========================================
+    # CONTEXT
+    # =========================================
 
     context = {
 
@@ -11999,6 +12160,12 @@ def livro_caixa(request):
         "data_inicio": data_inicio,
 
         "data_final": data_final,
+
+        "total_entradas": total_entradas,
+
+        "total_saidas": total_saidas,
+
+        "saldo": saldo,
 
     }
 
@@ -12010,7 +12177,7 @@ def livro_caixa(request):
 
         context
 
-    )  
+    ) 
 
 # =========================================
 # CENTRAL ORÇAMENTO
@@ -18962,77 +19129,83 @@ def obter_grafico_producao_gestor():
 
     }
 
- # =========================================
+# =========================================
 # DASHBOARD - META DA CLÍNICA
 # =========================================
 
 from django.db.models import Sum
 from decimal import Decimal
 
+
 def obter_meta_clinica():
 
     hoje = timezone.now()
 
-    meta = MetaClinica.objects.filter(
-        ano=hoje.year,
-        mes=hoje.month,
-        ativo=True
-    ).first()
+    ano = hoje.year
+    mes = hoje.month
 
-    if not meta:
+    # =========================================
+    # META DA CLÍNICA
+    # SOMA DAS METAS DOS DENTISTAS
+    # =========================================
 
-        return {
+    meta_clinica = (
+        MetaDentista.objects.filter(
+            ano=ano,
+            mes=mes,
+            ativo=True,
+        )
+        .aggregate(
+            total=Sum("meta_financeira")
+        )["total"]
+        or Decimal("0.00")
+    )
 
-            "meta_mes": Decimal("0.00"),
-            "faturado_mes": Decimal("0.00"),
-            "percentual_meta": 0,
-            "faltam_meta": Decimal("0.00"),
-
-        }
+    # =========================================
+    # FATURAMENTO REALIZADO NO MÊS
+    # =========================================
 
     faturado = (
-
         ContaReceber.objects.filter(
-
             status="RECEBIDO",
-
-            data_pagamento__year=hoje.year,
-
-            data_pagamento__month=hoje.month,
-
-        ).aggregate(
-
+            data_recebimento__year=ano,
+            data_recebimento__month=mes,
+        )
+        .aggregate(
             total=Sum("valor")
-
         )["total"]
-
         or Decimal("0.00")
-
     )
+
+    # =========================================
+    # PERCENTUAL DA META
+    # =========================================
 
     percentual = 0
 
-    if meta.valor > 0:
+    if meta_clinica > 0:
 
         percentual = round(
-
-            (faturado / meta.valor) * 100,
-
+            (faturado / meta_clinica) * 100,
             1
-
         )
 
+    # =========================================
+    # QUANTO FALTA
+    # =========================================
+
     faltam = max(
-
-        meta.valor - faturado,
-
+        meta_clinica - faturado,
         Decimal("0.00")
-
     )
+
+    # =========================================
+    # RETORNO
+    # =========================================
 
     return {
 
-        "meta_mes": meta.valor,
+        "meta_mes": meta_clinica,
 
         "faturado_mes": faturado,
 
@@ -19040,7 +19213,7 @@ def obter_meta_clinica():
 
         "faltam_meta": faltam,
 
-    }   
+    }  
 
 from django.db.models import Count
 
@@ -19238,70 +19411,6 @@ def funcionarios_perfil(request, perfil_id):
         context
 
     )
-
-# =========================================
-# META DA CLÍNICA
-# =========================================
-
-def obter_meta_clinica():
-
-    hoje = timezone.now()
-
-    meta = MetaClinica.objects.filter(
-
-        ano=hoje.year,
-        mes=hoje.month,
-        ativo=True
-
-    ).first()
-
-    if not meta:
-
-        return {
-
-            "meta_mes": 0,
-            "faturado": 0,
-            "percentual": 0,
-            "faltam": 0,
-
-        }
-
-    faturado = (
-        ContaReceber.objects.filter(
-            status="RECEBIDO",
-            data_pagamento__year=hoje.year,
-            data_pagamento__month=hoje.month,
-        ).aggregate(
-            total=Sum("valor")
-        )["total"] or Decimal("0.00")
-    )
-
-    percentual = 0
-
-    if meta.valor > 0:
-
-        percentual = round(
-            (faturado / meta.valor) * 100,
-            1
-        )
-
-    faltam = max(
-
-        meta.valor - faturado,
-
-        Decimal("0.00")
-
-    )
-
-    return {
-
-        "meta_mes": meta.valor,
-        "faturado": faturado,
-        "percentual": percentual,
-        "faltam": faltam,
-
-    }
-
 
 # =========================================
 # METAS DOS DENTISTAS

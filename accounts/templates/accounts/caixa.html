@@ -1,5 +1,67 @@
 {% extends 'accounts/base.html' %}
 
+<style>
+/* =========================================
+   TESTE / SCROLL FORÇADO - CAIXA
+========================================= */
+
+.caixa-listagem-scroll {
+
+    height: 400px !important;
+
+    max-height: 400px !important;
+
+    min-height: 400px !important;
+
+    overflow-y: scroll !important;
+
+    overflow-x: auto !important;
+
+    display: block !important;
+
+    position: relative !important;
+
+}
+
+
+/* Tabela */
+
+.caixa-listagem-scroll table {
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+}
+
+
+/* Cabeçalho fixo */
+
+.caixa-listagem-scroll thead {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
+}
+
+
+.caixa-listagem-scroll thead th {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 21;
+
+    background: #fff !important;
+
+}
+</style>
+
+
 {% block content %}
 
 <div class="container-fluid">
@@ -157,26 +219,39 @@
 
                     <form method="post" action="{% url 'fechar_caixa' %}" class="d-inline">
 
-                        {% csrf_token %}
+    {% csrf_token %}
 
-                        <button type="submit" class="btn btn-danger"
-                            onclick="return confirm('Deseja realmente fechar este Caixa?');">
+    {% if caixa_pendente %}
 
-                            <i class="fas fa-lock"></i>
+        <input
+            type="hidden"
+            name="caixa_id"
+            value="{{ caixa_pendente.id }}"
+        >
 
-                            {% if caixa_pendente %}
+    {% endif %}
 
-                            Fechar Caixa Pendente
+    <button
+        type="submit"
+        class="btn btn-danger"
+        onclick="return confirm('Deseja realmente fechar este Caixa?');"
+    >
 
-                            {% else %}
+        <i class="fas fa-lock"></i>
 
-                            Fechar Caixa
+        {% if caixa_pendente %}
 
-                            {% endif %}
+            Fechar Caixa Pendente
 
-                        </button>
+        {% else %}
 
-                    </form>
+            Fechar Caixa
+
+        {% endif %}
+
+    </button>
+
+</form>
 
                     {% else %}
 
@@ -403,94 +478,83 @@
     </div>
 
     <!-- ========================================= -->
-    <!-- MOVIMENTAÇÕES -->
-    <!-- ========================================= -->
+<!-- MOVIMENTAÇÕES -->
+<!-- ========================================= -->
 
-    <div class="card shadow-sm">
+<div class="card shadow-sm">
 
-        <div class="card-body">
+    <div class="card-body p-0">
 
-            <div class="table-responsive">
+        <div
+            style="
+                max-height: 400px;
+                overflow-y: scroll;
+                overflow-x: auto;
+            "
+        >
 
-                <table class="table table-hover">
+            <table class="table table-hover mb-0 align-middle">
 
-                    <thead>
+                <thead>
 
-                        <tr>
+                    <tr>
 
-                            <th>Data</th>
+                        <th>Data</th>
+                        <th>Origem</th>
+                        <th>Descrição</th>
+                        <th>Tipo</th>
+                        <th class="text-end">Valor</th>
 
-                            <th>Origem</th>
+                    </tr>
 
-                            <th>Descrição</th>
+                </thead>
 
-                            <th>Tipo</th>
+                <tbody>
 
-                            <th class="text-end">Valor</th>
+                    {% for item in movimentacoes %}
 
-                        </tr>
+                    <tr>
 
-                    </thead>
+                        <td>
+                            {{ item.data|date:"d/m/Y" }}
+                        </td>
 
-                    <tbody>
+                        <td>
 
-                        {% for item in movimentacoes %}
+                            {% if item.conta_receber %}
 
-                        <tr>
+                            <span class="badge bg-success">
+                                Conta a Receber
+                            </span>
 
-                            <td>
+                            {% elif item.conta_pagar %}
 
-                                {{ item.data|date:"d/m/Y" }}
+                            <span class="badge bg-danger">
+                                Conta a Pagar
+                            </span>
 
-                            </td>
+                            {% elif "Comissão" in item.descricao %}
 
-                            <td>
+                            <span class="badge bg-warning text-dark">
+                                Comissão
+                            </span>
 
-                                {% if item.conta_receber %}
+                            {% else %}
 
-                                <span class="badge bg-success">
+                            <span class="badge bg-secondary">
+                                Manual
+                            </span>
 
-                                    Conta a Receber
+                            {% endif %}
 
-                                </span>
+                        </td>
 
-                                {% elif item.conta_pagar %}
+                        <td>
 
-
-                                <span class="badge bg-danger">
-
-                                    Conta a Pagar
-
-                                </span>
-
-                                {% elif "Comissão" in item.descricao %}
-
-                                <span class="badge bg-warning text-dark">
-
-                                    Comissão
-
-                                </span>
-
-                                {% else %}
-
-                                <span class="badge bg-secondary">
-
-                                    Manual
-
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-                            <td>
-
-                                {% if item.conta_receber %}
+                            {% if item.conta_receber %}
 
                                 <strong>
-
                                     {{ item.conta_receber.paciente.nome }}
-
                                 </strong>
 
                                 <br>
@@ -501,23 +565,24 @@
 
                                     {% if item.conta_receber.numero_parcela %}
 
-                                    • Parcela {{ item.conta_receber.numero_parcela }}
+                                        • Parcela
+                                        {{ item.conta_receber.numero_parcela }}
 
                                     {% endif %}
 
                                 </small>
 
-                                {% elif item.conta_pagar %}
+                            {% elif item.conta_pagar %}
 
                                 <strong>
 
                                     {% if item.conta_pagar.profissional %}
 
-                                    {{ item.conta_pagar.profissional.nome }}
+                                        {{ item.conta_pagar.profissional.nome }}
 
                                     {% else %}
 
-                                    Não informado
+                                        Não informado
 
                                     {% endif %}
 
@@ -526,72 +591,62 @@
                                 <br>
 
                                 <small class="text-muted">
-
                                     {{ item.conta_pagar.descricao }}
-
                                 </small>
 
-                                {% else %}
+                            {% else %}
 
                                 {{ item.descricao }}
 
-                                {% endif %}
+                            {% endif %}
 
-                            </td>
+                        </td>
 
-                            <td>
+                        <td>
 
-                                {% if item.tipo == 'ENTRADA' %}
+                            {% if item.tipo == 'ENTRADA' %}
 
                                 <span class="badge bg-success">
-
                                     Entrada
-
                                 </span>
 
-                                {% else %}
+                            {% else %}
 
                                 <span class="badge bg-danger">
-
                                     Saída
-
                                 </span>
 
-                                {% endif %}
+                            {% endif %}
 
-                            </td>
+                        </td>
 
-                            <td class="text-end">
+                        <td class="text-end">
 
-                                <strong>
+                            <strong>
+                                R$ {{ item.valor }}
+                            </strong>
 
-                                    R$ {{ item.valor }}
+                        </td>
 
-                                </strong>
+                    </tr>
 
-                            </td>
+                    {% empty %}
 
-                        </tr>
+                    <tr>
 
-                        {% empty %}
+                        <td colspan="5" class="text-center py-4">
 
-                        <tr>
+                            Nenhuma movimentação encontrada.
 
-                            <td colspan="5" class="text-center py-4">
+                        </td>
 
-                                Nenhuma movimentação encontrada.
+                    </tr>
 
-                            </td>
+                    {% endfor %}
 
-                        </tr>
+                </tbody>
 
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
+            </table>
 
         </div>
 
@@ -836,3 +891,4 @@ HISTÓRICO DE FECHAMENTOS
 </div>
 
 {% endblock %}
+

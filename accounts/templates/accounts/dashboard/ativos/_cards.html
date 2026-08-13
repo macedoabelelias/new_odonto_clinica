@@ -28,7 +28,38 @@ CARDS
 
     {% endif %}
 
-    <!-- Minha Comissão -->
+    <!-- =========================================
+META DA CLÍNICA
+========================================== -->
+
+{% if dashboard.mostrar_meta_clinica %}
+
+<div class="stats-card">
+
+    <div class="stats-icon green">
+
+        <i class="bi bi-bullseye"></i>
+
+    </div>
+
+    <div>
+
+        <small>Meta da Clínica</small>
+
+        <h3>
+            R$ {{ meta_mes|floatformat:2 }}
+        </h3>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =========================================
+MINHA COMISSÃO
+========================================== -->
 
 {% if dashboard.mostrar_receber %}
 
@@ -44,7 +75,9 @@ CARDS
 
         <small>Minha Comissão</small>
 
-        <h3>R$ {{ minha_comissao|floatformat:2 }}</h3>
+        <h3>
+            R$ {{ minha_comissao|floatformat:2 }}
+        </h3>
 
     </div>
 

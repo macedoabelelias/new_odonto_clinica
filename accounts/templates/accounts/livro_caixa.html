@@ -4,6 +4,10 @@
 
 <div class="container-fluid">
 
+    <!-- =========================================
+    CABEÇALHO
+    ========================================= -->
+
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <h1>
@@ -12,20 +16,30 @@
 
     </div>
 
-    <!-- Resumo -->
+
+    <!-- =========================================
+    CARDS DE RESUMO
+    ========================================= -->
 
     <div class="row mb-4">
 
+        <!-- TOTAL ENTRADAS -->
+
         <div class="col-md-4">
 
-            <div class="card border-success">
+            <div class="card border-success shadow-sm">
 
                 <div class="card-body">
 
-                    <h6>Total Entradas</h6>
+                    <h6 class="text-muted mb-2">
+                        Total Entradas
+                    </h6>
 
-                    <h4>
-                        R$ {{ total_entradas }}
+                    <h4 class="text-success fw-bold mb-0">
+
+                        R$
+                        {{ total_entradas|floatformat:2 }}
+
                     </h4>
 
                 </div>
@@ -34,16 +48,24 @@
 
         </div>
 
+
+        <!-- TOTAL SAÍDAS -->
+
         <div class="col-md-4">
 
-            <div class="card border-danger">
+            <div class="card border-danger shadow-sm">
 
                 <div class="card-body">
 
-                    <h6>Total Saídas</h6>
+                    <h6 class="text-muted mb-2">
+                        Total Saídas
+                    </h6>
 
-                    <h4>
-                        R$ {{ total_saidas }}
+                    <h4 class="text-danger fw-bold mb-0">
+
+                        R$
+                        {{ total_saidas|floatformat:2 }}
+
                     </h4>
 
                 </div>
@@ -52,16 +74,24 @@
 
         </div>
 
+
+        <!-- SALDO -->
+
         <div class="col-md-4">
 
-            <div class="card border-primary">
+            <div class="card border-primary shadow-sm">
 
                 <div class="card-body">
 
-                    <h6>Saldo</h6>
+                    <h6 class="text-muted mb-2">
+                        Saldo
+                    </h6>
 
-                    <h4>
-                        R$ {{ saldo }}
+                    <h4 class="text-primary fw-bold mb-0">
+
+                        R$
+                        {{ saldo|floatformat:2 }}
+
                     </h4>
 
                 </div>
@@ -72,7 +102,10 @@
 
     </div>
 
-    <!-- Filtros -->
+
+    <!-- =========================================
+    FILTROS
+    ========================================= -->
 
     <div class="card shadow-sm mb-3">
 
@@ -80,11 +113,15 @@
 
             <form method="get">
 
-                <div class="row">
+                <div class="row align-items-end">
+
+                    <!-- DATA INICIAL -->
 
                     <div class="col-md-3">
 
-                        <label>Data Inicial</label>
+                        <label class="form-label">
+                            Data Inicial
+                        </label>
 
                         <input
                             type="date"
@@ -95,9 +132,14 @@
 
                     </div>
 
+
+                    <!-- DATA FINAL -->
+
                     <div class="col-md-3">
 
-                        <label>Data Final</label>
+                        <label class="form-label">
+                            Data Final
+                        </label>
 
                         <input
                             type="date"
@@ -108,9 +150,10 @@
 
                     </div>
 
-                    <div class="col-md-3">
 
-                        <label>&nbsp;</label>
+                    <!-- BOTÃO -->
+
+                    <div class="col-md-3">
 
                         <button
                             class="btn btn-primary w-100"
@@ -123,6 +166,22 @@
 
                     </div>
 
+
+                    <!-- LIMPAR -->
+
+                    <div class="col-md-2">
+
+                        <a
+                            href="{% url 'livro_caixa' %}"
+                            class="btn btn-outline-secondary w-100"
+                        >
+
+                            Limpar
+
+                        </a>
+
+                    </div>
+
                 </div>
 
             </form>
@@ -131,35 +190,55 @@
 
     </div>
 
-    <!-- Tabela -->
+
+    <!-- =========================================
+    TABELA
+    ========================================= -->
 
     <div class="card shadow-sm">
 
-        <div class="card-body">
+        <div class="card-body p-0">
 
-            <div class="table-responsive">
+            <!-- ÁREA COM SCROLL -->
 
-                <table class="table table-hover align-middle">
+            <div class="livro-caixa-scroll">
 
-                    <thead>
+                <table class="table table-hover align-middle mb-0">
+
+                    <!-- CABEÇALHO FIXO -->
+
+                    <thead class="table-light">
 
                         <tr>
 
-                            <th>Data</th>
+                            <th>
+                                Data
+                            </th>
 
-                            <th>Descrição</th>
+                            <th>
+                                Descrição
+                            </th>
 
-                            <th>Origem</th>
+                            <th>
+                                Origem
+                            </th>
 
-                            <th>Entrada</th>
+                            <th>
+                                Entrada
+                            </th>
 
-                            <th>Saída</th>
+                            <th>
+                                Saída
+                            </th>
 
-                            <th>Saldo</th>
+                            <th>
+                                Saldo
+                            </th>
 
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
@@ -167,11 +246,16 @@
 
                         <tr>
 
+                            <!-- DATA -->
+
                             <td>
 
                                 {{ item.data|date:"d/m/Y" }}
 
                             </td>
+
+
+                            <!-- DESCRIÇÃO -->
 
                             <td>
 
@@ -179,11 +263,17 @@
 
                             </td>
 
+
+                            <!-- ORIGEM -->
+
                             <td>
 
                                 {{ item.get_origem_display }}
 
                             </td>
+
+
+                            <!-- ENTRADA -->
 
                             <td>
 
@@ -191,13 +281,21 @@
 
                                     <span class="text-success fw-bold">
 
-                                        R$ {{ item.entrada }}
+                                        R$
+                                        {{ item.entrada|floatformat:2 }}
 
                                     </span>
+
+                                {% else %}
+
+                                    —
 
                                 {% endif %}
 
                             </td>
+
+
+                            <!-- SAÍDA -->
 
                             <td>
 
@@ -205,19 +303,28 @@
 
                                     <span class="text-danger fw-bold">
 
-                                        R$ {{ item.saida }}
+                                        R$
+                                        {{ item.saida|floatformat:2 }}
 
                                     </span>
+
+                                {% else %}
+
+                                    —
 
                                 {% endif %}
 
                             </td>
 
+
+                            <!-- SALDO -->
+
                             <td>
 
                                 <strong>
 
-                                    R$ {{ item.saldo }}
+                                    R$
+                                    {{ item.saldo|floatformat:2 }}
 
                                 </strong>
 
@@ -225,11 +332,15 @@
 
                         </tr>
 
+
                         {% empty %}
 
                         <tr>
 
-                            <td colspan="6" class="text-center">
+                            <td
+                                colspan="6"
+                                class="text-center py-4 text-muted"
+                            >
 
                                 Nenhum lançamento encontrado.
 
@@ -250,5 +361,97 @@
     </div>
 
 </div>
+
+
+<!-- =========================================
+CSS DO LIVRO CAIXA
+========================================= -->
+
+<style>
+
+    /* =========================================
+    ÁREA DE ROLAGEM DA TABELA
+    ========================================= */
+
+    .livro-caixa-scroll {
+
+        max-height: 500px;
+
+        overflow-y: auto;
+
+        overflow-x: auto;
+
+        border-radius: 0 0 8px 8px;
+
+    }
+
+
+    /* =========================================
+    CABEÇALHO FIXO
+    ========================================= */
+
+    .livro-caixa-scroll thead th {
+
+        position: sticky;
+
+        top: 0;
+
+        z-index: 5;
+
+        background: #f8f9fa;
+
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+
+    }
+
+
+    /* =========================================
+    TAMANHO DAS CÉLULAS
+    ========================================= */
+
+    .livro-caixa-scroll table {
+
+        min-width: 900px;
+
+    }
+
+
+    .livro-caixa-scroll th,
+    .livro-caixa-scroll td {
+
+        white-space: nowrap;
+
+    }
+
+
+    /* =========================================
+    SCROLLBAR
+    ========================================= */
+
+    .livro-caixa-scroll::-webkit-scrollbar {
+
+        width: 8px;
+
+        height: 8px;
+
+    }
+
+
+    .livro-caixa-scroll::-webkit-scrollbar-thumb {
+
+        background: #cbd5e1;
+
+        border-radius: 10px;
+
+    }
+
+
+    .livro-caixa-scroll::-webkit-scrollbar-track {
+
+        background: #f1f5f9;
+
+    }
+
+</style>
 
 {% endblock %}
