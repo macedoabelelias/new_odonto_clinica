@@ -2,7 +2,86 @@
 
 {% block content %}
 
+<style>
+
+    /* =========================================
+       TABELA - CONTAS A PAGAR
+       ========================================= */
+
+    .contas-pagar-table-wrapper {
+
+        max-height: 500px;
+
+        overflow-y: auto;
+        overflow-x: auto;
+
+        border-radius: 8px;
+
+    }
+
+    /* =========================================
+       CABEÇALHO FIXO
+       ========================================= */
+
+    .contas-pagar-table-wrapper thead th {
+
+        position: sticky;
+
+        top: 0;
+
+        z-index: 10;
+
+        background: #fff;
+
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+
+    }
+
+    /* =========================================
+       TABELA
+       ========================================= */
+
+    .contas-pagar-table-wrapper table {
+
+        margin-bottom: 0;
+
+        min-width: 900px;
+
+    }
+
+    /* =========================================
+       SCROLLBAR
+       ========================================= */
+
+    .contas-pagar-table-wrapper::-webkit-scrollbar {
+
+        width: 8px;
+        height: 8px;
+
+    }
+
+    .contas-pagar-table-wrapper::-webkit-scrollbar-thumb {
+
+        background: #cbd5e1;
+
+        border-radius: 10px;
+
+    }
+
+    .contas-pagar-table-wrapper::-webkit-scrollbar-track {
+
+        background: #f1f5f9;
+
+    }
+
+</style>
+
+
 <div class="container-fluid">
+
+    <!-- =========================================
+         CABEÇALHO
+         ========================================= -->
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -22,6 +101,11 @@
         </a>
 
     </div>
+
+
+    <!-- =========================================
+         INDICADORES
+         ========================================= -->
 
     <div class="row mb-4">
 
@@ -45,6 +129,7 @@
 
         </div>
 
+
         <div class="col-md-4">
 
             <div class="card border-success">
@@ -64,6 +149,7 @@
             </div>
 
         </div>
+
 
         <div class="col-md-4">
 
@@ -87,7 +173,10 @@
 
     </div>
 
-    <!-- FILTRO -->
+
+    <!-- =========================================
+         FILTRO
+         ========================================= -->
 
     <div class="card shadow-sm mb-3">
 
@@ -137,20 +226,25 @@
 
                     </div>
 
+
                     <div class="col-md-3 d-flex align-items-end">
 
                         <button
                             type="submit"
                             class="btn btn-primary me-2"
                         >
+
                             Filtrar
+
                         </button>
 
                         <a
                             href="{% url 'contas_pagar' %}"
                             class="btn btn-secondary"
                         >
+
                             Limpar
+
                         </a>
 
                     </div>
@@ -163,13 +257,16 @@
 
     </div>
 
-    <!-- TABELA -->
+
+    <!-- =========================================
+         TABELA
+         ========================================= -->
 
     <div class="card shadow-sm">
 
         <div class="card-body">
 
-            <div class="table-responsive">
+            <div class="contas-pagar-table-wrapper">
 
                 <table class="table table-hover align-middle">
 
@@ -178,16 +275,25 @@
                         <tr>
 
                             <th>Fornecedor</th>
+
                             <th>Descrição</th>
+
                             <th>Vencimento</th>
+
                             <th>Pagamento</th>
+
                             <th>Valor</th>
+
                             <th>Status</th>
-                            <th width="120">Ações</th>
+
+                            <th width="120">
+                                Ações
+                            </th>
 
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
@@ -249,6 +355,7 @@
 
                             </td>
 
+
                             <td>
 
                                 {% if conta.status != 'PAGO' %}
@@ -270,11 +377,15 @@
 
                         </tr>
 
+
                         {% empty %}
 
                         <tr>
 
-                            <td colspan="7" class="text-center text-muted">
+                            <td
+                                colspan="7"
+                                class="text-center text-muted"
+                            >
 
                                 Nenhuma conta encontrada.
 

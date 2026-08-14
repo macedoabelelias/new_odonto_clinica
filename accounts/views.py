@@ -5713,6 +5713,7 @@ def gerar_pdf_orcamento(request, id):
 
 import json
 
+
 @login_required(login_url='/')
 @permissao_required("odontograma", "editar")
 def alterar_status_procedimento(request, id):
@@ -5730,11 +5731,136 @@ def alterar_status_procedimento(request, id):
     )
 
     # =====================================
+    # GUARDA STATUS ANTERIOR
+    # =====================================
+
+    status_anterior = item.status
+
+    # =====================================
     # ATUALIZA ITEM DO ORÇAMENTO
     # =====================================
 
     item.status = novo_status
+
     item.save()
+
+    # =====================================
+    # GERA COMISSÃO DO DENTISTA
+    # =====================================
+    #
+    # A comissão é gerada somente quando
+    # o procedimento passa para REALIZADO.
+    #
+    # Se já estava realizado, não gera
+    # uma nova comissão.
+    #
+    # =====================================
+
+    if (
+        novo_status == "realizado"
+        and status_anterior != "realizado"
+    ):
+
+        tratamento = getattr(
+            item.orcamento,
+            "tratamento",
+            None
+        )
+
+        if tratamento and tratamento.dentista:
+
+            try:
+
+                perfil = PerfilUsuario.objects.get(
+                    usuario=tratamento.dentista
+                )
+
+            except PerfilUsuario.DoesNotExist:
+
+                perfil = None
+
+            if perfil:
+
+                # =====================================
+                # VALOR DO PROCEDIMENTO
+                # =====================================
+
+                valor_procedimento = (
+                    item.total or Decimal("0.00")
+                )
+
+                # =====================================
+                # PERCENTUAL DE COMISSÃO
+                # =====================================
+
+                percentual = Decimal(
+                    perfil.percentual_comissao or 0
+                )
+
+                # =====================================
+                # CALCULA COMISSÃO
+                # =====================================
+
+                valor_comissao = (
+                    valor_procedimento
+                    * percentual
+                    / Decimal("100")
+                ).quantize(
+                    Decimal("0.01")
+                )
+
+                # =====================================
+                # SOMENTE GERA SE HOUVER COMISSÃO
+                # =====================================
+
+                if valor_comissao > 0:
+
+                    # =====================================
+                    # VERIFICA SE JÁ EXISTE COMISSÃO
+                    # PARA ESTE ITEM
+                    # =====================================
+
+                    comissao_existente = (
+                        ContaPagar.objects
+                        .filter(
+                            profissional=perfil,
+                            descricao__icontains=(
+                                f"Item #{item.id}"
+                            )
+                        )
+                        .exists()
+                    )
+
+                    # =====================================
+                    # CRIA COMISSÃO
+                    # =====================================
+
+                    if not comissao_existente:
+
+                        ContaPagar.objects.create(
+
+                            profissional=perfil,
+
+                            descricao=(
+                                f"Comissão do procedimento "
+                                f"- {item.procedimento.nome} "
+                                f"(Item #{item.id})"
+                            ),
+
+                            valor=valor_comissao,
+
+                            vencimento=timezone.localdate(),
+
+                            status="PENDENTE",
+
+                            observacao=(
+                                f"Comissão referente ao "
+                                f"procedimento realizado. "
+                                f"ItemOrcamento #{item.id}. "
+                                f"Percentual: {percentual}%."
+                            )
+
+                        )
 
     # =====================================
     # ATUALIZA EVOLUÇÃO EXISTENTE
@@ -5750,11 +5876,14 @@ def alterar_status_procedimento(request, id):
 
         face=item.face
 
-    ).order_by('-id').first()
+    ).order_by(
+        '-id'
+    ).first()
 
     if evolucao:
 
         evolucao.status = novo_status
+
         evolucao.save()
 
     else:
@@ -5776,6 +5905,10 @@ def alterar_status_procedimento(request, id):
             descricao=''
 
         )
+
+    # =====================================
+    # RETORNO
+    # =====================================
 
     return JsonResponse({
 
@@ -11337,14 +11470,6 @@ def contas_receber(request):
 # RECEBER CONTA
 # =========================================
 
-from decimal import Decimal
-
-from django.db import transaction
-from django.utils import timezone
-
-from .financeiro import registrar_livro_caixa
-
-
 @transaction.atomic
 @login_required(login_url="/")
 @permissao_required("contas_receber", "editar")
@@ -11372,30 +11497,31 @@ def receber_conta(request, conta_id):
         .first()
     )
 
-    # Não existe Caixa aberto
+    # =========================================
+    # NÃO EXISTE CAIXA ABERTO
+    # =========================================
+
     if not caixa_aberto:
 
         messages.error(
-
             request,
-
-            "Não existe um Caixa aberto. Abra o Caixa antes de realizar um recebimento."
-
+            "Não existe um Caixa aberto. "
+            "Abra o Caixa antes de realizar um recebimento."
         )
 
         return redirect("caixa")
 
-    # Existe Caixa aberto de outro dia
+    # =========================================
+    # EXISTE CAIXA ABERTO DE OUTRO DIA
+    # =========================================
+
     if caixa_aberto.data < hoje:
 
         messages.error(
-
             request,
-
             f"Existe um Caixa aberto do dia "
             f"{caixa_aberto.data.strftime('%d/%m/%Y')}. "
             f"Feche-o antes de continuar."
-
         )
 
         return redirect("caixa")
@@ -11407,11 +11533,8 @@ def receber_conta(request, conta_id):
     if conta.status == "RECEBIDO":
 
         messages.warning(
-
             request,
-
             "Esta conta já foi recebida."
-
         )
 
         return redirect("contas_receber")
@@ -11424,7 +11547,12 @@ def receber_conta(request, conta_id):
 
     conta.data_recebimento = hoje
 
-    conta.save()
+    conta.save(
+        update_fields=[
+            "status",
+            "data_recebimento"
+        ]
+    )
 
     # =========================================
     # LANÇA NO CAIXA
@@ -11439,11 +11567,9 @@ def receber_conta(request, conta_id):
             data=conta.data_recebimento,
 
             descricao=(
-
                 f"{conta.paciente.nome} • "
                 f"{conta.descricao} "
                 f"(Parcela {conta.numero_parcela})"
-
             ),
 
             tipo="ENTRADA",
@@ -11479,113 +11605,35 @@ def receber_conta(request, conta_id):
         conta_receber=conta,
 
         observacao=(
-
             f"Recebimento da parcela "
             f"{conta.numero_parcela}"
-
         )
 
     )
 
     # =========================================
-    # GERA COMISSÃO DO DENTISTA
+    # COMISSÃO DO DENTISTA
     # =========================================
-
-    tratamento = getattr(
-
-        conta.orcamento,
-
-        "tratamento",
-
-        None
-
-    )
-
-    if tratamento and tratamento.dentista:
-
-        try:
-
-            perfil = PerfilUsuario.objects.get(
-
-                usuario=tratamento.dentista
-
-            )
-
-        except PerfilUsuario.DoesNotExist:
-
-            perfil = None
-
-        if perfil:
-
-            if not ContaPagar.objects.filter(
-                conta_receber=conta
-            ).exists():
-
-                percentual = Decimal(
-                    perfil.percentual_comissao or 0
-                )
-
-                print("=" * 60)
-                print("Dentista:", tratamento.dentista)
-                print("Perfil:", perfil)
-                print("Percentual:", perfil.percentual_comissao)
-                print("Valor da Conta:", conta.valor)
-                print("=" * 60)
-
-                valor_comissao = (
-
-                    conta.valor * percentual / Decimal("100")
-
-                ).quantize(
-
-                    Decimal("0.01")
-
-                )
-
-                ContaPagar.objects.create(
-
-                    profissional=perfil,
-
-                    conta_receber=conta,
-
-                    descricao=(
-
-                        f"Comissão do tratamento "
-                        f"- {tratamento.paciente.nome}"
-
-                    ),
-
-                    valor=valor_comissao,
-
-                    vencimento=hoje,
-
-                    status="PENDENTE",
-
-                    observacao=(
-
-                        f"Comissão automática referente "
-                        f"à Conta a Receber #{conta.id}"
-
-                    )
-
-                )
+    #
+    # A comissão NÃO é gerada no recebimento.
+    #
+    # Ela será calculada posteriormente,
+    # quando cada ItemOrcamento for marcado
+    # como "realizado".
+    #
+    # =========================================
 
     # =========================================
     # MENSAGEM
     # =========================================
 
     messages.success(
-
         request,
-
         "Conta recebida com sucesso."
-
     )
 
     return redirect(
-
         "contas_receber"
-
     )
 
 # =========================================
@@ -20530,3 +20578,267 @@ def campanha_publica(request, pk):
             "form": form,
         }
     )
+
+# =========================================
+# DRE GERENCIAL
+# =========================================
+
+def obter_dados_dre(
+    data_inicio=None,
+    data_final=None,
+    profissional_id=None,
+):
+
+    # =========================================
+    # IMPORTAÇÕES
+    # =========================================
+
+    from decimal import Decimal
+
+    # =========================================
+    # PROCEDIMENTOS REALIZADOS
+    # =========================================
+
+    procedimentos = (
+        ItemOrcamento.objects
+        .filter(
+            status="realizado"
+        )
+        .select_related(
+            "procedimento",
+            "orcamento",
+            "orcamento__paciente",
+        )
+    )
+
+    # =========================================
+    # FILTRO PROFISSIONAL
+    # =========================================
+
+    if profissional_id:
+
+        procedimentos = procedimentos.filter(
+            orcamento__paciente__dentista_id=profissional_id
+        )
+
+    # =========================================
+    # FILTRO DATA INICIAL
+    # =========================================
+
+    if data_inicio:
+
+        procedimentos = procedimentos.filter(
+            orcamento__criado_em__date__gte=data_inicio
+        )
+
+    # =========================================
+    # FILTRO DATA FINAL
+    # =========================================
+
+    if data_final:
+
+        procedimentos = procedimentos.filter(
+            orcamento__criado_em__date__lte=data_final
+        )
+
+    # =========================================
+    # RECEITA BRUTA
+    # =========================================
+
+    receita_bruta = sum(
+        (
+            item.total
+            for item in procedimentos
+        ),
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # QUANTIDADE DE PROCEDIMENTOS
+    # =========================================
+
+    quantidade_procedimentos = procedimentos.count()
+
+    # =========================================
+    # PACIENTES
+    # =========================================
+
+    quantidade_pacientes = (
+        procedimentos
+        .values(
+            "orcamento__paciente"
+        )
+        .distinct()
+        .count()
+    )
+
+    # =========================================
+    # TICKET MÉDIO
+    # =========================================
+
+    ticket_medio = (
+
+        receita_bruta /
+        quantidade_procedimentos
+
+        if quantidade_procedimentos
+
+        else Decimal("0.00")
+
+    )
+
+    # =========================================
+    # COMISSÕES
+    # =========================================
+
+    comissoes = ContaPagar.objects.filter(
+        conta_receber__isnull=False,
+        profissional__isnull=False,
+    )
+
+    # =========================================
+    # FILTRO PROFISSIONAL
+    # =========================================
+
+    if profissional_id:
+
+        comissoes = comissoes.filter(
+            profissional__usuario_id=profissional_id
+        )
+
+    # =========================================
+    # FILTRO DATA
+    # =========================================
+
+    if data_inicio:
+
+        comissoes = comissoes.filter(
+            conta_receber__data_recebimento__gte=data_inicio
+        )
+
+    if data_final:
+
+        comissoes = comissoes.filter(
+            conta_receber__data_recebimento__lte=data_final
+        )
+
+    # =========================================
+    # TOTAL DE COMISSÕES
+    # =========================================
+
+    total_comissoes = sum(
+        (
+            conta.valor
+            for conta in comissoes
+        ),
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # DESPESAS OPERACIONAIS
+    # =========================================
+
+    despesas = ContaPagar.objects.filter(
+        profissional__isnull=True,
+        conta_receber__isnull=True,
+        status__in=[
+            "PENDENTE",
+            "VENCIDO",
+            "PAGO",
+        ],
+    )
+
+    # =========================================
+    # FILTRO DATA DAS DESPESAS
+    # =========================================
+
+    if data_inicio:
+
+        despesas = despesas.filter(
+            vencimento__gte=data_inicio
+        )
+
+    if data_final:
+
+        despesas = despesas.filter(
+            vencimento__lte=data_final
+        )
+
+    # =========================================
+    # TOTAL DESPESAS
+    # =========================================
+
+    total_despesas = sum(
+        (
+            conta.valor
+            for conta in despesas
+        ),
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # RESULTADO APÓS CUSTOS
+    # =========================================
+
+    resultado_apos_custos = (
+        receita_bruta
+        - total_comissoes
+    )
+
+    # =========================================
+    # RESULTADO OPERACIONAL
+    # =========================================
+
+    resultado_operacional = (
+        resultado_apos_custos
+        - total_despesas
+    )
+
+    # =========================================
+    # MARGEM
+    # =========================================
+
+    margem_operacional = (
+
+        (
+            resultado_operacional /
+            receita_bruta
+        ) * Decimal("100")
+
+        if receita_bruta
+
+        else Decimal("0.00")
+
+    )
+
+    # =========================================
+    # RETORNO
+    # =========================================
+
+    return {
+
+        "receita_bruta": receita_bruta,
+
+        "total_comissoes": total_comissoes,
+
+        "total_despesas": total_despesas,
+
+        "resultado_apos_custos":
+            resultado_apos_custos,
+
+        "resultado_operacional":
+            resultado_operacional,
+
+        "margem_operacional":
+            margem_operacional,
+
+        "quantidade_procedimentos":
+            quantidade_procedimentos,
+
+        "quantidade_pacientes":
+            quantidade_pacientes,
+
+        "ticket_medio":
+            ticket_medio,
+
+    }

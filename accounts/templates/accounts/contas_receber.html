@@ -2,7 +2,86 @@
 
 {% block content %}
 
+<style>
+
+    /* =========================================
+       TABELA - CONTAS A RECEBER
+       ========================================= */
+
+    .contas-receber-table-wrapper {
+
+        max-height: 500px;
+
+        overflow-y: auto;
+        overflow-x: auto;
+
+        border-radius: 8px;
+
+    }
+
+    /* =========================================
+       CABEÇALHO FIXO
+       ========================================= */
+
+    .contas-receber-table-wrapper thead th {
+
+        position: sticky;
+
+        top: 0;
+
+        z-index: 10;
+
+        background: #fff;
+
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+
+    }
+
+    /* =========================================
+       TABELA
+       ========================================= */
+
+    .contas-receber-table-wrapper table {
+
+        margin-bottom: 0;
+
+        min-width: 900px;
+
+    }
+
+    /* =========================================
+       SCROLLBAR
+       ========================================= */
+
+    .contas-receber-table-wrapper::-webkit-scrollbar {
+
+        width: 8px;
+        height: 8px;
+
+    }
+
+    .contas-receber-table-wrapper::-webkit-scrollbar-thumb {
+
+        background: #cbd5e1;
+
+        border-radius: 10px;
+
+    }
+
+    .contas-receber-table-wrapper::-webkit-scrollbar-track {
+
+        background: #f1f5f9;
+
+    }
+
+</style>
+
+
 <div class="container-fluid">
+
+    <!-- =========================================
+         CABEÇALHO
+         ========================================= -->
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -11,6 +90,11 @@
         </h1>
 
     </div>
+
+
+    <!-- =========================================
+         INDICADORES
+         ========================================= -->
 
     <div class="row mb-4">
 
@@ -34,6 +118,7 @@
 
         </div>
 
+
         <div class="col-md-4">
 
             <div class="card border-success">
@@ -53,6 +138,7 @@
             </div>
 
         </div>
+
 
         <div class="col-md-4">
 
@@ -76,29 +162,43 @@
 
     </div>
 
+
+    <!-- =========================================
+         TABELA
+         ========================================= -->
+
     <div class="card shadow-sm">
 
         <div class="card-body">
 
-            <div class="table-responsive">
+            <div class="contas-receber-table-wrapper">
 
-                <table class="table table-hover">
+                <table class="table table-hover align-middle">
 
                     <thead>
 
                         <tr>
 
                             <th>Paciente</th>
+
                             <th>Descrição</th>
+
                             <th>Vencimento</th>
+
                             <th>Recebimento</th>
+
                             <th>Valor</th>
+
                             <th>Status</th>
-                            <th>Ações</th>
+
+                            <th width="100">
+                                Ações
+                            </th>
 
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
@@ -118,6 +218,7 @@
                                 {{ conta.vencimento|date:"d/m/Y" }}
                             </td>
 
+
                             <td>
 
                                 {% if conta.data_recebimento %}
@@ -132,9 +233,11 @@
 
                             </td>
 
+
                             <td>
                                 R$ {{ conta.valor }}
                             </td>
+
 
                             <td>
 
@@ -160,7 +263,8 @@
 
                             </td>
 
-                            <!-- <td>
+
+                            <td>
 
                                 {% if conta.status != 'RECEBIDO' %}
 
@@ -168,37 +272,28 @@
                                         href="{% url 'receber_conta' conta.id %}"
                                         class="btn btn-success btn-sm"
                                         onclick="return confirm('Confirmar recebimento?')"
+                                        title="Receber Conta"
                                     >
+
                                         <i class="fa-solid fa-check"></i>
+
                                     </a>
 
                                 {% endif %}
 
-                            </td> -->
-
-                            <td>
-
-   {% if conta.status != 'RECEBIDO' %}
-
-    <a
-        href="{% url 'receber_conta' conta.id %}"
-        class="btn btn-success btn-sm"
-        onclick="return confirm('Confirmar recebimento?')"
-    >
-        <i class="fa-solid fa-check"></i>
-    </a>
-
-{% endif %}
-
-</td>
+                            </td>
 
                         </tr>
+
 
                         {% empty %}
 
                         <tr>
 
-                            <td colspan="7" class="text-center">
+                            <td
+                                colspan="7"
+                                class="text-center text-muted"
+                            >
 
                                 Nenhuma conta encontrada.
 
