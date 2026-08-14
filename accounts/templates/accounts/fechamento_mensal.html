@@ -1,0 +1,706 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Fechamento Mensal
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =========================================
+    CABEÇALHO
+    ========================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="mb-1">
+                Fechamento Mensal
+            </h1>
+
+            <p class="text-muted mb-0">
+                Resumo financeiro e gerencial do mês
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    FILTRO DO MÊS
+    ========================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row align-items-end">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Ano
+                        </label>
+
+                        <select
+                            name="ano"
+                            class="form-select"
+                        >
+
+                            {% for ano in anos %}
+
+                                <option
+                                    value="{{ ano }}"
+                                    {% if ano == ano %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ ano }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Mês
+                        </label>
+
+                        <select
+                            name="mes"
+                            class="form-select"
+                        >
+
+                            {% for numero, nome in meses %}
+
+                                <option
+                                    value="{{ numero }}"
+                                    {% if numero == mes %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ nome }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="fa-solid fa-filter me-1"></i>
+
+                            Filtrar
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <a
+                            href="{% url 'fechamento_mensal' %}"
+                            class="btn btn-outline-secondary w-100"
+                        >
+
+                            <i class="fa-solid fa-rotate-left me-1"></i>
+
+                            Limpar
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    MÊS SELECIONADO
+    ========================================= -->
+
+    <div class="alert alert-light border shadow-sm mb-4">
+
+        <i class="fa-solid fa-calendar-check me-2"></i>
+
+        <strong>
+            Período:
+        </strong>
+
+        {% for numero, nome in meses %}
+                {% if numero == mes %}
+                    {{ nome }}
+                {% endif %}
+            {% endfor %} / {{ ano }}
+
+    </div>
+
+
+    <!-- =========================================
+    CARDS FINANCEIROS
+    ========================================= -->
+
+    <div class="row mb-4">
+
+
+        <!-- SALDO INICIAL -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card border-secondary shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Saldo Inicial
+                    </h6>
+
+                    <h4 class="fw-bold">
+
+                        R$
+                        {{ dados.saldo_inicial|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ENTRADAS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card border-success shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Entradas
+                    </h6>
+
+                    <h4 class="text-success fw-bold">
+
+                        R$
+                        {{ dados.total_entradas|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SAÍDAS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card border-danger shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Saídas
+                    </h6>
+
+                    <h4 class="text-danger fw-bold">
+
+                        R$
+                        {{ dados.total_saidas|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SALDO FINAL -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card border-primary shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Saldo Final
+                    </h6>
+
+                    <h4 class="text-primary fw-bold">
+
+                        R$
+                        {{ dados.saldo_final|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    DADOS GERENCIAIS
+    ========================================= -->
+
+    <div class="row mb-4">
+
+
+        <!-- RECEITA -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Receita Bruta
+                    </h6>
+
+                    <h4 class="text-success fw-bold">
+
+                        R$
+                        {{ dados.receita_bruta|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMISSÕES -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Comissões
+                    </h6>
+
+                    <h4 class="text-warning fw-bold">
+
+                        R$
+                        {{ dados.total_comissoes|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DESPESAS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Despesas Operacionais
+                    </h6>
+
+                    <h4 class="text-danger fw-bold">
+
+                        R$
+                        {{ dados.total_despesas|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULTADO -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card border-primary shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Resultado Operacional
+                    </h6>
+
+                    <h4 class="text-primary fw-bold">
+
+                        R$
+                        {{ dados.resultado_operacional|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    DEMONSTRATIVO
+    ========================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-light">
+
+            <h5 class="mb-0">
+
+                <i class="fa-solid fa-chart-line me-2"></i>
+
+                Demonstrativo do Mês
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            <table class="table table-hover mb-0">
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Saldo Inicial
+                        </td>
+
+                        <td class="text-end fw-semibold">
+
+                            R$
+                            {{ dados.saldo_inicial|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="text-success">
+                            (+) Entradas
+                        </td>
+
+                        <td class="text-end text-success fw-semibold">
+
+                            R$
+                            {{ dados.total_entradas|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="text-danger">
+                            (-) Saídas
+                        </td>
+
+                        <td class="text-end text-danger fw-semibold">
+
+                            R$
+                            {{ dados.total_saidas|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr class="table-primary">
+
+                        <td>
+                            <strong>
+                                Saldo Final
+                            </strong>
+                        </td>
+
+                        <td class="text-end">
+
+                            <strong>
+
+                                R$
+                                {{ dados.saldo_final|floatformat:2 }}
+
+                            </strong>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    RESULTADO OPERACIONAL
+    ========================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-light">
+
+            <h5 class="mb-0">
+
+                <i class="fa-solid fa-calculator me-2"></i>
+
+                Resultado Operacional
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            <table class="table table-hover mb-0">
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Receita Bruta
+                        </td>
+
+                        <td class="text-end text-success fw-bold">
+
+                            R$
+                            {{ dados.receita_bruta|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="text-danger">
+                            (-) Comissões
+                        </td>
+
+                        <td class="text-end text-danger">
+
+                            R$
+                            {{ dados.total_comissoes|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                Resultado após custos
+                            </strong>
+                        </td>
+
+                        <td class="text-end fw-bold">
+
+                            R$
+                            {{ dados.resultado_apos_custos|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="text-danger">
+                            (-) Despesas Operacionais
+                        </td>
+
+                        <td class="text-end text-danger">
+
+                            R$
+                            {{ dados.total_despesas|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr class="table-primary">
+
+                        <td>
+                            <strong>
+                                Resultado Operacional
+                            </strong>
+                        </td>
+
+                        <td class="text-end fw-bold">
+
+                            R$
+                            {{ dados.resultado_operacional|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                Margem Operacional
+                            </strong>
+                        </td>
+
+                        <td class="text-end fw-bold">
+
+                            {{ dados.margem_operacional|floatformat:2 }}%
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+    INDICADORES
+    ========================================= -->
+
+    <div class="row">
+
+
+        <div class="col-md-4 mb-3">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h6 class="text-muted">
+                Procedimentos Realizados
+            </h6>
+
+            <h4 class="fw-bold">
+
+                {{ dados.procedimentos_realizados }}
+
+            </h4>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="col-md-4 mb-3">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h6 class="text-muted">
+                Pacientes Atendidos
+            </h6>
+
+            <h4 class="fw-bold">
+
+                {{ dados.pacientes_atendidos }}
+
+            </h4>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Ticket Médio
+                    </h6>
+
+                    <h4 class="fw-bold">
+
+                        R$
+                        {{ dados.ticket_medio|floatformat:2 }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

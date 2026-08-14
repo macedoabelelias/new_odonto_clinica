@@ -348,9 +348,10 @@ FINANCEIRO
 {% possui_permissao request.user 'contas_receber' as pode_contas_receber %}
 {% possui_permissao request.user 'caixa' as pode_ver_caixa %}
 {% possui_permissao request.user 'livro_caixa' 'visualizar' as pode_ver_livro_caixa %}
+{% possui_permissao request.user 'fechamento_mensal' 'visualizar' as pode_ver_fechamento_mensal %}
 
 
-{% if pode_contas_pagar or pode_contas_receber or pode_ver_caixa or pode_ver_livro_caixa %}
+{% if pode_contas_pagar or pode_contas_receber or pode_ver_caixa or pode_ver_livro_caixa or pode_ver_fechamento_mensal %}
 
 
 <div class="sidebar-section">
@@ -463,13 +464,33 @@ FINANCEIRO
         {% endif %}
 
 
+        <!-- =================================================
+        FECHAMENTO MENSAL
+        ================================================== -->
+
+        {% if pode_ver_fechamento_mensal %}
+
+        <li class="{% if 'fechamento-mensal' in request.path or 'fechamento_mensal' in request.path %}active{% endif %}">
+
+            <a href="{% url 'fechamento_mensal' %}">
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+                <span>Fechamento Mensal</span>
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
     </ul>
 
 </li>
 
 
 {% endif %}
-
 
 <!-- =====================================================
 COMPRAS

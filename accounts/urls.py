@@ -849,6 +849,22 @@ path(
 ),
 
 path(
+    "financeiro/dre/",
+    views.dre,
+    name="dre"
+),
+
+# =========================================
+# FECHAMENTO MENSAL
+# =========================================
+
+path(
+    "financeiro/fechamento-mensal/",
+    views.fechamento_mensal,
+    name="fechamento_mensal",
+),
+
+path(
     'orcamentos/central/',
     views.central_orcamentos,
     name='central_orcamentos'

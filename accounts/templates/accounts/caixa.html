@@ -551,56 +551,78 @@
 
                         <td>
 
-                            {% if item.conta_receber %}
+                            <td>
 
-                                <strong>
-                                    {{ item.conta_receber.paciente.nome }}
-                                </strong>
+    {% if item.conta_receber %}
 
-                                <br>
+        <strong>
+            {{ item.conta_receber.paciente.nome }}
+        </strong>
 
-                                <small class="text-muted">
+        <br>
 
-                                    {{ item.conta_receber.descricao }}
+        <small class="text-muted">
 
-                                    {% if item.conta_receber.numero_parcela %}
+            {{ item.conta_receber.descricao }}
 
-                                        • Parcela
-                                        {{ item.conta_receber.numero_parcela }}
+            {% if item.conta_receber.numero_parcela %}
 
-                                    {% endif %}
+                • Parcela
+                {{ item.conta_receber.numero_parcela }}
 
-                                </small>
+            {% endif %}
 
-                            {% elif item.conta_pagar %}
+        </small>
 
-                                <strong>
+    {% elif item.conta_pagar %}
 
-                                    {% if item.conta_pagar.profissional %}
+        {% if item.conta_pagar.profissional %}
 
-                                        {{ item.conta_pagar.profissional.nome }}
+            <strong>
+                {{ item.conta_pagar.profissional.usuario.get_full_name|default:item.conta_pagar.profissional.usuario.username }}
+            </strong>
 
-                                    {% else %}
+            <br>
 
-                                        Não informado
+            <small class="text-muted">
 
-                                    {% endif %}
+                {{ item.conta_pagar.descricao }}
 
-                                </strong>
+                {% if "Comissão" in item.conta_pagar.descricao %}
 
-                                <br>
+                    <br>
 
-                                <small class="text-muted">
-                                    {{ item.conta_pagar.descricao }}
-                                </small>
+                    <span class="text-primary">
+                        <i class="fas fa-user-md me-1"></i>
+                        Dentista: 
+                        {{ item.conta_pagar.profissional.usuario.get_full_name|default:item.conta_pagar.profissional.usuario.username }}
+                    </span>
 
-                            {% else %}
+                {% endif %}
 
-                                {{ item.descricao }}
+            </small>
 
-                            {% endif %}
+        {% else %}
 
-                        </td>
+            <strong>
+                Não informado
+            </strong>
+
+            <br>
+
+            <small class="text-muted">
+                {{ item.conta_pagar.descricao }}
+            </small>
+
+        {% endif %}
+
+    {% else %}
+
+        {{ item.descricao }}
+
+    {% endif %}
+
+</td>
 
                         <td>
 

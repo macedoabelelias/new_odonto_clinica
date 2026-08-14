@@ -2,7 +2,7 @@ import os
 import json
 
 from datetime import date, datetime, timedelta
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 
 from django.conf import settings
 
@@ -103,6 +103,7 @@ from .models import (
     ItemCompra,
     ItemOrcamento,
     LivroCaixa,
+    FechamentoMensal,
     LoteProduto,
     Medicamento,
     MetaClinica,
@@ -1348,7 +1349,7 @@ def dashboard_view(request):
     )
 
 
-        # =========================================
+    # =========================================
     # RANKING DOS DENTISTAS
     # =========================================
 
@@ -1360,47 +1361,141 @@ def dashboard_view(request):
 
     ranking_dict = defaultdict(Decimal)
 
-    tratamentos = (
-        Tratamento.objects.filter(
-            dentista__isnull=False
+    # =========================================
+    # BUSCA OS ORÇAMENTOS
+    # =========================================
+
+    orcamentos = (
+        Orcamento.objects
+        .filter(
+            status__in=status_validos,
+            paciente__dentista__isnull=False,
         )
         .select_related(
-            "dentista",
-            "dentista__perfil",
-        )
-        .prefetch_related(
-            "orcamentos"
+            "paciente",
+            "paciente__dentista",
+            "paciente__dentista__perfil",
         )
     )
 
-    for tratamento in tratamentos:
+    # =========================================
+    # CALCULA A PRODUÇÃO POR DENTISTA
+    # =========================================
 
-        orcamentos = tratamento.orcamentos.filter(
-            status__in=status_validos
+    for orcamento in orcamentos:
+
+        # -----------------------------------------
+        # Dentista responsável pelo paciente
+        # -----------------------------------------
+
+        dentista = orcamento.paciente.dentista
+
+        if not dentista:
+            continue
+
+        # -----------------------------------------
+        # Somente usuários com perfil de dentista
+        # -----------------------------------------
+
+        perfil = getattr(
+            dentista,
+            "perfil",
+            None
         )
 
-        for orcamento in orcamentos:
+        if not perfil:
+            continue
 
-            ranking_dict[
-                tratamento.dentista
-            ] += orcamento.total
+        tipo_usuario = str(
+            getattr(
+                perfil,
+                "tipo_usuario",
+                ""
+            )
+        ).strip().lower()
+
+        if tipo_usuario != "dentista":
+            continue
+
+        # -----------------------------------------
+        # Soma a produção
+        # -----------------------------------------
+
+        ranking_dict[dentista] += (
+            orcamento.total
+            or Decimal("0.00")
+        )
+
+
+    # =========================================
+    # ORDENA DO MAIOR PARA O MENOR
+    # =========================================
 
     ranking_dentistas = sorted(
         ranking_dict.items(),
         key=lambda item: item[1],
         reverse=True,
     )
-
+    
     # =========================================
     # DESEMPENHO DOS DENTISTAS
     # =========================================
 
     desempenho_dentistas = []
 
+    # =========================================
+    # FILTRA SOMENTE USUÁRIOS DENTISTAS
+    # =========================================
+
+    ranking_dentistas_filtrado = []
+
+    for dentista, producao in ranking_dentistas:
+
+        perfil = getattr(
+            dentista,
+            "perfil",
+            None
+        )
+
+        if not perfil:
+            continue
+
+        tipo_usuario = str(
+            getattr(perfil, "tipo_usuario", "")
+        ).strip().lower()
+
+        # Somente usuários cujo perfil é dentista
+        if tipo_usuario != "dentista":
+            continue
+
+        ranking_dentistas_filtrado.append(
+            (dentista, producao)
+        )
+
+
+    # =========================================
+    # LIMITA RANKING DO ADMINISTRADOR / GESTOR
+    # =========================================
+
+    if dashboard_tipo != "dentista":
+
+        ranking_dentistas_filtrado = (
+            ranking_dentistas_filtrado[:5]
+        )
+
+
+    # =========================================
+    # MONTA DESEMPENHO
+    # =========================================
+
     for posicao, (dentista, producao) in enumerate(
-        ranking_dentistas,
+        ranking_dentistas_filtrado,
         start=1
     ):
+
+        # =========================================
+        # DASHBOARD DO DENTISTA
+        # =========================================
 
         if (
             dashboard_tipo == "dentista"
@@ -1420,17 +1515,28 @@ def dashboard_view(request):
 
         if perfil:
 
-            meta = perfil.meta_mensal or Decimal("0.00")
+            # Meta mensal
+            meta = (
+                perfil.meta_mensal
+                or Decimal("0.00")
+            )
 
+            # Percentual de comissão
             percentual_comissao = (
                 perfil.percentual_comissao
                 or Decimal("0.00")
             )
 
+            # Comissão
             comissao = (
                 producao * percentual_comissao
             ) / Decimal("100")
 
+            comissao = comissao.quantize(
+                Decimal("0.01")
+            )
+
+            # Percentual da meta
             if meta > 0:
 
                 percentual = int(
@@ -1450,6 +1556,14 @@ def dashboard_view(request):
             "comissao": comissao,
 
         })
+
+
+    # =========================================
+    # ATUALIZA O RANKING PARA USAR SOMENTE
+    # DENTISTAS
+    # =========================================
+
+    ranking_dentistas = ranking_dentistas_filtrado
 
     # =========================================
     # POSIÇÃO DO DENTISTA
@@ -5069,28 +5183,32 @@ def aprovar_orcamento(request, id):
     # =========================================
 
     orcamento.status = "aprovado"
-    orcamento.save(update_fields=["status"])
+
+    orcamento.save(
+        update_fields=["status"]
+    )
 
     # =========================================
     # CÁLCULOS
     # =========================================
 
-    valor_entrada = orcamento.entrada or Decimal("0.00")
+    valor_entrada = (
+        orcamento.entrada or
+        Decimal("0.00")
+    )
 
     quantidade_parcelas = max(
         1,
         int(orcamento.parcelas or 1)
     )
 
-    saldo = orcamento.total - valor_entrada
+    saldo = (
+        orcamento.total -
+        valor_entrada
+    )
 
     if saldo < 0:
         saldo = Decimal("0.00")
-
-    valor_parcela = (
-        saldo /
-        quantidade_parcelas
-    )
 
     # =========================================
     # GERA ENTRADA
@@ -5108,25 +5226,69 @@ def aprovar_orcamento(request, id):
 
             defaults={
 
-                "descricao": f"Entrada - Orçamento #{orcamento.id}",
+                "descricao":
+                    f"Entrada - Orçamento #{orcamento.id}",
 
-                "valor": valor_entrada,
+                "valor":
+                    valor_entrada,
 
-                "total_parcelas": quantidade_parcelas,
+                "total_parcelas":
+                    quantidade_parcelas,
 
-                "vencimento": timezone.now().date(),
+                "vencimento":
+                    timezone.now().date(),
 
-                "status": "PENDENTE",
-
+                "status":
+                    "PENDENTE",
             }
-
         )
+
+    # =========================================
+    # CALCULA PARCELAS
+    # =========================================
+
+    # Valor base da parcela com 2 casas
+    valor_parcela_base = (
+        saldo /
+        quantidade_parcelas
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_DOWN
+    )
+
+    # =========================================
+    # DIFERENÇA DE CENTAVOS
+    # =========================================
+
+    total_parcelas_base = (
+        valor_parcela_base *
+        quantidade_parcelas
+    )
+
+    diferenca = (
+        saldo -
+        total_parcelas_base
+    )
 
     # =========================================
     # GERA PARCELAS
     # =========================================
 
-    for numero in range(1, quantidade_parcelas + 1):
+    for numero in range(
+        1,
+        quantidade_parcelas + 1
+    ):
+
+        valor_atual = valor_parcela_base
+
+        # Distribui os centavos restantes
+        if (
+            diferenca > 0 and
+            numero <= int(
+                diferenca * 100
+            )
+        ):
+            valor_atual += Decimal("0.01")
 
         ContaReceber.objects.get_or_create(
 
@@ -5138,29 +5300,38 @@ def aprovar_orcamento(request, id):
 
             defaults={
 
-                "descricao": f"Orçamento #{orcamento.id}",
+                "descricao":
+                    f"Orçamento #{orcamento.id}",
 
-                "valor": valor_parcela,
+                "valor":
+                    valor_atual,
 
-                "total_parcelas": quantidade_parcelas,
+                "total_parcelas":
+                    quantidade_parcelas,
 
                 "vencimento": (
-                    timezone.now().date() +
-                    timedelta(days=30 * numero)
+                    timezone.now().date()
+                    +
+                    timedelta(
+                        days=30 * numero
+                    )
                 ),
 
-                "status": "PENDENTE",
-
+                "status":
+                    "PENDENTE",
             }
-
         )
+
+    # =========================================
+    # MENSAGEM
+    # =========================================
 
     messages.success(
 
         request,
 
-        "Orçamento aprovado e contas a receber geradas com sucesso."
-
+        "Orçamento aprovado e contas a receber "
+        "geradas com sucesso."
     )
 
     return redirect(
@@ -5168,7 +5339,6 @@ def aprovar_orcamento(request, id):
         "orcamento",
 
         id=orcamento.paciente.id
-
     )
 # =========================================
 # EXCLUIR ORÇAMENTO
@@ -5748,11 +5918,14 @@ def alterar_status_procedimento(request, id):
     # GERA COMISSÃO DO DENTISTA
     # =====================================
     #
-    # A comissão é gerada somente quando
+    # A comissão é gerada SOMENTE quando
     # o procedimento passa para REALIZADO.
     #
-    # Se já estava realizado, não gera
-    # uma nova comissão.
+    # A comissão pertence ao DENTISTA
+    # VINCULADO AO PACIENTE.
+    #
+    # O valor da comissão é calculado sobre
+    # o valor do procedimento realizado.
     #
     # =====================================
 
@@ -5761,44 +5934,69 @@ def alterar_status_procedimento(request, id):
         and status_anterior != "realizado"
     ):
 
-        tratamento = getattr(
-            item.orcamento,
-            "tratamento",
+        # =====================================
+        # IDENTIFICA O DENTISTA DO PACIENTE
+        # =====================================
+
+        dentista = getattr(
+            item.orcamento.paciente,
+            "dentista",
             None
         )
 
-        if tratamento and tratamento.dentista:
+        # =====================================
+        # SÓ CONTINUA SE HOUVER DENTISTA
+        # =====================================
 
-            try:
+        if dentista:
 
-                perfil = PerfilUsuario.objects.get(
-                    usuario=tratamento.dentista
-                )
+            # =====================================
+            # LOCALIZA O PERFIL DO DENTISTA
+            # =====================================
 
-            except PerfilUsuario.DoesNotExist:
+            perfil_dentista = getattr(
+                dentista,
+                "perfil",
+                None
+            )
 
-                perfil = None
+            # =====================================
+            # CONFIRMA QUE É DENTISTA
+            # =====================================
 
-            if perfil:
-
-                # =====================================
-                # VALOR DO PROCEDIMENTO
-                # =====================================
-
-                valor_procedimento = (
-                    item.total or Decimal("0.00")
-                )
+            if (
+                perfil_dentista
+                and perfil_dentista.tipo_usuario == "dentista"
+            ):
 
                 # =====================================
                 # PERCENTUAL DE COMISSÃO
                 # =====================================
 
+                percentual = (
+                    perfil_dentista.percentual_comissao
+                    or Decimal("0.00")
+                )
+
                 percentual = Decimal(
-                    perfil.percentual_comissao or 0
+                    str(percentual)
                 )
 
                 # =====================================
-                # CALCULA COMISSÃO
+                # VALOR DO PROCEDIMENTO REALIZADO
+                # =====================================
+
+                valor_procedimento = (
+                    item.total
+                    or Decimal("0.00")
+                )
+
+                valor_procedimento = Decimal(
+                    str(valor_procedimento)
+                )
+
+                # =====================================
+                # CALCULA A COMISSÃO
                 # =====================================
 
                 valor_comissao = (
@@ -5810,20 +6008,19 @@ def alterar_status_procedimento(request, id):
                 )
 
                 # =====================================
-                # SOMENTE GERA SE HOUVER COMISSÃO
+                # SÓ GERA SE HOUVER VALOR
                 # =====================================
 
                 if valor_comissao > 0:
 
                     # =====================================
-                    # VERIFICA SE JÁ EXISTE COMISSÃO
-                    # PARA ESTE ITEM
+                    # VERIFICA DUPLICIDADE
                     # =====================================
 
                     comissao_existente = (
                         ContaPagar.objects
                         .filter(
-                            profissional=perfil,
+                            profissional=perfil_dentista,
                             descricao__icontains=(
                                 f"Item #{item.id}"
                             )
@@ -5839,7 +6036,7 @@ def alterar_status_procedimento(request, id):
 
                         ContaPagar.objects.create(
 
-                            profissional=perfil,
+                            profissional=perfil_dentista,
 
                             descricao=(
                                 f"Comissão do procedimento "
@@ -5857,9 +6054,17 @@ def alterar_status_procedimento(request, id):
                                 f"Comissão referente ao "
                                 f"procedimento realizado. "
                                 f"ItemOrcamento #{item.id}. "
-                                f"Percentual: {percentual}%."
+                                f"Paciente: "
+                                f"{item.orcamento.paciente.nome}. "
+                                f"Dentista: "
+                                f"{dentista.get_full_name() or dentista.username}. "
+                                f"Valor do procedimento: "
+                                f"R$ {valor_procedimento}. "
+                                f"Percentual: "
+                                f"{percentual}%. "
+                                f"Comissão: "
+                                f"R$ {valor_comissao}."
                             )
-
                         )
 
     # =====================================
@@ -20687,17 +20892,17 @@ def obter_dados_dre(
 
     )
 
-    # =========================================
+        # =========================================
     # COMISSÕES
     # =========================================
 
     comissoes = ContaPagar.objects.filter(
-        conta_receber__isnull=False,
         profissional__isnull=False,
+        descricao__icontains="Comissão",
     )
 
     # =========================================
-    # FILTRO PROFISSIONAL
+    # FILTRO POR PROFISSIONAL
     # =========================================
 
     if profissional_id:
@@ -20707,19 +20912,19 @@ def obter_dados_dre(
         )
 
     # =========================================
-    # FILTRO DATA
+    # FILTRO POR DATA
     # =========================================
 
     if data_inicio:
 
         comissoes = comissoes.filter(
-            conta_receber__data_recebimento__gte=data_inicio
+            vencimento__gte=data_inicio
         )
 
     if data_final:
 
         comissoes = comissoes.filter(
-            conta_receber__data_recebimento__lte=data_final
+            vencimento__lte=data_final
         )
 
     # =========================================
@@ -20728,7 +20933,7 @@ def obter_dados_dre(
 
     total_comissoes = sum(
         (
-            conta.valor
+            conta.valor or Decimal("0.00")
             for conta in comissoes
         ),
         Decimal("0.00")
@@ -20842,3 +21047,509 @@ def obter_dados_dre(
             ticket_medio,
 
     }
+
+# =========================================
+# DADOS DO FECHAMENTO MENSAL
+# =========================================
+
+def obter_dados_fechamento_mensal(
+    ano,
+    mes,
+):
+
+    from decimal import Decimal
+    from calendar import monthrange
+    from datetime import date
+
+    # =========================================
+    # PERÍODO
+    # =========================================
+
+    primeiro_dia = date(
+        ano,
+        mes,
+        1
+    )
+
+    ultimo_dia = date(
+        ano,
+        mes,
+        monthrange(
+            ano,
+            mes
+        )[1]
+    )
+
+    # =========================================
+    # LANÇAMENTOS DO CAIXA
+    # =========================================
+
+    lancamentos = Caixa.objects.filter(
+        data__gte=primeiro_dia,
+        data__lte=ultimo_dia,
+    )
+
+    # =========================================
+    # TOTAL DE ENTRADAS
+    # =========================================
+
+    total_entradas = sum(
+        (
+            lancamento.valor
+            for lancamento in lancamentos
+            if lancamento.tipo == "ENTRADA"
+        ),
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # TOTAL DE SAÍDAS
+    # =========================================
+
+    total_saidas = sum(
+        (
+            lancamento.valor
+            for lancamento in lancamentos
+            if lancamento.tipo == "SAIDA"
+        ),
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # SALDO DO PERÍODO
+    # =========================================
+
+    movimento_periodo = (
+        total_entradas
+        - total_saidas
+    )
+
+    # =========================================
+    # SALDO ANTERIOR
+    # =========================================
+
+    lancamentos_anteriores = (
+        Caixa.objects.filter(
+            data__lt=primeiro_dia
+        )
+        .order_by(
+            "data",
+            "id"
+        )
+    )
+
+    saldo_inicial = Decimal("0.00")
+
+    for lancamento in lancamentos_anteriores:
+
+        valor = (
+            lancamento.valor
+            or Decimal("0.00")
+        )
+
+        if lancamento.tipo == "ENTRADA":
+
+            saldo_inicial += valor
+
+        elif lancamento.tipo == "SAIDA":
+
+            saldo_inicial -= valor
+
+    # =========================================
+    # SALDO FINAL
+    # =========================================
+
+    saldo_final = (
+        saldo_inicial
+        + movimento_periodo
+    )
+
+    # =========================================
+    # DRE DO PERÍODO
+    # =========================================
+
+    dados_dre = obter_dados_dre(
+        data_inicio=primeiro_dia,
+        data_final=ultimo_dia,
+    )
+
+    # =========================================
+    # DADOS PRINCIPAIS DO DRE
+    # =========================================
+
+    receita_bruta = dados_dre.get(
+        "receita_bruta",
+        Decimal("0.00")
+    )
+
+    total_comissoes = dados_dre.get(
+        "total_comissoes",
+        Decimal("0.00")
+    )
+
+    total_despesas = dados_dre.get(
+        "total_despesas",
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # RESULTADO APÓS CUSTOS
+    # =========================================
+
+    resultado_apos_custos = (
+        receita_bruta
+        - total_comissoes
+    )
+
+    # =========================================
+    # RESULTADO OPERACIONAL
+    # =========================================
+
+    resultado_operacional = dados_dre.get(
+        "resultado_operacional",
+        resultado_apos_custos - total_despesas
+    )
+
+    # =========================================
+    # MARGEM OPERACIONAL
+    # =========================================
+
+    margem_operacional = dados_dre.get(
+        "margem_operacional",
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # INDICADORES GERENCIAIS
+    # =========================================
+
+    procedimentos_realizados = dados_dre.get(
+        "quantidade_procedimentos",
+        0
+    )
+
+    pacientes_atendidos = dados_dre.get(
+        "quantidade_pacientes",
+        0
+    )
+
+    ticket_medio = dados_dre.get(
+        "ticket_medio",
+        Decimal("0.00")
+    )
+
+    # =========================================
+    # RETORNO
+    # =========================================
+
+    return {
+
+        # -----------------------------------------
+        # COMPETÊNCIA
+        # -----------------------------------------
+
+        "ano": ano,
+
+        "mes": mes,
+
+        "primeiro_dia": primeiro_dia,
+
+        "ultimo_dia": ultimo_dia,
+
+        # -----------------------------------------
+        # CAIXA
+        # -----------------------------------------
+
+        "saldo_inicial": saldo_inicial,
+
+        "total_entradas": total_entradas,
+
+        "total_saidas": total_saidas,
+
+        "saldo_final": saldo_final,
+
+        # -----------------------------------------
+        # DRE
+        # -----------------------------------------
+
+        "receita_bruta": receita_bruta,
+
+        "total_comissoes": total_comissoes,
+
+        "total_despesas": total_despesas,
+
+        "resultado_apos_custos": (
+            resultado_apos_custos
+        ),
+
+        "resultado_operacional": (
+            resultado_operacional
+        ),
+
+        "margem_operacional": (
+            margem_operacional
+        ),
+
+        # -----------------------------------------
+        # INDICADORES
+        # -----------------------------------------
+
+        "procedimentos_realizados": (
+            procedimentos_realizados
+        ),
+
+        "pacientes_atendidos": (
+            pacientes_atendidos
+        ),
+
+        "ticket_medio": (
+            ticket_medio
+        ),
+
+    }
+
+# =========================================
+# FECHAMENTO MENSAL
+# =========================================
+
+@login_required
+def fechamento_mensal(request):
+
+    from datetime import date
+
+    # =========================================
+    # COMPETÊNCIA ATUAL
+    # =========================================
+
+    hoje = date.today()
+
+    try:
+
+        ano = int(
+            request.GET.get(
+                "ano",
+                hoje.year
+            )
+        )
+
+    except (TypeError, ValueError):
+
+        ano = hoje.year
+
+    try:
+
+        mes = int(
+            request.GET.get(
+                "mes",
+                hoje.month
+            )
+        )
+
+    except (TypeError, ValueError):
+
+        mes = hoje.month
+
+    # =========================================
+    # VALIDAÇÃO DO ANO
+    # =========================================
+
+    if ano < 2000 or ano > hoje.year + 1:
+
+        ano = hoje.year
+
+    # =========================================
+    # VALIDAÇÃO DO MÊS
+    # =========================================
+
+    if mes < 1 or mes > 12:
+
+        mes = hoje.month
+
+    # =========================================
+    # LISTA DE ANOS
+    # =========================================
+    #
+    # Incluímos alguns anos anteriores para
+    # permitir consultas históricas.
+    #
+
+    anos = list(
+        range(
+            hoje.year - 5,
+            hoje.year + 1
+        )
+    )
+
+    # =========================================
+    # LISTA DE MESES
+    # =========================================
+
+    meses = [
+
+        (1, "Janeiro"),
+        (2, "Fevereiro"),
+        (3, "Março"),
+        (4, "Abril"),
+        (5, "Maio"),
+        (6, "Junho"),
+        (7, "Julho"),
+        (8, "Agosto"),
+        (9, "Setembro"),
+        (10, "Outubro"),
+        (11, "Novembro"),
+        (12, "Dezembro"),
+
+    ]
+
+    # =========================================
+    # CALCULA OS DADOS
+    # =========================================
+
+    dados = obter_dados_fechamento_mensal(
+        ano,
+        mes
+    )
+
+    # =========================================
+    # PROCURA FECHAMENTO EXISTENTE
+    # =========================================
+
+    fechamento = (
+        FechamentoMensal.objects.filter(
+            ano=ano,
+            mes=mes,
+        )
+        .first()
+    )
+
+    # =========================================
+    # CONTEXTO
+    # =========================================
+
+    context = {
+
+        "ano": ano,
+
+        "mes": mes,
+
+        "anos": anos,
+
+        "meses": meses,
+
+        "dados": dados,
+
+        "fechamento": fechamento,
+
+    }
+
+    # =========================================
+    # RENDER
+    # =========================================
+
+    return render(
+        request,
+        "accounts/fechamento_mensal.html",
+        context
+    )
+
+# =========================================
+# DRE GERENCIAL
+# =========================================
+
+@login_required(login_url="/")
+@permissao_required("financeiro", "visualizar")
+def dre(request):
+
+    # =========================================
+    # FILTROS
+    # =========================================
+
+    data_inicio = request.GET.get("data_inicio") or None
+    data_final = request.GET.get("data_final") or None
+    profissional_id = request.GET.get("profissional") or None
+
+    # =========================================
+    # DADOS DO DRE
+    # =========================================
+
+    dados = obter_dados_dre(
+        data_inicio=data_inicio,
+        data_final=data_final,
+        profissional_id=profissional_id,
+    )
+
+    # =========================================
+    # PROFISSIONAIS
+    # =========================================
+
+    profissionais = User.objects.filter(
+        perfil__tipo_usuario="DENTISTA"
+    ).order_by(
+        "first_name",
+        "username",
+    )
+
+    # =========================================
+    # CONTEXTO
+    # =========================================
+
+    context = {
+
+        # -----------------------------------------
+        # DADOS FINANCEIROS
+        # -----------------------------------------
+
+        "receita_bruta":
+            dados["receita_bruta"],
+
+        "total_comissoes":
+            dados["total_comissoes"],
+
+        "total_despesas":
+            dados["total_despesas"],
+
+        "resultado_apos_custos":
+            dados["resultado_apos_custos"],
+
+        "resultado_operacional":
+            dados["resultado_operacional"],
+
+        "margem_operacional":
+            dados["margem_operacional"],
+
+        # -----------------------------------------
+        # INDICADORES
+        # -----------------------------------------
+
+        "quantidade_procedimentos":
+            dados["quantidade_procedimentos"],
+
+        "quantidade_pacientes":
+            dados["quantidade_pacientes"],
+
+        "ticket_medio":
+            dados["ticket_medio"],
+
+        # -----------------------------------------
+        # FILTROS
+        # -----------------------------------------
+
+        "data_inicio":
+            data_inicio,
+
+        "data_final":
+            data_final,
+
+        "profissional_id":
+            profissional_id,
+
+        "profissionais":
+            profissionais,
+
+    }
+
+    return render(
+        request,
+        "accounts/dre.html",
+        context
+    )

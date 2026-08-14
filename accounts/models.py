@@ -3859,6 +3859,200 @@ class CaixaDiario(models.Model):
     def __str__(self):
 
         return f"{self.data} - {self.get_status_display()}"
+
+# =========================================
+# FECHAMENTO MENSAL
+# =========================================
+
+class FechamentoMensal(models.Model):
+
+    STATUS_CHOICES = [
+        ("ABERTO", "Aberto"),
+        ("FECHADO", "Fechado"),
+    ]
+
+    # =========================================
+    # COMPETÊNCIA
+    # =========================================
+
+    ano = models.PositiveIntegerField()
+
+    mes = models.PositiveIntegerField()
+
+    # =========================================
+    # RESUMO DO CAIXA
+    # =========================================
+
+    saldo_inicial = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    total_entradas = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    total_saidas = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    saldo_final = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    # =========================================
+    # DRE
+    # =========================================
+
+    receita_bruta = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    total_comissoes = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    total_despesas = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    # =========================================
+    # RESULTADO APÓS CUSTOS
+    # =========================================
+
+    resultado_apos_custos = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    # =========================================
+    # RESULTADO OPERACIONAL
+    # =========================================
+
+    resultado_operacional = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    margem_operacional = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    # =========================================
+    # INDICADORES OPERACIONAIS
+    # =========================================
+
+    procedimentos_realizados = models.PositiveIntegerField(
+        default=0
+    )
+
+    pacientes_atendidos = models.PositiveIntegerField(
+        default=0
+    )
+
+    ticket_medio = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    # =========================================
+    # STATUS
+    # =========================================
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="ABERTO"
+    )
+
+    # =========================================
+    # RESPONSÁVEL PELO FECHAMENTO
+    # =========================================
+
+    usuario_fechamento = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="fechamentos_mensais"
+    )
+
+    data_fechamento = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    # =========================================
+    # OBSERVAÇÕES
+    # =========================================
+
+    observacoes = models.TextField(
+        blank=True
+    )
+
+    # =========================================
+    # CONTROLE DE DATA
+    # =========================================
+
+    criado_em = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    atualizado_em = models.DateTimeField(
+        auto_now=True
+    )
+
+    # =========================================
+    # META
+    # =========================================
+
+    class Meta:
+
+        ordering = [
+            "-ano",
+            "-mes",
+        ]
+
+        constraints = [
+
+            models.UniqueConstraint(
+                fields=[
+                    "ano",
+                    "mes",
+                ],
+                name="unique_fechamento_mensal"
+            )
+
+        ]
+
+    # =========================================
+    # REPRESENTAÇÃO
+    # =========================================
+
+    def __str__(self):
+
+        return (
+            f"Fechamento "
+            f"{self.mes:02d}/{self.ano}"
+        )
         
 # =========================================
 # LIVRO CAIXA
