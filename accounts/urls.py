@@ -100,6 +100,16 @@ urlpatterns = [
         name='odontograma'
     ),
 
+    # =========================================
+    # POSICIONAMENTO DOS DENTES
+    # =========================================
+
+    path(
+        "pacientes/<int:id>/odontograma/posicionamento/",
+        views.salvar_posicionamento_dente,
+        name="salvar_posicionamento_dente",
+    ),
+
 # =========================================
 # MARKETING - LEADS
 # =========================================
@@ -1343,6 +1353,8 @@ path(
     views.editar_meta_dentista,
     name="editar_meta_dentista",
 ),
+
+
 
 ]
 

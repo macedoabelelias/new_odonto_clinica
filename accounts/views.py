@@ -75,7 +75,10 @@ from agenda.models import (
     Profissional,
 )
 
-from .financeiro import registrar_livro_caixa
+from .financeiro import (
+    registrar_livro_caixa,
+    competencia_fechada,
+)
 
 from .forms import (
     ConvenioForm,
@@ -123,6 +126,7 @@ from .models import (
     SolicitacaoExame,
     TemplateDocumento,
     Tratamento,
+    PosicionamentoDente,
 )
 
 from django.db.models import Q
@@ -3674,7 +3678,7 @@ def odontograma(request, id):
         id=id
     )
 
-   # =====================================
+    # =====================================
     # TRATAMENTO ATIVO
     # =====================================
 
@@ -3688,7 +3692,9 @@ def odontograma(request, id):
 
     historico_tratamentos = paciente.tratamentos.filter(
         status="ENCERRADO"
-    ).order_by("-data_encerramento")
+    ).order_by(
+        "-data_encerramento"
+    )
 
     # =====================================
     # ORÇAMENTO DO TRATAMENTO ATIVO
@@ -3699,44 +3705,130 @@ def odontograma(request, id):
     if tratamento:
 
         orcamento, created = Orcamento.objects.get_or_create(
-
             paciente=paciente,
-
             tratamento=tratamento,
-
             defaults={
                 "tratamento": tratamento
             }
-
         )
+
     # =========================================
-    # SALVAR EVOLUÇÃO
+    # SALVAR PROCEDIMENTO / EVOLUÇÃO
     # =========================================
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
+        print("=========================================")
+        print("POST ODONTOGRAMA")
         print(request.POST)
+        print("=========================================")
 
-        procedimento = Procedimento.objects.get(
-            id=request.POST.get('procedimento')
+        # =====================================
+        # TRATAMENTO OBRIGATÓRIO
+        # =====================================
+
+        if not tratamento:
+
+            return JsonResponse({
+                "sucesso": False,
+                "erro": "Paciente não possui tratamento ativo."
+            }, status=400)
+
+        # =====================================
+        # ORÇAMENTO OBRIGATÓRIO
+        # =====================================
+
+        if not orcamento:
+
+            return JsonResponse({
+                "sucesso": False,
+                "erro": "Não foi possível localizar o orçamento do tratamento."
+            }, status=400)
+
+        # =====================================
+        # PROCEDIMENTO
+        # =====================================
+
+        procedimento_id = request.POST.get(
+            "procedimento"
         )
 
-        status = request.POST.get('status')
+        if not procedimento_id:
 
-        dente = request.POST.get('dente')
+            return JsonResponse({
+                "sucesso": False,
+                "erro": "Procedimento não informado."
+            }, status=400)
 
-        face = request.POST.get('face')
+        procedimento = get_object_or_404(
+            Procedimento,
+            id=procedimento_id
+        )
 
-        descricao = request.POST.get('descricao')
+        # =====================================
+        # STATUS
+        # =====================================
+
+        status = request.POST.get(
+            "status"
+        ) or "planejado"
+
+        # =====================================
+        # DENTE
+        # =====================================
+
+        dente = request.POST.get(
+            "dente"
+        )
+
+        # =====================================
+        # FACE
+        # =====================================
+
+        face = request.POST.get(
+            "face"
+        )
+
+        # =====================================
+        # DESCRIÇÃO
+        # =====================================
+
+        descricao = request.POST.get(
+            "descricao"
+        ) or ""
+
+        # =====================================
+        # POSIÇÃO DO ÍCONE
+        # =====================================
 
         posicao_icone = request.POST.get(
-            'posicao_icone'
+            "posicao_icone"
         )
 
         print(
-            'POSICAO ESCOLHIDA:',
+            "DENTE:",
+            dente
+        )
+
+        print(
+            "FACE:",
+            face
+        )
+
+        print(
+            "POSIÇÃO DO ÍCONE:",
             posicao_icone
         )
+
+        # =====================================
+        # IMPORTANTE
+        #
+        # O POSICIONAMENTO DO DENTE NÃO É
+        # SALVO AQUI.
+        #
+        # Ele pertence exclusivamente ao
+        # modelo PosicionamentoDente.
+        # =====================================
 
         # =====================================
         # DEFINE VALOR CONFORME CONVÊNIO
@@ -3767,7 +3859,7 @@ def odontograma(request, id):
 
             procedimento=procedimento,
 
-            tipo_local='dente',
+            tipo_local="dente",
 
             dente=dente,
 
@@ -3805,15 +3897,19 @@ def odontograma(request, id):
 
             status=status,
 
-            descricao=descricao or ''
+            descricao=descricao
 
         )
+
+        # =====================================
+        # RETORNA AO ODONTOGRAMA
+        # =====================================
 
         return redirect(
-            'odontograma',
+            "odontograma",
             id=paciente.id
         )
-    
+
     # =========================================
     # EVOLUÇÕES CLÍNICAS
     # =========================================
@@ -3821,17 +3917,15 @@ def odontograma(request, id):
     if tratamento:
 
         evolucoes = EvolucaoClinica.objects.filter(
-
             paciente=paciente,
-
             tratamento=tratamento
-
-        ).order_by('-criado_em')
+        ).order_by(
+            "-criado_em"
+        )
 
     else:
 
         evolucoes = EvolucaoClinica.objects.none()
-
 
     # =========================================
     # ITENS DO ORÇAMENTO
@@ -3840,24 +3934,22 @@ def odontograma(request, id):
     if orcamento:
 
         itens_orcamento = ItemOrcamento.objects.filter(
-
             orcamento=orcamento
-
+        ).select_related(
+            "procedimento"
         )
 
     else:
 
         itens_orcamento = ItemOrcamento.objects.none()
-   # =========================================
+
+    # =========================================
     # PROCEDIMENTOS
     # =========================================
 
     procedimentos = Procedimento.objects.all().order_by(
-
-        'categoria',
-
-        'nome'
-
+        "categoria",
+        "nome"
     )
 
     # =========================================
@@ -3865,92 +3957,325 @@ def odontograma(request, id):
     # =========================================
 
     procedimentos_gerais = Procedimento.objects.filter(
-
-        tipo__in=['geral', 'hemiarcada']
-
+        tipo__in=[
+            "geral",
+            "hemiarcada"
+        ]
     ).order_by(
-
-        'categoria',
-
-        'nome'
-
+        "categoria",
+        "nome"
     )
+
+    # =========================================
+    # POSICIONAMENTOS CLÍNICOS DOS DENTES
+    #
+    # IMPORTANTE:
+    # Estes dados vêm exclusivamente de
+    # PosicionamentoDente.
+    #
+    # Não dependem de procedimento,
+    # orçamento ou evolução.
+    # =========================================
+
+    posicionamentos_dentes = (
+        PosicionamentoDente.objects.filter(
+            paciente=paciente
+        )
+    )
+
+    # =========================================
+    # DICIONÁRIO DE POSIÇÕES
+    # =========================================
+
+    posicoes_dentes = {
+        item.dente: item.posicao
+        for item in posicionamentos_dentes
+    }
+
+    # =========================================
+    # CONTEXTO
+    # =========================================
 
     context = {
 
-        'paciente': paciente,
+        "paciente": paciente,
 
-        'tratamento': tratamento,
+        "tratamento": tratamento,
 
-        'historico_tratamentos': historico_tratamentos,
+        "historico_tratamentos": historico_tratamentos,
 
-        'orcamento': orcamento,
+        "orcamento": orcamento,
 
-        'evolucoes': evolucoes,
+        "evolucoes": evolucoes,
 
-        'itens_orcamento': itens_orcamento,
+        "itens_orcamento": itens_orcamento,
 
-        'procedimentos': procedimentos,
+        "procedimentos": procedimentos,
 
-        'procedimentos_gerais': procedimentos_gerais,
-        # =========================================
+        "procedimentos_gerais": procedimentos_gerais,
+
+        # =====================================
+        # POSICIONAMENTO DOS DENTES
+        # =====================================
+
+        "posicoes_dentes": posicoes_dentes,
+
+        # =====================================
         # DENTES PERMANENTES
-        # =========================================
+        # =====================================
 
-        'superiores': [
-            '18','17','16','15','14','13','12','11',
-            '21','22','23','24','25','26','27','28'
+        "superiores": [
+            "18", "17", "16", "15",
+            "14", "13", "12", "11",
+            "21", "22", "23", "24",
+            "25", "26", "27", "28"
         ],
 
-        'inferiores': [
-            '48','47','46','45','44','43','42','41',
-            '31','32','33','34','35','36','37','38'
+        "inferiores": [
+            "48", "47", "46", "45",
+            "44", "43", "42", "41",
+            "31", "32", "33", "34",
+            "35", "36", "37", "38"
         ],
 
-        # =========================================
+        # =====================================
         # DENTES DECÍDUOS
-        # =========================================
+        # =====================================
 
-        'dec_superiores': [
-            '55','54','53','52','51',
-            '61','62','63','64','65'
+        "dec_superiores": [
+            "55", "54", "53", "52", "51",
+            "61", "62", "63", "64", "65"
         ],
 
-        'dec_inferiores': [
-            '85','84','83','82','81',
-            '71','72','73','74','75'
+        "dec_inferiores": [
+            "85", "84", "83", "82", "81",
+            "71", "72", "73", "74", "75"
         ],
 
     }
+
+    # =========================================
+    # DEBUG
+    # =========================================
+
     for item in itens_orcamento:
 
         print(
-            f'ITEM {item.id} | DENTE={item.dente} | POSICAO={item.posicao_icone}'
+            f"ITEM {item.id} | "
+            f"DENTE={item.dente} | "
+            f"POSICAO_ICONE={item.posicao_icone}"
         )
 
+    print(
+        "POSICIONAMENTOS DOS DENTES:",
+        posicoes_dentes
+    )
+
+    # =========================================
+    # RENDER
+    # =========================================
+
     return render(
-
         request,
-
-        'accounts/odontograma.html',
-
+        "accounts/odontograma.html",
         context
-
     )
 
 
+# =========================================
+# SALVAR POSICIONAMENTO DO DENTE
+# =========================================
+
 @login_required(login_url='/')
-@perfil_required(
-    "Administrador",
-    "Dentista",
-    "Auxiliar de Saúde Bucal",
-)
+@permissao_required("odontograma", "visualizar")
+def salvar_posicionamento_dente(request, id):
+
+    paciente = get_object_or_404(
+        Paciente,
+        id=id
+    )
+
+    # =====================================
+    # SOMENTE POST
+    # =====================================
+
+    if request.method != "POST":
+
+        return JsonResponse({
+            "sucesso": False,
+            "erro": "Método não permitido."
+        }, status=405)
+
+    # =====================================
+    # DADOS RECEBIDOS
+    # =====================================
+
+    dente = request.POST.get("dente")
+    posicao = request.POST.get("posicao")
+
+    print("=========================================")
+    print("SALVAR POSICIONAMENTO DO DENTE")
+    print("PACIENTE:", paciente.id)
+    print("DENTE:", dente)
+    print("POSIÇÃO RECEBIDA:", posicao)
+    print("=========================================")
+
+    # =====================================
+    # VALIDAÇÃO DO DENTE
+    # =====================================
+
+    if not dente:
+
+        return JsonResponse({
+            "sucesso": False,
+            "erro": "Dente não informado."
+        }, status=400)
+
+    # =====================================
+    # POSIÇÃO PADRÃO
+    # =====================================
+
+    if not posicao:
+
+        posicao = "normal"
+
+    # =====================================
+    # NORMALIZAÇÃO
+    #
+    # O JavaScript trabalha com hífen:
+    # inclinado-esquerda
+    #
+    # O banco trabalha com underscore:
+    # inclinado_esquerda
+    # =====================================
+
+    posicao = posicao.strip().lower()
+
+    posicao = posicao.replace(
+        "-",
+        "_"
+    )
+
+    print(
+        "POSIÇÃO NORMALIZADA:",
+        posicao
+    )
+
+    # =====================================
+    # POSIÇÕES PERMITIDAS
+    # =====================================
+
+    posicoes_validas = [
+
+        "normal",
+
+        "incluso_vertical",
+
+        "incluso_horizontal",
+
+        "inclinado_mesial",
+
+        "inclinado_distal",
+
+        "inclinado_direita",
+
+        "inclinado_esquerda",
+
+        "rotacao",
+
+        "extrusao",
+
+    ]
+
+    # =====================================
+    # VALIDA POSIÇÃO
+    # =====================================
+
+    if posicao not in posicoes_validas:
+
+        print(
+            "POSIÇÃO INVÁLIDA:",
+            posicao
+        )
+
+        return JsonResponse({
+
+            "sucesso": False,
+
+            "erro":
+                "Posição do dente inválida."
+
+        }, status=400)
+
+    # =====================================
+    # SALVA / ATUALIZA
+    # =====================================
+
+    posicionamento, created = (
+        PosicionamentoDente.objects.update_or_create(
+
+            paciente=paciente,
+
+            dente=dente,
+
+            defaults={
+                "posicao": posicao
+            }
+
+        )
+    )
+
+    # =====================================
+    # DEBUG
+    # =====================================
+
+    print("=========================================")
+    print("POSICIONAMENTO SALVO COM SUCESSO")
+    print("ID:", posicionamento.id)
+    print("DENTE:", posicionamento.dente)
+    print("POSIÇÃO:", posicionamento.posicao)
+    print("NOVO:", created)
+    print("=========================================")
+
+    # =====================================
+    # RESPOSTA
+    # =====================================
+
+    return JsonResponse({
+
+        "sucesso": True,
+
+        "dente": posicionamento.dente,
+
+        "posicao": posicionamento.posicao,
+
+        "novo": created
+
+    })
+
+# =========================================
+# SALVAR PROCEDIMENTO GERAL
+# =========================================
+
+@login_required(login_url='/')
+@permissao_required("odontograma", "visualizar")
 def salvar_procedimento_geral(request, id):
 
     paciente = get_object_or_404(
         Paciente,
         id=id
     )
+
+    # =====================================
+    # SOMENTE POST
+    # =====================================
+
+    if request.method != "POST":
+
+        return JsonResponse({
+            "sucesso": False,
+            "erro": "Método não permitido."
+        }, status=405)
 
     # =====================================
     # TRATAMENTO ATIVO
@@ -3960,24 +4285,20 @@ def salvar_procedimento_geral(request, id):
         status="ATIVO"
     ).first()
 
-    if tratamento is None:
+    if not tratamento:
 
-        tratamento = Tratamento.objects.create(
-            paciente=paciente,
-            dentista=request.user,
-            titulo="Tratamento Inicial"
+        messages.error(
+            request,
+            "Paciente não possui tratamento ativo."
+        )
+
+        return redirect(
+            "odontograma",
+            id=paciente.id
         )
 
     # =====================================
-    # HISTÓRICO DE TRATAMENTOS
-    # =====================================
-
-    historico_tratamentos = paciente.tratamentos.filter(
-        status='ENCERRADO'
-    ).order_by('-data_encerramento')
-
-    # =====================================
-    # ORÇAMENTO DO TRATAMENTO
+    # ORÇAMENTO
     # =====================================
 
     orcamento, created = Orcamento.objects.get_or_create(
@@ -3987,117 +4308,145 @@ def salvar_procedimento_geral(request, id):
         tratamento=tratamento,
 
         defaults={
-            'tratamento': tratamento
+            "tratamento": tratamento
         }
 
     )
 
-    if request.method == 'POST':
+    # =====================================
+    # PROCEDIMENTO
+    # =====================================
 
-        procedimento = get_object_or_404(
+    procedimento_id = request.POST.get(
+        "procedimento"
+    )
 
-            Procedimento,
+    if not procedimento_id:
 
-            id=request.POST.get('procedimento')
-
-        )
-
-        status = request.POST.get(
-            'status'
-        ) or 'planejado'
-
-        descricao = request.POST.get(
-            'descricao'
-        ) or ''
-
-        posicao_icone = request.POST.get(
-            'posicao_icone'
-        )
-
-        # =====================================
-        # CALCULA VALOR CONFORME CONVÊNIO
-        # =====================================
-
-        valor_unitario = procedimento.valor_particular
-
-        if paciente.convenio:
-
-            convenio = Convenio.objects.filter(
-                nome=paciente.convenio
-            ).first()
-
-            if convenio:
-
-                valor_unitario = (
-                    procedimento.valor_particular
-                    * convenio.indice
-                )
-
-        # =====================================
-        # CRIA ITEM NO ORÇAMENTO
-        # =====================================
-
-        item = ItemOrcamento.objects.create(
-
-            orcamento=orcamento,
-
-            procedimento=procedimento,
-
-            tipo_local='geral',
-
-            valor_unitario=valor_unitario,
-
-            quantidade=1,
-
-            status=status
-
-        )
-
-        # =====================================
-        # CRIA EVOLUÇÃO CLÍNICA
-        # =====================================
-
-        EvolucaoClinica.objects.create(
-
-            paciente=paciente,
-
-            tratamento=tratamento,
-
-            orcamento=orcamento,
-
-            item_orcamento=item,
-
-            procedimento=procedimento,
-
-            status=status,
-
-            descricao=descricao
-
-        )
-
-        messages.success(
-
+        messages.error(
             request,
-
-            'Procedimento salvo com sucesso.'
-
+            "Procedimento não informado."
         )
 
         return redirect(
-
-            'odontograma',
-
+            "odontograma",
             id=paciente.id
-
         )
 
+    procedimento = get_object_or_404(
+        Procedimento,
+        id=procedimento_id
+    )
+
+    # =====================================
+    # STATUS
+    # =====================================
+
+    status = request.POST.get(
+        "status"
+    ) or "planejado"
+
+    # =====================================
+    # DESCRIÇÃO
+    # =====================================
+
+    descricao = request.POST.get(
+        "descricao"
+    ) or ""
+
+    # =====================================
+    # VALOR
+    # =====================================
+
+    valor_unitario = procedimento.valor_particular
+
+    # =====================================
+    # CONVÊNIO
+    # =====================================
+
+    if paciente.convenio:
+
+        convenio = Convenio.objects.filter(
+            nome=paciente.convenio
+        ).first()
+
+        if convenio:
+
+            valor_unitario = (
+                procedimento.valor_particular
+                * convenio.indice
+            )
+
+    # =====================================
+    # CRIA ITEM DO ORÇAMENTO
+    # =====================================
+
+    item = ItemOrcamento.objects.create(
+
+        orcamento=orcamento,
+
+        procedimento=procedimento,
+
+        tipo_local="geral",
+
+        dente=None,
+
+        face=None,
+
+        posicao_icone=None,
+
+        valor_unitario=valor_unitario,
+
+        status=status
+
+    )
+
+    # =====================================
+    # REGISTRA EVOLUÇÃO
+    # =====================================
+
+    EvolucaoClinica.objects.create(
+
+        paciente=paciente,
+
+        tratamento=tratamento,
+
+        orcamento=orcamento,
+
+        item_orcamento=item,
+
+        dente=None,
+
+        face=None,
+
+        posicao_icone=None,
+
+        procedimento=procedimento,
+
+        status=status,
+
+        descricao=descricao
+
+    )
+
+    # =====================================
+    # MENSAGEM
+    # =====================================
+
+    messages.success(
+        request,
+        "Procedimento geral registrado com sucesso."
+    )
+
+    # =====================================
+    # RETORNO
+    # =====================================
+
     return redirect(
-
-        'odontograma',
-
+        "odontograma",
         id=paciente.id
+    )
 
-    )   
 
 @login_required(login_url='/')
 @permissao_required("anamnese", "visualizar")
@@ -11686,10 +12035,31 @@ def receber_conta(request, conta_id):
 
     hoje = timezone.localdate()
 
+    # =========================================
+    # LOCALIZA A CONTA
+    # =========================================
+
     conta = get_object_or_404(
         ContaReceber,
         id=conta_id
     )
+
+    # =========================================
+    # VERIFICA COMPETÊNCIA FECHADA
+    # =========================================
+
+    if competencia_fechada(hoje):
+
+        messages.error(
+            request,
+            (
+                f"A competência {hoje.month:02d}/{hoje.year} "
+                "está fechada. "
+                "Reabra o mês antes de realizar este recebimento."
+            )
+        )
+
+        return redirect("contas_receber")
 
     # =========================================
     # VERIFICA O CAIXA DIÁRIO
@@ -21316,12 +21686,19 @@ def obter_dados_fechamento_mensal(
 def fechamento_mensal(request):
 
     from datetime import date
+    from django.contrib import messages
+    from django.shortcuts import redirect
+    from django.utils import timezone
 
     # =========================================
-    # COMPETÊNCIA ATUAL
+    # DATA ATUAL
     # =========================================
 
     hoje = date.today()
+
+    # =========================================
+    # ANO
+    # =========================================
 
     try:
 
@@ -21335,6 +21712,10 @@ def fechamento_mensal(request):
     except (TypeError, ValueError):
 
         ano = hoje.year
+
+    # =========================================
+    # MÊS
+    # =========================================
 
     try:
 
@@ -21350,15 +21731,7 @@ def fechamento_mensal(request):
         mes = hoje.month
 
     # =========================================
-    # VALIDAÇÃO DO ANO
-    # =========================================
-
-    if ano < 2000 or ano > hoje.year + 1:
-
-        ano = hoje.year
-
-    # =========================================
-    # VALIDAÇÃO DO MÊS
+    # VALIDAÇÃO
     # =========================================
 
     if mes < 1 or mes > 12:
@@ -21368,15 +21741,11 @@ def fechamento_mensal(request):
     # =========================================
     # LISTA DE ANOS
     # =========================================
-    #
-    # Incluímos alguns anos anteriores para
-    # permitir consultas históricas.
-    #
 
     anos = list(
         range(
             hoje.year - 5,
-            hoje.year + 1
+            hoje.year + 2
         )
     )
 
@@ -21402,16 +21771,7 @@ def fechamento_mensal(request):
     ]
 
     # =========================================
-    # CALCULA OS DADOS
-    # =========================================
-
-    dados = obter_dados_fechamento_mensal(
-        ano,
-        mes
-    )
-
-    # =========================================
-    # PROCURA FECHAMENTO EXISTENTE
+    # FECHAMENTO EXISTENTE
     # =========================================
 
     fechamento = (
@@ -21420,6 +21780,205 @@ def fechamento_mensal(request):
             mes=mes,
         )
         .first()
+    )
+
+    # =========================================
+    # AÇÕES
+    # =========================================
+
+    if request.method == "POST":
+
+        acao = request.POST.get("acao")
+
+        # =====================================
+        # FECHAR MÊS
+        # =====================================
+
+        if acao == "fechar":
+
+            if fechamento is None:
+
+                dados = obter_dados_fechamento_mensal(
+                    ano,
+                    mes
+                )
+
+                fechamento = FechamentoMensal.objects.create(
+
+                    ano=ano,
+
+                    mes=mes,
+
+                    saldo_inicial=dados[
+                        "saldo_inicial"
+                    ],
+
+                    total_entradas=dados[
+                        "total_entradas"
+                    ],
+
+                    total_saidas=dados[
+                        "total_saidas"
+                    ],
+
+                    saldo_final=dados[
+                        "saldo_final"
+                    ],
+
+                    receita_bruta=dados[
+                        "receita_bruta"
+                    ],
+
+                    total_comissoes=dados[
+                        "total_comissoes"
+                    ],
+
+                    total_despesas=dados[
+                        "total_despesas"
+                    ],
+
+                    resultado_apos_custos=dados[
+                        "resultado_apos_custos"
+                    ],
+
+                    resultado_operacional=dados[
+                        "resultado_operacional"
+                    ],
+
+                    margem_operacional=dados[
+                        "margem_operacional"
+                    ],
+
+                    procedimentos_realizados=dados[
+                        "procedimentos_realizados"
+                    ],
+
+                    pacientes_atendidos=dados[
+                        "pacientes_atendidos"
+                    ],
+
+                    ticket_medio=dados[
+                        "ticket_medio"
+                    ],
+
+                    status="FECHADO",
+
+                    usuario_fechamento=request.user,
+
+                    data_fechamento=timezone.now(),
+
+                )
+
+            else:
+
+                if fechamento.status != "FECHADO":
+
+                    dados = obter_dados_fechamento_mensal(
+                        ano,
+                        mes
+                    )
+
+                    fechamento.saldo_inicial = dados[
+                        "saldo_inicial"
+                    ]
+
+                    fechamento.total_entradas = dados[
+                        "total_entradas"
+                    ]
+
+                    fechamento.total_saidas = dados[
+                        "total_saidas"
+                    ]
+
+                    fechamento.saldo_final = dados[
+                        "saldo_final"
+                    ]
+
+                    fechamento.receita_bruta = dados[
+                        "receita_bruta"
+                    ]
+
+                    fechamento.total_comissoes = dados[
+                        "total_comissoes"
+                    ]
+
+                    fechamento.total_despesas = dados[
+                        "total_despesas"
+                    ]
+
+                    fechamento.resultado_apos_custos = dados[
+                        "resultado_apos_custos"
+                    ]
+
+                    fechamento.resultado_operacional = dados[
+                        "resultado_operacional"
+                    ]
+
+                    fechamento.margem_operacional = dados[
+                        "margem_operacional"
+                    ]
+
+                    fechamento.procedimentos_realizados = dados[
+                        "procedimentos_realizados"
+                    ]
+
+                    fechamento.pacientes_atendidos = dados[
+                        "pacientes_atendidos"
+                    ]
+
+                    fechamento.ticket_medio = dados[
+                        "ticket_medio"
+                    ]
+
+                    fechamento.status = "FECHADO"
+
+                    fechamento.usuario_fechamento = request.user
+
+                    fechamento.data_fechamento = timezone.now()
+
+                    fechamento.save()
+
+            messages.success(
+                request,
+                f"Competência {mes:02d}/{ano} fechada com sucesso."
+            )
+
+            return redirect(
+                f"/financeiro/fechamento-mensal/?ano={ano}&mes={mes}"
+            )
+
+        # =====================================
+        # ABRIR MÊS
+        # =====================================
+
+        elif acao == "abrir":
+
+            if fechamento:
+
+                fechamento.status = "ABERTO"
+
+                fechamento.usuario_fechamento = None
+
+                fechamento.data_fechamento = None
+
+                fechamento.save()
+
+                messages.success(
+                    request,
+                    f"Competência {mes:02d}/{ano} reaberta com sucesso."
+                )
+
+            return redirect(
+                f"/financeiro/fechamento-mensal/?ano={ano}&mes={mes}"
+            )
+
+    # =========================================
+    # CALCULA OS DADOS ATUAIS
+    # =========================================
+
+    dados = obter_dados_fechamento_mensal(
+        ano,
+        mes
     )
 
     # =========================================
@@ -21442,15 +22001,13 @@ def fechamento_mensal(request):
 
     }
 
-    # =========================================
-    # RENDER
-    # =========================================
-
     return render(
         request,
         "accounts/fechamento_mensal.html",
         context
     )
+
+
 
 # =========================================
 # DRE GERENCIAL

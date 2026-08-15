@@ -52,15 +52,15 @@ Fechamento Mensal
                             class="form-select"
                         >
 
-                            {% for ano in anos %}
+                            {% for ano_item in anos %}
 
                                 <option
-                                    value="{{ ano }}"
-                                    {% if ano == ano %}
+                                    value="{{ ano_item }}"
+                                    {% if ano_item == ano %}
                                         selected
                                     {% endif %}
                                 >
-                                    {{ ano }}
+                                    {{ ano_item }}
                                 </option>
 
                             {% endfor %}
@@ -152,12 +152,247 @@ Fechamento Mensal
         </strong>
 
         {% for numero, nome in meses %}
-                {% if numero == mes %}
-                    {{ nome }}
-                {% endif %}
-            {% endfor %} / {{ ano }}
+
+            {% if numero == mes %}
+
+                {{ nome }}
+
+            {% endif %}
+
+        {% endfor %}
+
+        / {{ ano }}
 
     </div>
+
+
+    <!-- =========================================
+     STATUS DO PERÍODO
+     ========================================= -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+            <div>
+
+                <h5 class="mb-1">
+
+                    {% if fechamento and fechamento.status == "FECHADO" %}
+
+                        <i class="bi bi-lock-fill text-danger me-2"></i>
+
+                    {% else %}
+
+                        <i class="bi bi-unlock-fill text-success me-2"></i>
+
+                    {% endif %}
+
+                    Status do período
+
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Controle de abertura e fechamento da competência.
+                </p>
+
+            </div>
+
+
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+
+                {% if fechamento and fechamento.status == "FECHADO" %}
+
+                    <!-- =========================================
+                         MÊS FECHADO
+                         ========================================= -->
+
+                    <span class="btn btn-danger">
+
+                        <i class="bi bi-lock-fill me-1"></i>
+
+                        MÊS FECHADO
+
+                    </span>
+
+
+                    <!-- =========================================
+                         REABRIR MÊS
+                         ========================================= -->
+
+                    <form method="post"
+                          action="{% url 'fechamento_mensal' %}"
+                          class="d-inline">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="ano"
+                            value="{{ ano }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="mes"
+                            value="{{ mes }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="acao"
+                            value="abrir"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-warning"
+                            onclick="return confirm(
+                                'Deseja realmente reabrir esta competência?'
+                            );"
+                        >
+
+                            <i class="bi bi-unlock-fill me-1"></i>
+
+                            Reabrir Mês
+
+                        </button>
+
+                    </form>
+
+
+                {% else %}
+
+                    <!-- =========================================
+                         MÊS ABERTO
+                         ========================================= -->
+
+                    <span class="btn btn-success">
+
+                        <i class="bi bi-unlock-fill me-1"></i>
+
+                        MÊS ABERTO
+
+                    </span>
+
+
+                    <!-- =========================================
+                         FECHAR MÊS
+                         ========================================= -->
+
+                    <form method="post"
+                          action="{% url 'fechamento_mensal' %}"
+                          class="d-inline">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="ano"
+                            value="{{ ano }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="mes"
+                            value="{{ mes }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="acao"
+                            value="fechar"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm(
+                                'Deseja realmente fechar esta competência? Após o fechamento, novas movimentações financeiras serão bloqueadas.'
+                            );"
+                        >
+
+                            <i class="bi bi-lock-fill me-1"></i>
+
+                            Fechar Mês
+
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- =========================================
+    INFORMAÇÕES DO FECHAMENTO
+    ========================================= -->
+
+    {% if fechamento %}
+
+        <div class="alert alert-light border shadow-sm mb-4">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <strong>Status:</strong>
+
+                    {% if fechamento.status == "FECHADO" %}
+
+                        <span class="text-danger fw-bold">
+                            Fechado
+                        </span>
+
+                    {% else %}
+
+                        <span class="text-success fw-bold">
+                            Aberto
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% if fechamento.usuario_fechamento %}
+
+                    <div class="col-md-4">
+
+                        <strong>Responsável:</strong>
+
+                        {{ fechamento.usuario_fechamento.get_full_name|default:fechamento.usuario_fechamento.username }}
+
+                    </div>
+
+                {% endif %}
+
+
+                {% if fechamento.data_fechamento %}
+
+                    <div class="col-md-4">
+
+                        <strong>Data do fechamento:</strong>
+
+                        {{ fechamento.data_fechamento|date:"d/m/Y H:i" }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
 
 
     <!-- =========================================
@@ -462,9 +697,11 @@ Fechamento Mensal
                     <tr class="table-primary">
 
                         <td>
+
                             <strong>
                                 Saldo Final
                             </strong>
+
                         </td>
 
                         <td class="text-end">
@@ -549,9 +786,11 @@ Fechamento Mensal
                     <tr>
 
                         <td>
+
                             <strong>
                                 Resultado após custos
                             </strong>
+
                         </td>
 
                         <td class="text-end fw-bold">
@@ -583,9 +822,11 @@ Fechamento Mensal
                     <tr class="table-primary">
 
                         <td>
+
                             <strong>
                                 Resultado Operacional
                             </strong>
+
                         </td>
 
                         <td class="text-end fw-bold">
@@ -601,9 +842,11 @@ Fechamento Mensal
                     <tr>
 
                         <td>
+
                             <strong>
                                 Margem Operacional
                             </strong>
+
                         </td>
 
                         <td class="text-end fw-bold">
@@ -630,55 +873,61 @@ Fechamento Mensal
     <div class="row">
 
 
-        <div class="col-md-4 mb-3">
-
-    <div class="card shadow-sm">
-
-        <div class="card-body">
-
-            <h6 class="text-muted">
-                Procedimentos Realizados
-            </h6>
-
-            <h4 class="fw-bold">
-
-                {{ dados.procedimentos_realizados }}
-
-            </h4>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="col-md-4 mb-3">
-
-    <div class="card shadow-sm">
-
-        <div class="card-body">
-
-            <h6 class="text-muted">
-                Pacientes Atendidos
-            </h6>
-
-            <h4 class="fw-bold">
-
-                {{ dados.pacientes_atendidos }}
-
-            </h4>
-
-        </div>
-
-    </div>
-
-</div>
-
+        <!-- PROCEDIMENTOS -->
 
         <div class="col-md-4 mb-3">
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Procedimentos Realizados
+                    </h6>
+
+                    <h4 class="fw-bold">
+
+                        {{ dados.procedimentos_realizados }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PACIENTES -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Pacientes Atendidos
+                    </h6>
+
+                    <h4 class="fw-bold">
+
+                        {{ dados.pacientes_atendidos }}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TICKET -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm h-100">
 
                 <div class="card-body">
 

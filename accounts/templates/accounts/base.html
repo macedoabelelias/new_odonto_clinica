@@ -348,10 +348,11 @@ FINANCEIRO
 {% possui_permissao request.user 'contas_receber' as pode_contas_receber %}
 {% possui_permissao request.user 'caixa' as pode_ver_caixa %}
 {% possui_permissao request.user 'livro_caixa' 'visualizar' as pode_ver_livro_caixa %}
+{% possui_permissao request.user 'dre' 'visualizar' as pode_ver_dre %}
 {% possui_permissao request.user 'fechamento_mensal' 'visualizar' as pode_ver_fechamento_mensal %}
 
 
-{% if pode_contas_pagar or pode_contas_receber or pode_ver_caixa or pode_ver_livro_caixa or pode_ver_fechamento_mensal %}
+{% if pode_contas_pagar or pode_contas_receber or pode_ver_caixa or pode_ver_livro_caixa or pode_ver_dre or pode_ver_fechamento_mensal %}
 
 
 <div class="sidebar-section">
@@ -456,6 +457,27 @@ FINANCEIRO
                 <i class="fa-solid fa-book"></i>
 
                 <span>Livro Caixa</span>
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        <!-- =================================================
+        DRE
+        ================================================== -->
+
+        {% if pode_ver_dre %}
+
+        <li class="{% if '/financeiro/dre/' in request.path or 'dre' in request.path %}active{% endif %}">
+
+            <a href="{% url 'dre' %}">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>DRE</span>
 
             </a>
 

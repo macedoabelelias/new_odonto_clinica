@@ -1341,6 +1341,78 @@ class Tratamento(models.Model):
     def __str__(self):
 
         return f"{self.paciente.nome} - {self.titulo}"
+
+# =========================================
+# POSIÇÕES CLÍNICAS DO DENTE
+# =========================================
+
+POSICOES_DENTE = (
+
+    ('normal', 'Normal'),
+
+    ('incluso_vertical', 'Inclusão vertical'),
+
+    ('incluso_horizontal', 'Inclusão horizontal'),
+
+    ('incluso_mesial', 'Inclusão mesial'),
+
+    ('incluso_distal', 'Inclusão distal'),
+
+    ('inclinado_direita', 'Inclinado para direita'),
+
+    ('inclinado_esquerda', 'Inclinado para esquerda'),
+
+    ('rotacao', 'Rotação / Giro'),
+
+    ('extrusao', 'Extrusão'),
+
+)
+
+# =========================================
+# POSICIONAMENTO DO DENTE
+# =========================================
+
+class PosicionamentoDente(models.Model):
+
+    paciente = models.ForeignKey(
+        Paciente,
+        on_delete=models.CASCADE,
+        related_name="posicionamentos_dentes"
+    )
+
+    dente = models.CharField(
+        max_length=2
+    )
+
+    posicao = models.CharField(
+        max_length=30,
+        choices=POSICOES_DENTE,
+        default="normal"
+    )
+
+    atualizado_em = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+
+        verbose_name = "Posicionamento do Dente"
+        verbose_name_plural = "Posicionamentos dos Dentes"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["paciente", "dente"],
+                name="unique_posicionamento_dente_paciente"
+            )
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.paciente.nome} - "
+            f"Dente {self.dente} - "
+            f"{self.posicao}"
+        )
     
     
 # =========================================
@@ -1841,6 +1913,10 @@ class ItemOrcamento(models.Model):
 
     )
 
+    # =========================================
+    # POSIÇÃO DO ÍCONE
+    # =========================================
+
     posicao_icone = models.CharField(
 
         max_length=20,
@@ -1853,6 +1929,7 @@ class ItemOrcamento(models.Model):
 
     )
 
+    
     # =========================================
     # HEMI ARCADA
     # =========================================
@@ -3875,9 +3952,13 @@ class FechamentoMensal(models.Model):
     # COMPETÊNCIA
     # =========================================
 
-    ano = models.PositiveIntegerField()
+    ano = models.PositiveIntegerField(
+        verbose_name="Ano"
+    )
 
-    mes = models.PositiveIntegerField()
+    mes = models.PositiveIntegerField(
+        verbose_name="Mês"
+    )
 
     # =========================================
     # RESUMO DO CAIXA
@@ -4040,6 +4121,25 @@ class FechamentoMensal(models.Model):
                 ],
                 name="unique_fechamento_mensal"
             )
+
+        ]
+
+        indexes = [
+
+            models.Index(
+                fields=[
+                    "ano",
+                    "mes",
+                ],
+                name="idx_fechamento_ano_mes"
+            ),
+
+            models.Index(
+                fields=[
+                    "status",
+                ],
+                name="idx_fechamento_status"
+            ),
 
         ]
 
