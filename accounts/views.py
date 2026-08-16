@@ -155,6 +155,7 @@ from .forms import (
     CampanhaMarketingForm,
 )
 
+from decimal import InvalidOperation
 
 
 # =========================================
@@ -4141,12 +4142,6 @@ def salvar_posicionamento_dente(request, id):
 
     # =====================================
     # NORMALIZAÇÃO
-    #
-    # O JavaScript trabalha com hífen:
-    # inclinado-esquerda
-    #
-    # O banco trabalha com underscore:
-    # inclinado_esquerda
     # =====================================
 
     posicao = posicao.strip().lower()
@@ -4155,6 +4150,30 @@ def salvar_posicionamento_dente(request, id):
         "-",
         "_"
     )
+
+    # =====================================
+    # COMPATIBILIDADE
+    #
+    # Aceita também:
+    #
+    # mesial
+    # distal
+    #
+    # convertendo para os nomes oficiais
+    # utilizados no banco.
+    # =====================================
+
+    if posicao == "mesial":
+
+        posicao = "inclinado_mesial"
+
+    elif posicao == "distal":
+
+        posicao = "inclinado_distal"
+
+    # =====================================
+    # DEBUG
+    # =====================================
 
     print(
         "POSIÇÃO NORMALIZADA:",
@@ -4169,22 +4188,43 @@ def salvar_posicionamento_dente(request, id):
 
         "normal",
 
+        # =================================
+        # INCLUSÕES
+        # =================================
+
         "incluso_vertical",
 
         "incluso_horizontal",
+
+        "incluso_mesial",
+
+        "incluso_distal",
+
+        # =================================
+        # INCLINAÇÕES
+        # =================================
 
         "inclinado_mesial",
 
         "inclinado_distal",
 
-        "inclinado_direita",
+        # =================================
+        # ROTAÇÕES
+        # =================================
 
-        "inclinado_esquerda",
+        "rotacao_45",
 
-        "rotacao",
+        "rotacao_menos_45",
+
+        "rotacao_35",
+
+        "rotacao_menos_35",
+
+        # =================================
+        # EXTRUSÃO
+        # =================================
 
         "extrusao",
-
     ]
 
     # =====================================
@@ -12446,11 +12486,23 @@ def caixa(request):
 @permissao_required("caixa", "inserir")
 def abrir_caixa(request):
 
+    # =========================================
+    # SOMENTE POST
+    # =========================================
+
     if request.method != "POST":
 
         return redirect("caixa")
 
+    # =========================================
+    # DATA ATUAL
+    # =========================================
+
     hoje = timezone.localdate()
+
+    # =========================================
+    # VERIFICA SE JÁ EXISTE CAIXA ABERTO
+    # =========================================
 
     caixa_aberto = CaixaDiario.objects.filter(
 
@@ -12472,22 +12524,91 @@ def abrir_caixa(request):
 
         return redirect("caixa")
 
-    saldo_inicial = Decimal(
+    # =========================================
+    # SALDO INICIAL
+    # =========================================
 
-        request.POST.get(
-
-            "saldo_inicial",
-
-            "0"
-
-        ).replace(",", ".")
-
+    saldo_inicial_raw = request.POST.get(
+        "saldo_inicial",
+        "0"
     )
+
+    # -----------------------------------------
+    # LIMPA O VALOR RECEBIDO
+    # -----------------------------------------
+
+    saldo_inicial_raw = str(
+        saldo_inicial_raw
+    ).strip()
+
+    # Remove símbolo de moeda
+    saldo_inicial_raw = saldo_inicial_raw.replace(
+        "R$",
+        ""
+    )
+
+    # Remove espaços
+    saldo_inicial_raw = saldo_inicial_raw.replace(
+        " ",
+        ""
+    )
+
+    # =========================================
+    # CONVERSÃO PARA DECIMAL
+    # =========================================
+
+    try:
+
+        # -------------------------------------
+        # FORMATO BRASILEIRO
+        #
+        # 1.234,56
+        # → 1234.56
+        # -------------------------------------
+
+        if "," in saldo_inicial_raw:
+
+            saldo_inicial_raw = (
+                saldo_inicial_raw
+                .replace(".", "")
+                .replace(",", ".")
+            )
+
+        # -------------------------------------
+        # FORMATO DECIMAL NORMAL
+        #
+        # 1234.56
+        # → 1234.56
+        # -------------------------------------
+
+        saldo_inicial = Decimal(
+            saldo_inicial_raw or "0"
+        )
+
+    except (InvalidOperation, ValueError):
+
+        messages.error(
+
+            request,
+
+            "O saldo inicial informado é inválido."
+
+        )
+
+        return redirect("caixa")
+
+    # =========================================
+    # OBSERVAÇÕES
+    # =========================================
 
     observacoes = request.POST.get(
         "observacoes",
         ""
     )
+
+    # =========================================
+    # CRIA O CAIXA
+    # =========================================
 
     CaixaDiario.objects.create(
 
@@ -12502,6 +12623,10 @@ def abrir_caixa(request):
         status="ABERTO"
 
     )
+
+    # =========================================
+    # MENSAGEM
+    # =========================================
 
     messages.success(
 

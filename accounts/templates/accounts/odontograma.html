@@ -1,685 +1,1401 @@
 <style>
 
-    /* =========================================
-       DENTES COM CONDIÇÃO ESPECIAL
-       ========================================= */
+/* =========================================================
+   POSICIONAMENTO CLÍNICO DOS DENTES
+   ========================================================= */
 
-    .dente-box.condicao-especial .dente-img {
-        opacity: 0.38;
-        filter: saturate(0.65);
 
-        transition:
-            opacity 0.2s ease,
-            filter 0.2s ease,
-            transform 0.3s ease;
-    }
+/* =========================================================
+   BASE — IMAGEM DOS DENTES
+   ========================================================= */
 
-    .dente-box.condicao-especial .icone-procedimento-dente {
-        opacity: 1;
-        filter: none;
-    }
+.dente-img {
 
+    transition:
+        transform 0.3s ease,
+        margin 0.3s ease;
 
-    /* =========================================
-       POSICIONAMENTO CLÍNICO DOS DENTES
-       ========================================= */
+    transform-origin: center center;
+}
 
-    .dente-img {
 
-        transition:
-            transform 0.3s ease,
-            margin 0.3s ease;
+/* =========================================================
+   CONDIÇÃO ESPECIAL
+   ========================================================= */
 
-        transform-origin: center center;
-    }
+.dente-box.condicao-especial .dente-img {
 
+    opacity: 0.38;
 
-    /* =========================================
-       POSIÇÃO NORMAL
-       ========================================= */
+    filter: saturate(0.65);
 
-    .dente-box .dente-img.posicao-normal {
-        transform: none;
-    }
+    transition:
+        opacity 0.2s ease,
+        filter 0.2s ease,
+        transform 0.3s ease;
+}
 
 
-    /* =====================================================
-       ARCADA INFERIOR
-       ===================================================== */
+.dente-box.condicao-especial .icone-procedimento-dente {
 
-    /*
-     * A arcada inferior mantém o comportamento
-     * que já estava funcionando.
-     */
+    opacity: 1;
 
+    filter: none;
+}
 
-    /* =========================================
-       INCLUSO VERTICAL
-       ========================================= */
 
-    .arcada.inferior .dente-img.posicao-incluso_vertical,
-    .arcada.inferior .dente-img.posicao-incluso-vertical {
+/* =========================================================
+   POSIÇÃO NORMAL
+   ========================================================= */
 
-        transform:
-            translateY(28px);
-    }
+.dente-box .dente-img.posicao-normal {
 
+    transform: none;
+}
 
-    /* =========================================
-       INCLUSO HORIZONTAL
-       ========================================= */
 
-    .arcada.inferior .dente-img.posicao-incluso_horizontal,
-    .arcada.inferior .dente-img.posicao-incluso-horizontal {
+/* =========================================================
+   =========================================================
+   ARCADA INFERIOR
+   =========================================================
+   ========================================================= */
 
-        transform:
-            rotate(90deg)
-            translateY(5px);
-    }
 
+/* =========================================================
+   INCLUSO VERTICAL — INFERIOR
+   ========================================================= */
 
-    /* =========================================
-       INCLUSO MESIAL
-       ========================================= */
+.arcada.inferior .dente-img.posicao-incluso_vertical,
+.arcada.inferior .dente-img.posicao-incluso-vertical {
 
-    .arcada.inferior .dente-img.posicao-incluso_mesial,
-    .arcada.inferior .dente-img.posicao-incluso-mesial {
+    transform:
+        translateY(28px);
+}
 
-        transform:
-            rotate(-35deg)
-            translateY(15px);
-    }
 
+/* =========================================================
+   INCLUSO HORIZONTAL — INFERIOR
+   =========================================================
 
-    /* =========================================
-       INCLUSO DISTAL
-       ========================================= */
+   IMPORTANTE:
+   Não existe mais uma regra genérica aqui.
 
-    .arcada.inferior .dente-img.posicao-incluso_distal,
-    .arcada.inferior .dente-img.posicao-incluso-distal {
+   Cada lado da arcada recebe sua própria rotação.
+   ========================================================= */
 
-        transform:
-            rotate(35deg)
-            translateY(15px);
-    }
 
+/* ---------------------------------------------------------
+   31 A 38
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
 
-    /* =========================================
-       INCLINADO MESIAL
-       ========================================= */
+.dente-box:is(
+    .dente-31,
+    .dente-32,
+    .dente-33,
+    .dente-34,
+    .dente-35,
+    .dente-36,
+    .dente-37,
+    .dente-38
+) .dente-img.posicao-incluso_horizontal,
 
-    .arcada.inferior .dente-img.posicao-inclinado_mesial,
-    .arcada.inferior .dente-img.posicao-inclinado-mesial {
+.dente-box:is(
+    .dente-31,
+    .dente-32,
+    .dente-33,
+    .dente-34,
+    .dente-35,
+    .dente-36,
+    .dente-37,
+    .dente-38
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(-90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* ---------------------------------------------------------
+   41 A 48
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-41,
+    .dente-42,
+    .dente-43,
+    .dente-44,
+    .dente-45,
+    .dente-46,
+    .dente-47,
+    .dente-48
+) .dente-img.posicao-incluso_horizontal,
+
+.dente-box:is(
+    .dente-41,
+    .dente-42,
+    .dente-43,
+    .dente-44,
+    .dente-45,
+    .dente-46,
+    .dente-47,
+    .dente-48
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* ---------------------------------------------------------
+   71 A 75
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-71,
+    .dente-72,
+    .dente-73,
+    .dente-74,
+    .dente-75
+) .dente-img.posicao-incluso_horizontal,
+
+.dente-box:is(
+    .dente-71,
+    .dente-72,
+    .dente-73,
+    .dente-74,
+    .dente-75
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(-90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* ---------------------------------------------------------
+   81 A 85
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-81,
+    .dente-82,
+    .dente-83,
+    .dente-84,
+    .dente-85
+) .dente-img.posicao-incluso_horizontal,
 
-        transform:
-            rotate(-25deg);
-    }
+.dente-box:is(
+    .dente-81,
+    .dente-82,
+    .dente-83,
+    .dente-84,
+    .dente-85
+) .dente-img.posicao-incluso-horizontal {
 
+    transform:
+        rotate(90deg)
+        translateY(5px);
 
-    /* =========================================
-       INCLINADO DISTAL
-       ========================================= */
+    transform-origin: center center;
+}
 
-    .arcada.inferior .dente-img.posicao-inclinado_distal,
-    .arcada.inferior .dente-img.posicao-inclinado-distal {
 
-        transform:
-            rotate(25deg);
-    }
+/* =========================================================
+   INCLUSO MESIAL — INFERIOR
+   ========================================================= */
 
+.arcada.inferior .dente-img.posicao-incluso_mesial,
+.arcada.inferior .dente-img.posicao-incluso-mesial {
 
-    /* =========================================
-       INCLINADO PARA DIREITA
-       ========================================= */
+    transform:
+        rotate(-35deg)
+        translateY(15px);
+}
 
-    .arcada.inferior .dente-img.posicao-inclinado_direita,
-    .arcada.inferior .dente-img.posicao-inclinado-direita {
 
-        transform:
-            rotate(35deg);
-    }
+/* =========================================================
+   INCLUSO DISTAL — INFERIOR
+   ========================================================= */
 
+.arcada.inferior .dente-img.posicao-incluso_distal,
+.arcada.inferior .dente-img.posicao-incluso-distal {
+
+    transform:
+        rotate(35deg)
+        translateY(15px);
+}
+
+
+/* =========================================================
+   MESIAL — INFERIOR
+   ========================================================= */
+
+.arcada.inferior .dente-img.posicao-inclinado_mesial,
+.arcada.inferior .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* =========================================================
+   DISTAL — INFERIOR
+   ========================================================= */
+
+.arcada.inferior .dente-img.posicao-inclinado_distal,
+.arcada.inferior .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* =========================================================
+   ROTAÇÃO — INFERIOR
+   ========================================================= */
+
+.arcada.inferior .dente-img.posicao-rotacao {
+
+    transform:
+        rotate(180deg);
+}
+
+
+/* =========================================================
+   EXTRUSÃO — INFERIOR
+   ========================================================= */
+
+.arcada.inferior .dente-img.posicao-extrusao {
+
+    transform:
+        translateY(-20px);
+}
+
+
+/* =========================================================
+   =========================================================
+   ARCADA SUPERIOR
+   =========================================================
+   ========================================================= */
+
+
+/* =========================================================
+   INCLUSO VERTICAL — SUPERIOR
+   ========================================================= */
+
+.arcada:not(.inferior) .dente-img.posicao-incluso_vertical,
+.arcada:not(.inferior) .dente-img.posicao-incluso-vertical {
+
+    transform:
+        translateY(-28px);
+}
+
+
+/* =========================================================
+   INCLUSO HORIZONTAL — SUPERIOR
+   =========================================================
+
+   Não usamos uma regra genérica para a arcada superior.
+   Cada grupo possui seu próprio posicionamento.
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   11 A 18
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-11,
+    .dente-12,
+    .dente-13,
+    .dente-14,
+    .dente-15,
+    .dente-16,
+    .dente-17,
+    .dente-18
+) .dente-img.posicao-incluso_horizontal,
+
+.dente-box:is(
+    .dente-11,
+    .dente-12,
+    .dente-13,
+    .dente-14,
+    .dente-15,
+    .dente-16,
+    .dente-17,
+    .dente-18
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(-90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* ---------------------------------------------------------
+   21 A 28
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-21,
+    .dente-22,
+    .dente-23,
+    .dente-24,
+    .dente-25,
+    .dente-26,
+    .dente-27,
+    .dente-28
+) .dente-img.posicao-incluso_horizontal,
+
+.dente-box:is(
+    .dente-21,
+    .dente-22,
+    .dente-23,
+    .dente-24,
+    .dente-25,
+    .dente-26,
+    .dente-27,
+    .dente-28
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* ---------------------------------------------------------
+   51 A 55
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-51,
+    .dente-52,
+    .dente-53,
+    .dente-54,
+    .dente-55
+) .dente-img.posicao-incluso_horizontal,
+
+.dente-box:is(
+    .dente-51,
+    .dente-52,
+    .dente-53,
+    .dente-54,
+    .dente-55
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(-90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* ---------------------------------------------------------
+   61 A 65
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-61,
+    .dente-62,
+    .dente-63,
+    .dente-64,
+    .dente-65
+) .dente-img.posicao-incluso_horizontal,
+
+.dente-box:is(
+    .dente-61,
+    .dente-62,
+    .dente-63,
+    .dente-64,
+    .dente-65
+) .dente-img.posicao-incluso-horizontal {
+
+    transform:
+        rotate(90deg)
+        translateY(5px);
+
+    transform-origin: center center;
+}
+
+
+/* =========================================================
+   INCLUSO MESIAL — SUPERIOR
+   ========================================================= */
+
+.arcada:not(.inferior) .dente-img.posicao-incluso_mesial,
+.arcada:not(.inferior) .dente-img.posicao-incluso-mesial {
+
+    transform:
+        rotate(35deg)
+        translateY(-15px);
+}
+
+
+/* =========================================================
+   INCLUSO DISTAL — SUPERIOR
+   ========================================================= */
+
+.arcada:not(.inferior) .dente-img.posicao-incluso_distal,
+.arcada:not(.inferior) .dente-img.posicao-incluso-distal {
+
+    transform:
+        rotate(-35deg)
+        translateY(-15px);
+}
+
+
+/* =========================================================
+   MESIAL — ARCADA SUPERIOR
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   11 A 18
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-11,
+    .dente-12,
+    .dente-13,
+    .dente-14,
+    .dente-15,
+    .dente-16,
+    .dente-17,
+    .dente-18
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-11,
+    .dente-12,
+    .dente-13,
+    .dente-14,
+    .dente-15,
+    .dente-16,
+    .dente-17,
+    .dente-18
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* ---------------------------------------------------------
+   21 A 28
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-21,
+    .dente-22,
+    .dente-23,
+    .dente-24,
+    .dente-25,
+    .dente-26,
+    .dente-27,
+    .dente-28
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-21,
+    .dente-22,
+    .dente-23,
+    .dente-24,
+    .dente-25,
+    .dente-26,
+    .dente-27,
+    .dente-28
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* ---------------------------------------------------------
+   51 A 55
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-51,
+    .dente-52,
+    .dente-53,
+    .dente-54,
+    .dente-55
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-51,
+    .dente-52,
+    .dente-53,
+    .dente-54,
+    .dente-55
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* ---------------------------------------------------------
+   61 A 65
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-61,
+    .dente-62,
+    .dente-63,
+    .dente-64,
+    .dente-65
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-61,
+    .dente-62,
+    .dente-63,
+    .dente-64,
+    .dente-65
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* =========================================================
+   DISTAL — ARCADA SUPERIOR
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   11 A 18
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-11,
+    .dente-12,
+    .dente-13,
+    .dente-14,
+    .dente-15,
+    .dente-16,
+    .dente-17,
+    .dente-18
+) .dente-img.posicao-inclinado_distal,
+
+.dente-box:is(
+    .dente-11,
+    .dente-12,
+    .dente-13,
+    .dente-14,
+    .dente-15,
+    .dente-16,
+    .dente-17,
+    .dente-18
+) .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* ---------------------------------------------------------
+   21 A 28
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-21,
+    .dente-22,
+    .dente-23,
+    .dente-24,
+    .dente-25,
+    .dente-26,
+    .dente-27,
+    .dente-28
+) .dente-img.posicao-inclinado_distal,
+
+.dente-box:is(
+    .dente-21,
+    .dente-22,
+    .dente-23,
+    .dente-24,
+    .dente-25,
+    .dente-26,
+    .dente-27,
+    .dente-28
+) .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* ---------------------------------------------------------
+   51 A 55
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-51,
+    .dente-52,
+    .dente-53,
+    .dente-54,
+    .dente-55
+) .dente-img.posicao-inclinado_distal,
+
+.dente-box:is(
+    .dente-51,
+    .dente-52,
+    .dente-53,
+    .dente-54,
+    .dente-55
+) .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* ---------------------------------------------------------
+   61 A 65
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-61,
+    .dente-62,
+    .dente-63,
+    .dente-64,
+    .dente-65
+) .dente-img.posicao-inclinado_distal,
+
+.dente-box:is(
+    .dente-61,
+    .dente-62,
+    .dente-63,
+    .dente-64,
+    .dente-65
+) .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(-25deg);
+}
+
+/* =========================================================
+   MESIAL — ARCADA INFERIOR
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   DENTES 31 A 38
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-31,
+    .dente-32,
+    .dente-33,
+    .dente-34,
+    .dente-35,
+    .dente-36,
+    .dente-37,
+    .dente-38
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-31,
+    .dente-32,
+    .dente-33,
+    .dente-34,
+    .dente-35,
+    .dente-36,
+    .dente-37,
+    .dente-38
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* ---------------------------------------------------------
+   DENTES 41 A 48
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-41,
+    .dente-42,
+    .dente-43,
+    .dente-44,
+    .dente-45,
+    .dente-46,
+    .dente-47,
+    .dente-48
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-41,
+    .dente-42,
+    .dente-43,
+    .dente-44,
+    .dente-45,
+    .dente-46,
+    .dente-47,
+    .dente-48
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* ---------------------------------------------------------
+   DENTES 71 A 75
+   COROA → ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-71,
+    .dente-72,
+    .dente-73,
+    .dente-74,
+    .dente-75
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-71,
+    .dente-72,
+    .dente-73,
+    .dente-74,
+    .dente-75
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* ---------------------------------------------------------
+   DENTES 81 A 85
+   COROA → DIREITA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-81,
+    .dente-82,
+    .dente-83,
+    .dente-84,
+    .dente-85
+) .dente-img.posicao-inclinado_mesial,
+
+.dente-box:is(
+    .dente-81,
+    .dente-82,
+    .dente-83,
+    .dente-84,
+    .dente-85
+) .dente-img.posicao-inclinado-mesial {
+
+    transform:
+        rotate(25deg);
+}
+
+/* =========================================================
+   DISTAL — ARCADA INFERIOR
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   DENTES 41 A 48
+   DISTAL → COROA PARA A ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-41,
+    .dente-42,
+    .dente-43,
+    .dente-44,
+    .dente-45,
+    .dente-46,
+    .dente-47,
+    .dente-48
+) .dente-img.posicao-inclinado_distal,
+
+.dente-box:is(
+    .dente-41,
+    .dente-42,
+    .dente-43,
+    .dente-44,
+    .dente-45,
+    .dente-46,
+    .dente-47,
+    .dente-48
+) .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* ---------------------------------------------------------
+   DENTES 81 A 85
+   DISTAL → COROA PARA A ESQUERDA
+   --------------------------------------------------------- */
+
+.dente-box:is(
+    .dente-81,
+    .dente-82,
+    .dente-83,
+    .dente-84,
+    .dente-85
+) .dente-img.posicao-inclinado_distal,
+
+.dente-box:is(
+    .dente-81,
+    .dente-82,
+    .dente-83,
+    .dente-84,
+    .dente-85
+) .dente-img.posicao-inclinado-distal {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+/* =========================================================
+   ROTAÇÕES
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   +45°
+   --------------------------------------------------------- */
+
+.dente-img.posicao-rotacao-45 {
+
+    transform:
+        rotate(45deg);
+
+    transform-origin:
+        center center;
+}
+
+
+/* ---------------------------------------------------------
+   -45°
+   --------------------------------------------------------- */
+
+.dente-img.posicao-rotacao-menos-45 {
+
+    transform:
+        rotate(-45deg);
+
+    transform-origin:
+        center center;
+}
+
+
+/* ---------------------------------------------------------
+   +35°
+   --------------------------------------------------------- */
+
+.dente-img.posicao-rotacao-35 {
+
+    transform:
+        rotate(35deg);
+
+    transform-origin:
+        center center;
+}
+
+
+/* ---------------------------------------------------------
+   -35°
+   --------------------------------------------------------- */
+
+.dente-img.posicao-rotacao-menos-35 {
+
+    transform:
+        rotate(-35deg);
+
+    transform-origin:
+        center center;
+}
+
+
+/* =========================================================
+   EXTRUSÃO — SUPERIOR
+   ========================================================= */
+
+.arcada:not(.inferior) .dente-img.posicao-extrusao {
+
+    transform:
+        translateY(20px);
+}
+
+
+/* =========================================================
+   PAINEL DE POSICIONAMENTO
+   ========================================================= */
+
+.painel-posicionamento-dentes {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 10px 14px 12px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid #dfe6ef;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.05);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TÍTULO
+   ========================================================= */
+
+.painel-posicionamento-titulo {
+
+    display: flex;
+
+    align-items: center;
 
-    /* =========================================
-       INCLINADO PARA ESQUERDA
-       ========================================= */
+    gap: 6px;
 
-    .arcada.inferior .dente-img.posicao-inclinado_esquerda,
-    .arcada.inferior .dente-img.posicao-inclinado-esquerda {
+    margin: 0 0 2px;
 
-        transform:
-            rotate(-35deg);
-    }
+    font-size: 14px;
 
+    font-weight: 600;
 
-    /* =========================================
-       ROTAÇÃO
-       ========================================= */
+    color: #1f2937;
+}
 
-    .arcada.inferior .dente-img.posicao-rotacao {
 
-        transform:
-            rotate(180deg);
-    }
+.painel-posicionamento-titulo span {
 
+    font-size: 15px;
+}
 
-    /* =========================================
-       EXTRUSÃO
-       ========================================= */
 
-    .arcada.inferior .dente-img.posicao-extrusao {
+/* =========================================================
+   TEXTO DE ORIENTAÇÃO
+   ========================================================= */
 
-        transform:
-            translateY(-20px);
-    }
+.painel-posicionamento-info {
 
+    margin: 0 0 5px;
 
-    /* =====================================================
-       ARCADA SUPERIOR
-       ===================================================== */
+    font-size: 10px;
 
-    /*
-     * Na arcada superior os movimentos precisam
-     * ser visualmente espelhados em relação à inferior.
-     *
-     * O seletor abaixo NÃO atinge a arcada inferior.
-     */
+    line-height: 14px;
 
+    color: #7b8794;
+}
 
-    /* =========================================
-       INCLUSO VERTICAL
-       ========================================= */
 
-    .arcada:not(.inferior) .dente-img.posicao-incluso_vertical,
-    .arcada:not(.inferior) .dente-img.posicao-incluso-vertical {
+/* =========================================================
+   DENTE SELECIONADO
+   ========================================================= */
 
-        transform:
-            translateY(-28px);
-    }
+.dente-selecionado-posicao {
 
+    display: inline-block;
 
-    /* =========================================
-       INCLUSO HORIZONTAL
-       ========================================= */
+    padding: 3px 8px;
 
-    .arcada:not(.inferior) .dente-img.posicao-incluso_horizontal,
-    .arcada:not(.inferior) .dente-img.posicao-incluso-horizontal {
+    margin-bottom: 6px;
 
-        transform:
-            rotate(-90deg)
-            translateY(5px);
-    }
+    background: #f4f7fb;
 
+    border-radius: 6px;
 
-    /* =========================================
-       INCLUSO MESIAL
-       ========================================= */
+    font-size: 10px;
 
-    .arcada:not(.inferior) .dente-img.posicao-incluso_mesial,
-    .arcada:not(.inferior) .dente-img.posicao-incluso-mesial {
+    line-height: 14px;
 
-        transform:
-            rotate(35deg)
-            translateY(-15px);
-    }
+    color: #667085;
+}
 
 
-    /* =========================================
-       INCLUSO DISTAL
-       ========================================= */
+.dente-selecionado-posicao strong {
 
-    .arcada:not(.inferior) .dente-img.posicao-incluso_distal,
-    .arcada:not(.inferior) .dente-img.posicao-incluso-distal {
+    color: #1769ff;
+}
 
-        transform:
-            rotate(-35deg)
-            translateY(-15px);
-    }
 
+/* =========================================================
+   OPÇÕES — UMA ÚNICA LINHA
+   ========================================================= */
 
-    /* =========================================
-       INCLINADO MESIAL
-       ========================================= */
+.posicoes-dentes {
 
-    .arcada:not(.inferior) .dente-img.posicao-inclinado_mesial,
-    .arcada:not(.inferior) .dente-img.posicao-inclinado-mesial {
+    display: flex;
 
-        transform:
-            rotate(25deg);
-    }
+    flex-wrap: nowrap;
 
+    align-items: center;
 
-    /* =========================================
-       INCLINADO DISTAL
-       ========================================= */
+    justify-content: center;
 
-    .arcada:not(.inferior) .dente-img.posicao-inclinado_distal,
-    .arcada:not(.inferior) .dente-img.posicao-inclinado-distal {
+    gap: 3px;
 
-        transform:
-            rotate(-25deg);
-    }
+    width: 100%;
 
+    overflow-x: auto;
 
-    /* =========================================
-       INCLINADO PARA DIREITA
-       ========================================= */
+    padding: 2px 0 3px;
 
-    .arcada:not(.inferior) .dente-img.posicao-inclinado_direita,
-    .arcada:not(.inferior) .dente-img.posicao-inclinado-direita {
+    box-sizing: border-box;
+}
 
-        transform:
-            rotate(-35deg);
-    }
 
+/* =========================================================
+   CADA OPÇÃO
+   ========================================================= */
 
-    /* =========================================
-       INCLINADO PARA ESQUERDA
-       ========================================= */
+.opcao-posicao {
 
-    .arcada:not(.inferior) .dente-img.posicao-inclinado_esquerda,
-    .arcada:not(.inferior) .dente-img.posicao-inclinado-esquerda {
+    flex: 0 0 62px;
 
-        transform:
-            rotate(35deg);
-    }
+    width: 62px;
 
+    height: 72px;
 
-    /* =========================================
-       ROTAÇÃO
-       ========================================= */
+    min-height: 72px;
 
-    .arcada:not(.inferior) .dente-img.posicao-rotacao {
+    padding: 4px 2px;
 
-        transform:
-            rotate(180deg);
-    }
+    margin: 0;
 
+    background: transparent;
 
-    /* =========================================
-       EXTRUSÃO
-       ========================================= */
+    border: 1px solid transparent;
 
-    .arcada:not(.inferior) .dente-img.posicao-extrusao {
+    border-radius: 8px;
 
-        transform:
-            translateY(20px);
-    }
+    cursor: pointer;
 
+    display: flex;
 
-    /* =====================================================
-       PAINEL DE POSICIONAMENTO
-       ===================================================== */
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.opcao-posicao:hover {
+
+    background: #f5f8fc;
+
+    border-color: #dce5f1;
+
+    transform:
+        translateY(-1px);
+}
+
+
+.opcao-posicao.selecionada {
+
+    background: #eef5ff;
+
+    border-color: #2f80ed;
+
+    box-shadow:
+        0 0 0 2px rgba(47, 128, 237, 0.08);
+}
+
+
+/* =========================================================
+   ÁREA DO DESENHO
+   ========================================================= */
+
+.desenho-posicao {
+
+    width: 42px;
+
+    height: 45px;
+
+    margin: 0 auto 2px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: visible;
+
+    flex-shrink: 0;
+}
+
+
+.desenho-posicao img {
+
+    width: 30px;
+
+    height: 42px;
+
+    object-fit: contain;
+
+    transform-origin: center center;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   TEXTO DA POSIÇÃO
+   ========================================================= */
+
+.opcao-posicao span {
+
+    display: block;
+
+    width: 100%;
+
+    font-size: 9px;
+
+    line-height: 10px;
+
+    text-align: center;
+
+    color: #667085;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   POSIÇÕES DOS DESENHOS DO PAINEL
+   ========================================================= */
+
+.desenho-posicao.normal img {
+
+    transform:
+        rotate(0deg);
+}
+
+
+.desenho-posicao.incluso-vertical img {
+
+    transform:
+        rotate(90deg);
+}
+
+
+.desenho-posicao.incluso-horizontal img {
+
+    transform:
+        rotate(90deg)
+        scale(0.95);
+}
+
+
+.desenho-posicao.inclinado-mesial img {
+
+    transform:
+        rotate(-25deg);
+}
+
+
+.desenho-posicao.inclinado-distal img {
+
+    transform:
+        rotate(25deg);
+}
+
+
+/* =========================================================
+   ROTAÇÕES DOS ÍCONES DO PAINEL
+   ========================================================= */
+
+.desenho-posicao.rotacao-45 img {
+
+    transform:
+        rotate(45deg);
+}
+
+
+.desenho-posicao.rotacao-menos-45 img {
+
+    transform:
+        rotate(-45deg);
+}
+
+
+.desenho-posicao.rotacao-35 img {
+
+    transform:
+        rotate(35deg);
+}
+
+
+.desenho-posicao.rotacao-menos-35 img {
+
+    transform:
+        rotate(-35deg);
+}
+
+
+.desenho-posicao.rotacao img {
+
+    transform:
+        rotate(180deg);
+}
+
+
+.desenho-posicao.extrusao img {
+
+    transform:
+        translateY(-6px)
+        scale(1.05);
+}
+
+
+/* =========================================================
+   DENTE SELECIONADO NO ODONTOGRAMA
+   ========================================================= */
+
+.dente-posicao-selecionado {
+
+    outline:
+        2px solid #1769ff;
+
+    outline-offset:
+        3px;
+
+    border-radius:
+        6px;
+}
+
+
+/* =========================================================
+   BARRA DE ROLAGEM DISCRETA
+   ========================================================= */
+
+.posicoes-dentes::-webkit-scrollbar {
+
+    height:
+        4px;
+}
+
+
+.posicoes-dentes::-webkit-scrollbar-track {
+
+    background:
+        transparent;
+}
+
+
+.posicoes-dentes::-webkit-scrollbar-thumb {
+
+    background:
+        #d5dce5;
+
+    border-radius:
+        10px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 900px) {
 
     .painel-posicionamento-dentes {
 
-        width: 100%;
-
-        margin-top: 18px;
-
-        padding: 10px 14px 12px;
-
-        background: rgba(255, 255, 255, 0.96);
-
-        border: 1px solid #dfe6ef;
-
-        border-radius: 14px;
-
-        box-shadow:
-            0 3px 10px rgba(0, 0, 0, 0.05);
-
-        box-sizing: border-box;
+        padding:
+            9px 10px 10px;
     }
 
-
-    /* =========================================
-       TÍTULO
-       ========================================= */
-
-    .painel-posicionamento-titulo {
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 6px;
-
-        margin: 0 0 2px;
-
-        font-size: 14px;
-
-        font-weight: 600;
-
-        color: #1f2937;
-    }
-
-    .painel-posicionamento-titulo span {
-        font-size: 15px;
-    }
-
-
-    /* =========================================
-       TEXTO DE ORIENTAÇÃO
-       ========================================= */
-
-    .painel-posicionamento-info {
-
-        margin: 0 0 5px;
-
-        font-size: 10px;
-
-        line-height: 14px;
-
-        color: #7b8794;
-    }
-
-
-    /* =========================================
-       DENTE SELECIONADO
-       ========================================= */
-
-    .dente-selecionado-posicao {
-
-        display: inline-block;
-
-        padding: 3px 8px;
-
-        margin-bottom: 6px;
-
-        background: #f4f7fb;
-
-        border-radius: 6px;
-
-        font-size: 10px;
-
-        line-height: 14px;
-
-        color: #667085;
-    }
-
-    .dente-selecionado-posicao strong {
-        color: #1769ff;
-    }
-
-
-    /* =========================================
-       OPÇÕES — UMA ÚNICA LINHA
-       ========================================= */
 
     .posicoes-dentes {
 
-        display: flex;
+        justify-content:
+            flex-start;
 
-        flex-wrap: nowrap;
-
-        align-items: center;
-
-        justify-content: center;
-
-        gap: 3px;
-
-        width: 100%;
-
-        overflow-x: auto;
-
-        padding: 2px 0 3px;
-
-        box-sizing: border-box;
+        gap:
+            2px;
     }
 
-
-    /* =========================================
-       CADA OPÇÃO
-       ========================================= */
 
     .opcao-posicao {
 
-        flex: 0 0 62px;
+        flex-basis:
+            58px;
 
-        width: 62px;
-
-        height: 72px;
-
-        min-height: 72px;
-
-        padding: 4px 2px;
-
-        margin: 0;
-
-        background: transparent;
-
-        border: 1px solid transparent;
-
-        border-radius: 8px;
-
-        cursor: pointer;
-
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: center;
-
-        justify-content: flex-start;
-
-        box-sizing: border-box;
-
-        transition:
-            background 0.2s ease,
-            border-color 0.2s ease,
-            transform 0.2s ease;
-    }
-
-
-    .opcao-posicao:hover {
-
-        background: #f5f8fc;
-
-        border-color: #dce5f1;
-
-        transform: translateY(-1px);
-    }
-
-
-    .opcao-posicao.selecionada {
-
-        background: #eef5ff;
-
-        border-color: #2f80ed;
-
-        box-shadow:
-            0 0 0 2px rgba(47, 128, 237, 0.08);
-    }
-
-
-    /* =========================================
-       ÁREA DO DESENHO
-       ========================================= */
-
-    .desenho-posicao {
-
-        width: 42px;
-
-        height: 45px;
-
-        margin: 0 auto 2px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        overflow: visible;
-
-        flex-shrink: 0;
+        width:
+            58px;
     }
 
 
     .desenho-posicao img {
 
-        width: 30px;
+        width:
+            28px;
 
-        height: 42px;
-
-        object-fit: contain;
-
-        transform-origin: center center;
-
-        transition:
-            transform 0.25s ease;
+        height:
+            40px;
     }
-
-
-    /* =========================================
-       TEXTO DA POSIÇÃO
-       ========================================= */
-
-    .opcao-posicao span {
-
-        display: block;
-
-        width: 100%;
-
-        font-size: 9px;
-
-        line-height: 10px;
-
-        text-align: center;
-
-        color: #667085;
-
-        white-space: nowrap;
-
-        overflow: hidden;
-
-        text-overflow: ellipsis;
-    }
-
-
-    /* =========================================
-       POSIÇÕES DOS DESENHOS DO PAINEL
-       ========================================= */
-
-    .desenho-posicao.normal img {
-        transform: rotate(0deg);
-    }
-
-
-    .desenho-posicao.incluso-vertical img {
-        transform: rotate(90deg);
-    }
-
-
-    .desenho-posicao.incluso-horizontal img {
-        transform:
-            rotate(90deg)
-            scale(0.95);
-    }
-
-
-    .desenho-posicao.inclinado-mesial img {
-        transform: rotate(-25deg);
-    }
-
-
-    .desenho-posicao.inclinado-distal img {
-        transform: rotate(25deg);
-    }
-
-
-    .desenho-posicao.inclinado-direita img {
-        transform: rotate(35deg);
-    }
-
-
-    .desenho-posicao.inclinado-esquerda img {
-        transform: rotate(-35deg);
-    }
-
-
-    .desenho-posicao.rotacao img {
-        transform: rotate(180deg);
-    }
-
-
-    .desenho-posicao.extrusao img {
-        transform:
-            translateY(-6px)
-            scale(1.05);
-    }
-
-
-    /* =========================================
-       DENTE SELECIONADO NO ODONTOGRAMA
-       ========================================= */
-
-    .dente-posicao-selecionado {
-
-        outline: 2px solid #1769ff;
-
-        outline-offset: 3px;
-
-        border-radius: 6px;
-    }
-
-
-    /* =========================================
-       BARRA DE ROLAGEM DISCRETA
-       ========================================= */
-
-    .posicoes-dentes::-webkit-scrollbar {
-        height: 4px;
-    }
-
-    .posicoes-dentes::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .posicoes-dentes::-webkit-scrollbar-thumb {
-
-        background: #d5dce5;
-
-        border-radius: 10px;
-    }
-
-
-    /* =========================================
-       RESPONSIVO
-       ========================================= */
-
-    @media (max-width: 900px) {
-
-        .painel-posicionamento-dentes {
-            padding: 9px 10px 10px;
-        }
-
-        .posicoes-dentes {
-
-            justify-content: flex-start;
-
-            gap: 2px;
-        }
-
-        .opcao-posicao {
-
-            flex-basis: 58px;
-
-            width: 58px;
-        }
-
-        .desenho-posicao img {
-
-            width: 28px;
-
-            height: 40px;
-        }
-    }
+}
 
 </style>
 
 
-icone-hemi{% extends 'accounts/base.html' %}
+<!-- icone-hemi{% extends 'accounts/base.html' %} -->
 
 {% load static %}
 
@@ -1175,52 +1891,71 @@ LAYOUT
 
             <span>Distal</span>
 
-        </button>
+        </button>        
 
 
-        <!-- INCLINADO DIREITA -->
-        <button type="button"
-                class="opcao-posicao"
-                data-posicao="inclinado-direita"
-                title="Inclinado para direita">
+        <!-- =========================================================
+     ROTAÇÃO
+     ========================================================= -->
 
-            <div class="desenho-posicao inclinado-direita">
-                <img src="{% static 'img/dentes/46.png' %}">
-            </div>
+<!-- ROTAÇÃO +45° -->
+<button type="button"
+        class="opcao-posicao"
+        data-posicao="rotacao-45"
+        title="Rotação +45°">
 
-            <span>Direita</span>
+    <div class="desenho-posicao rotacao">
+        <img src="{% static 'img/dentes/46.png' %}">
+    </div>
 
-        </button>
+    <span>Rotação +45°</span>
 
-
-        <!-- INCLINADO ESQUERDA -->
-        <button type="button"
-                class="opcao-posicao"
-                data-posicao="inclinado-esquerda"
-                title="Inclinado para esquerda">
-
-            <div class="desenho-posicao inclinado-esquerda">
-                <img src="{% static 'img/dentes/46.png' %}">
-            </div>
-
-            <span>Esquerda</span>
-
-        </button>
+</button>
 
 
-        <!-- ROTAÇÃO -->
-        <button type="button"
-                class="opcao-posicao"
-                data-posicao="rotacao"
-                title="Rotação / Giro">
+<!-- ROTAÇÃO -45° -->
+<button type="button"
+        class="opcao-posicao"
+        data-posicao="rotacao-menos-45"
+        title="Rotação -45°">
 
-            <div class="desenho-posicao rotacao">
-                <img src="{% static 'img/dentes/46.png' %}">
-            </div>
+    <div class="desenho-posicao rotacao">
+        <img src="{% static 'img/dentes/46.png' %}">
+    </div>
 
-            <span>Rotação</span>
+    <span>Rotação -45°</span>
 
-        </button>
+</button>
+
+
+<!-- ROTAÇÃO +35° -->
+<button type="button"
+        class="opcao-posicao"
+        data-posicao="rotacao-35"
+        title="Rotação +35°">
+
+    <div class="desenho-posicao rotacao">
+        <img src="{% static 'img/dentes/46.png' %}">
+    </div>
+
+    <span>Rotação +35°</span>
+
+</button>
+
+
+<!-- ROTAÇÃO -35° -->
+<button type="button"
+        class="opcao-posicao"
+        data-posicao="rotacao-menos-35"
+        title="Rotação -35°">
+
+    <div class="desenho-posicao rotacao">
+        <img src="{% static 'img/dentes/46.png' %}">
+    </div>
+
+    <span>Rotação -35°</span>
+
+</button>
 
 
         <!-- EXTRUSÃO -->
@@ -1567,8 +2302,8 @@ LAYOUT
 
 
     <!-- =========================================
-MODAL EVOLUÇÃO CLÍNICA
-========================================= -->
+    MODAL EVOLUÇÃO CLÍNICA
+    ========================================= -->
 
     <div class="modal fade" id="modalEvolucao" tabindex="-1">
 
@@ -1876,8 +2611,8 @@ MODAL EVOLUÇÃO CLÍNICA
     </div>
 
     <!-- =========================================
-MODAL PROCEDIMENTO GERAL
-========================================= -->
+    MODAL PROCEDIMENTO GERAL
+    ========================================= -->
 
     <div class="modal fade" id="modalProcedimentoGeral" tabindex="-1">
 
@@ -2520,15 +3255,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         "posicao-incluso-distal",
 
-        "posicao-inclinado-direita",
-
-        "posicao-inclinado-esquerda",
-
         "posicao-inclinado-mesial",
 
         "posicao-inclinado-distal",
 
-        "posicao-rotacao",
+        "posicao-rotacao-45",
+
+        "posicao-rotacao-menos-45",
+
+        "posicao-rotacao-35",
+
+        "posicao-rotacao-menos-35",
 
         "posicao-extrusao"
 
@@ -2605,6 +3342,39 @@ document.addEventListener("DOMContentLoaded", function () {
                         denteSelecionado;
 
                 }
+
+                /* =========================================
+   ABRIR PROCEDIMENTO DO DENTE
+   ========================================= */
+
+const campoProcedimento =
+    document.getElementById("denteSelecionado");
+
+if (campoProcedimento) {
+
+    campoProcedimento.value =
+        denteSelecionado;
+
+}
+
+
+/* =========================================
+   ABRIR MODAL DE PROCEDIMENTO
+   ========================================= */
+
+const modalProcedimento =
+    document.getElementById("modalEvolucao");
+
+if (modalProcedimento) {
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalProcedimento
+        );
+
+    modal.show();
+
+}
 
 
                 /* =========================================
