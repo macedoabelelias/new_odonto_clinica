@@ -1546,6 +1546,17 @@ class Orcamento(models.Model):
 
 
     # =========================================
+    # VERIFICA SE POSSUI ITENS ATIVOS
+    # =========================================
+
+    @property
+    def tem_itens_ativos(self):
+
+        return self.itens.exclude(
+            status="cancelado"
+        ).exists()
+
+    # =========================================
     # VALOR DO DESCONTO
     # =========================================
 

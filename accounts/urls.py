@@ -475,6 +475,12 @@ path(
 ),
 
 path(
+    'usuarios/<int:id>/excluir/',
+    views.excluir_usuario,
+    name='excluir_usuario'
+),
+
+path(
     'usuarios/<int:id>/ativar/',
     views.ativar_usuario,
     name='ativar_usuario'
@@ -484,6 +490,12 @@ path(
     'usuarios/<int:id>/desativar/',
     views.desativar_usuario,
     name='desativar_usuario'
+),
+
+path(
+    'usuarios/<int:id>/status/',
+    views.alterar_status_usuario,
+    name='alterar_status_usuario'
 ),
 
 # =========================================

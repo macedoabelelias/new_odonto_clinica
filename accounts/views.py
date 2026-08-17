@@ -3126,18 +3126,32 @@ def pacientes_view(request):
 
         pacientes = Paciente.objects.all().order_by('-id')
 
+    # =========================================
+    # CONVÊNIOS ATIVOS
+    # =========================================
+
     convenios = Convenio.objects.filter(
         ativo=True
     ).order_by('nome')
+
+    # =========================================
+    # DENTISTAS
+    # =========================================
 
     dentistas = User.objects.filter(
         perfil__tipo_usuario='dentista'
     ).order_by('first_name')
 
+    # =========================================
+    # CONTEXTO
+    # =========================================
+
     context = {
+
         'pacientes': pacientes,
         'convenios': convenios,
         'dentistas': dentistas,
+
     }
 
     return render(
@@ -5126,8 +5140,52 @@ def upload_anexo(request, id):
 # =========================================
 
 @login_required(login_url='/')
-@permissao_required("procedimentos")
+@permissao_required("procedimentos", "visualizar")
 def procedimentos(request):
+
+    # =========================================
+    # SALVAR NOVO PROCEDIMENTO
+    # =========================================
+
+    if request.method == 'POST':
+
+        # Verifica se o usuário pode INSERIR
+        if not tem_permissao(
+            request.user,
+            "procedimentos",
+            "inserir"
+        ):
+            messages.error(
+                request,
+                "Você não possui permissão para cadastrar procedimentos."
+            )
+            return redirect('procedimentos')
+
+        form = ProcedimentoForm(request.POST)
+
+        if form.is_valid():
+
+            procedimento = form.save(commit=False)
+
+            if not procedimento.valor_convenio:
+                procedimento.valor_convenio = 0
+
+            procedimento.save()
+
+            messages.success(
+                request,
+                "Procedimento cadastrado com sucesso."
+            )
+
+            return redirect('procedimentos')
+
+    else:
+
+        form = ProcedimentoForm()
+
+    # =========================================
+    # LISTAGEM
+    # =========================================
 
     procedimentos = Procedimento.objects.all().order_by(
         'ordem',
@@ -5139,117 +5197,63 @@ def procedimentos(request):
     # =========================================
 
     mini_path = os.path.join(
-
         settings.BASE_DIR,
         'static',
         'img',
         'procedimentos',
         'mini'
-
     )
 
     full_path = os.path.join(
-
         settings.BASE_DIR,
         'static',
         'img',
         'procedimentos',
         'full'
-
     )
 
     mini_icons = []
     full_icons = []
 
-    # MINI
-
     if os.path.exists(mini_path):
 
         mini_icons = [
-
             arquivo
-
             for arquivo in os.listdir(mini_path)
-
             if arquivo.lower().endswith((
-
                 '.png',
                 '.svg',
                 '.webp',
                 '.jpg',
                 '.jpeg'
-
             ))
-
         ]
-
-    # FULL
 
     if os.path.exists(full_path):
 
         full_icons = [
-
             arquivo
-
             for arquivo in os.listdir(full_path)
-
             if arquivo.lower().endswith((
-
                 '.png',
                 '.svg',
                 '.webp',
                 '.jpg',
                 '.jpeg'
-
             ))
-
         ]
 
-    # REMOVE DUPLICADOS
-
     icones = sorted(
-
         list(
-
             set(
                 mini_icons + full_icons
             )
-
         )
-
     )
 
-    print(icones)
-
-        # =========================================
-    # FORMULÁRIO
     # =========================================
-
-    form = ProcedimentoForm()
-
+    # CONTEXTO
     # =========================================
-    # SALVAR
-    # =========================================
-
-    if request.method == 'POST':
-
-        form = ProcedimentoForm(request.POST)
-
-        if form.is_valid():
-
-            procedimento = form.save(commit=False)
-
-            if not procedimento.valor_convenio:
-
-                procedimento.valor_convenio = 0
-
-            procedimento.save()
-
-            return redirect('procedimentos')
-
-        else:
-
-            print(form.errors)
 
     context = {
 
@@ -5260,13 +5264,9 @@ def procedimentos(request):
     }
 
     return render(
-
         request,
-
         'accounts/procedimentos.html',
-
         context
-
     )
 
 # =========================================
@@ -5692,7 +5692,6 @@ def orcamento(request, id):
 
     )
 
-
 # =========================================
 # APROVAR ORÇAMENTO
 # =========================================
@@ -5707,7 +5706,42 @@ def aprovar_orcamento(request, id):
     )
 
     # =========================================
-    # VERIFICA STATUS
+    # NÃO PERMITE APROVAR TRATAMENTO INATIVO
+    # =========================================
+
+    if (
+        orcamento.tratamento and
+        orcamento.tratamento.status != "ATIVO"
+    ):
+
+        messages.error(
+            request,
+            "Não é possível aprovar este orçamento porque o tratamento não está ativo."
+        )
+
+        return redirect(
+            "orcamento",
+            id=orcamento.paciente.id
+        )
+
+    # =========================================
+    # NÃO PERMITE APROVAR ORÇAMENTO CANCELADO
+    # =========================================
+
+    if orcamento.status == "cancelado":
+
+        messages.error(
+            request,
+            "Não é possível aprovar um orçamento cancelado."
+        )
+
+        return redirect(
+            "orcamento",
+            id=orcamento.paciente.id
+        )
+
+    # =========================================
+    # VERIFICA SE JÁ FOI APROVADO
     # =========================================
 
     if orcamento.status == "aprovado":
@@ -5723,14 +5757,22 @@ def aprovar_orcamento(request, id):
         )
 
     # =========================================
-    # APROVA ORÇAMENTO
+    # VERIFICA SE EXISTEM PROCEDIMENTOS ATIVOS
     # =========================================
 
-    orcamento.status = "aprovado"
+    subtotal = orcamento.subtotal
 
-    orcamento.save(
-        update_fields=["status"]
-    )
+    if subtotal <= Decimal("0.00"):
+
+        messages.error(
+            request,
+            "Não é possível aprovar um orçamento sem procedimentos ativos."
+        )
+
+        return redirect(
+            "orcamento",
+            id=orcamento.paciente.id
+        )
 
     # =========================================
     # CÁLCULOS
@@ -5741,18 +5783,51 @@ def aprovar_orcamento(request, id):
         Decimal("0.00")
     )
 
+    valor_entrada = valor_entrada.quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    total_orcamento = orcamento.total
+
+    # =========================================
+    # NÃO PERMITE ENTRADA MAIOR QUE O TOTAL
+    # =========================================
+
+    if valor_entrada > total_orcamento:
+
+        messages.error(
+            request,
+            "O valor da entrada não pode ser maior que o total do orçamento."
+        )
+
+        return redirect(
+            "orcamento",
+            id=orcamento.paciente.id
+        )
+
     quantidade_parcelas = max(
         1,
         int(orcamento.parcelas or 1)
     )
 
     saldo = (
-        orcamento.total -
+        total_orcamento -
         valor_entrada
     )
 
     if saldo < 0:
         saldo = Decimal("0.00")
+
+    # =========================================
+    # APROVA ORÇAMENTO
+    # =========================================
+
+    orcamento.status = "aprovado"
+
+    orcamento.save(
+        update_fields=["status"]
+    )
 
     # =========================================
     # GERA ENTRADA
@@ -5788,83 +5863,92 @@ def aprovar_orcamento(request, id):
         )
 
     # =========================================
-    # CALCULA PARCELAS
+    # GERA PARCELAS SOMENTE SE EXISTIR SALDO
     # =========================================
 
-    # Valor base da parcela com 2 casas
-    valor_parcela_base = (
-        saldo /
-        quantidade_parcelas
-    ).quantize(
-        Decimal("0.01"),
-        rounding=ROUND_DOWN
-    )
+    if saldo > Decimal("0.00"):
 
-    # =========================================
-    # DIFERENÇA DE CENTAVOS
-    # =========================================
+        # =====================================
+        # VALOR BASE DA PARCELA
+        # =====================================
 
-    total_parcelas_base = (
-        valor_parcela_base *
-        quantidade_parcelas
-    )
-
-    diferenca = (
-        saldo -
-        total_parcelas_base
-    )
-
-    # =========================================
-    # GERA PARCELAS
-    # =========================================
-
-    for numero in range(
-        1,
-        quantidade_parcelas + 1
-    ):
-
-        valor_atual = valor_parcela_base
-
-        # Distribui os centavos restantes
-        if (
-            diferenca > 0 and
-            numero <= int(
-                diferenca * 100
-            )
-        ):
-            valor_atual += Decimal("0.01")
-
-        ContaReceber.objects.get_or_create(
-
-            paciente=orcamento.paciente,
-
-            orcamento=orcamento,
-
-            parcela=numero,
-
-            defaults={
-
-                "descricao":
-                    f"Orçamento #{orcamento.id}",
-
-                "valor":
-                    valor_atual,
-
-                "total_parcelas":
-                    quantidade_parcelas,
-
-                "vencimento": (
-                    timezone.now().date()
-                    +
-                    timedelta(
-                        days=30 * numero
-                    )
-                ),
-
-                "status":
-                    "PENDENTE",
-            }
+        valor_parcela_base = (
+            saldo /
+            quantidade_parcelas
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_DOWN
         )
+
+        # =====================================
+        # DIFERENÇA DE CENTAVOS
+        # =====================================
+
+        total_parcelas_base = (
+            valor_parcela_base *
+            quantidade_parcelas
+        )
+
+        diferenca = (
+            saldo -
+            total_parcelas_base
+        )
+
+        # =====================================
+        # GERA PARCELAS
+        # =====================================
+
+        for numero in range(
+            1,
+            quantidade_parcelas + 1
+        ):
+
+            valor_atual = valor_parcela_base
+
+            # =================================
+            # DISTRIBUI OS CENTAVOS RESTANTES
+            # =================================
+
+            if (
+                diferenca > Decimal("0.00") and
+                numero <= int(
+                    diferenca * 100
+                )
+            ):
+
+                valor_atual += Decimal("0.01")
+
+            ContaReceber.objects.get_or_create(
+
+                paciente=orcamento.paciente,
+
+                orcamento=orcamento,
+
+                parcela=numero,
+
+                defaults={
+
+                    "descricao":
+                        f"Orçamento #{orcamento.id}",
+
+                    "valor":
+                        valor_atual,
+
+                    "total_parcelas":
+                        quantidade_parcelas,
+
+                    "vencimento": (
+                        timezone.now().date()
+                        +
+                        timedelta(
+                            days=30 * numero
+                        )
+                    ),
+
+                    "status":
+                        "PENDENTE",
+                }
+            )
 
     # =========================================
     # MENSAGEM
@@ -5884,6 +5968,7 @@ def aprovar_orcamento(request, id):
 
         id=orcamento.paciente.id
     )
+
 # =========================================
 # EXCLUIR ORÇAMENTO
 # =========================================
@@ -9309,7 +9394,8 @@ def perfil_usuario(request, id):
 # NOVO USUÁRIO
 # =========================================
 
-@login_required
+@login_required(login_url='/')
+@permissao_required("usuarios", "inserir")
 def novo_usuario(request):
 
     if request.method == "POST":
@@ -9343,12 +9429,17 @@ def novo_usuario(request):
         # PERFIL DE ACESSO
         # =========================================
 
-        perfil_acesso_id = request.POST.get("perfil_acesso") or None
+        perfil_acesso_id = (
+            request.POST.get("perfil_acesso") or None
+        )
 
         perfil_acesso = None
 
         if perfil_acesso_id:
-            perfil_acesso = Perfil.objects.get(id=perfil_acesso_id)
+
+            perfil_acesso = Perfil.objects.get(
+                id=perfil_acesso_id
+            )
 
         # =========================================
         # MAPEAR PERFIL -> TIPO_USUARIO
@@ -9356,23 +9447,42 @@ def novo_usuario(request):
 
         mapa = {
 
-            "Administrador": PerfilUsuario.ADMIN,
-            "Gestor": PerfilUsuario.GESTOR,
-            "Dentista": PerfilUsuario.DENTISTA,
-            "Secretária": PerfilUsuario.SECRETARIA,
-            "Auxiliar de Saúde Bucal": PerfilUsuario.ACD,
-            "Contabilidade": PerfilUsuario.CONTABILIDADE,
-            "Marketing": PerfilUsuario.MARKETING,
-            "Auditoria": PerfilUsuario.AUDITORIA,
+            "Administrador":
+                PerfilUsuario.ADMIN,
+
+            "Gestor":
+                PerfilUsuario.GESTOR,
+
+            "Dentista":
+                PerfilUsuario.DENTISTA,
+
+            "Secretária":
+                PerfilUsuario.SECRETARIA,
+
+            "Auxiliar de Saúde Bucal":
+                PerfilUsuario.ACD,
+
+            "Contabilidade":
+                PerfilUsuario.CONTABILIDADE,
+
+            "Marketing":
+                PerfilUsuario.MARKETING,
+
+            "Auditoria":
+                PerfilUsuario.AUDITORIA,
 
         }
 
         tipo_usuario = PerfilUsuario.SECRETARIA
 
         if perfil_acesso:
+
             tipo_usuario = mapa.get(
+
                 perfil_acesso.nome,
+
                 PerfilUsuario.SECRETARIA
+
             )
 
         # =========================================
@@ -9390,34 +9500,62 @@ def novo_usuario(request):
             foto=request.FILES.get("foto"),
 
             cpf=request.POST.get("cpf"),
+
             rg=request.POST.get("rg"),
-            data_nascimento=request.POST.get("data_nascimento") or None,
+
+            data_nascimento=(
+                request.POST.get(
+                    "data_nascimento"
+                ) or None
+            ),
+
             sexo=request.POST.get("sexo"),
 
             telefone=request.POST.get("telefone"),
+
             celular=request.POST.get("celular"),
 
             cep=request.POST.get("cep"),
+
             logradouro=request.POST.get("logradouro"),
+
             numero=request.POST.get("numero"),
+
             complemento=request.POST.get("complemento"),
+
             bairro=request.POST.get("bairro"),
+
             cidade=request.POST.get("cidade"),
+
             uf=request.POST.get("uf"),
 
             cro=request.POST.get("cro"),
+
             cro_uf=request.POST.get("cro_uf"),
-            especialidade=request.POST.get("especialidade"),
+
+            especialidade=request.POST.get(
+                "especialidade"
+            ),
 
             percentual_comissao=(
-                request.POST.get("percentual_comissao") or 40
+
+                request.POST.get(
+                    "percentual_comissao"
+                ) or 40
+
             ),
 
             meta_mensal=(
-                request.POST.get("meta_mensal") or 0
+
+                request.POST.get(
+                    "meta_mensal"
+                ) or 0
+
             ),
 
-            assinatura=request.FILES.get("assinatura"),
+            assinatura=request.FILES.get(
+                "assinatura"
+            ),
 
         )
 
@@ -9428,6 +9566,7 @@ def novo_usuario(request):
         if perfil.tipo_usuario in [
 
             PerfilUsuario.DENTISTA,
+
             PerfilUsuario.ACD,
 
         ]:
@@ -9439,9 +9578,17 @@ def novo_usuario(request):
                 defaults={
 
                     "nome": nome,
+
                     "email": email,
-                    "telefone": request.POST.get("celular"),
-                    "especialidade": request.POST.get("especialidade"),
+
+                    "telefone": request.POST.get(
+                        "celular"
+                    ),
+
+                    "especialidade": request.POST.get(
+                        "especialidade"
+                    ),
+
                     "ativo": True,
 
                 }
@@ -9449,50 +9596,84 @@ def novo_usuario(request):
             )
 
         messages.success(
+
             request,
+
             "Usuário criado com sucesso."
+
         )
 
-        return redirect("usuarios")
+        return redirect(
+            "usuarios"
+        )
+
+    # =========================================
+    # GET
+    # =========================================
 
     perfis = Perfil.objects.filter(
+
         ativo=True
+
     ).order_by(
+
         "nome"
+
     )
 
     return render(
+
         request,
+
         "accounts/usuario_form.html",
+
         {
+
             "perfis": perfis,
+
         }
+
     )
+
 
 # =========================================
 # EDITAR USUÁRIO
 # =========================================
 
-@login_required
+@login_required(login_url='/')
+@permissao_required("usuarios", "editar")
 def editar_usuario(request, id):
 
-    usuario = get_object_or_404(User, id=id)
+    usuario = get_object_or_404(
+
+        User,
+
+        id=id
+
+    )
 
     # =========================================
     # GARANTE QUE O PERFIL EXISTA
     # =========================================
 
-    perfil, criado = PerfilUsuario.objects.get_or_create(
+    perfil, criado = (
+        PerfilUsuario.objects.get_or_create(
 
-        usuario=usuario,
+            usuario=usuario,
 
-        defaults={
+            defaults={
 
-            "tipo_usuario": PerfilUsuario.SECRETARIA,
+                "tipo_usuario":
+                    PerfilUsuario.SECRETARIA,
 
-        }
+            }
 
+        )
     )
+
+    # =========================================
+    # POST
+    # =========================================
 
     if request.method == "POST":
 
@@ -9500,29 +9681,65 @@ def editar_usuario(request, id):
         # DADOS DO USUÁRIO
         # =========================================
 
-        usuario.first_name = request.POST.get("nome")
-        usuario.username = request.POST.get("username")
-        usuario.email = request.POST.get("email")
+        usuario.first_name = (
+            request.POST.get("nome")
+        )
+
+        usuario.username = (
+            request.POST.get("username")
+        )
+
+        usuario.email = (
+            request.POST.get("email")
+        )
+
         usuario.save()
 
         # =========================================
         # PERFIL DE ACESSO
         # =========================================
 
-        perfil.perfil_acesso_id = request.POST.get("perfil_acesso") or None
+        perfil_acesso_id = (
+            request.POST.get(
+                "perfil_acesso"
+            ) or None
+        )
+
+        perfil.perfil_acesso_id = (
+            perfil_acesso_id
+        )
+
+        # =========================================
+        # MAPEAR PERFIL
+        # =========================================
 
         if perfil.perfil_acesso:
 
             mapa = {
 
-                "Administrador": PerfilUsuario.ADMIN,
-                "Gestor": PerfilUsuario.GESTOR,
-                "Dentista": PerfilUsuario.DENTISTA,
-                "Secretária": PerfilUsuario.SECRETARIA,
-                "Auxiliar de Saúde Bucal": PerfilUsuario.ACD,
-                "Contabilidade": PerfilUsuario.CONTABILIDADE,
-                "Marketing": PerfilUsuario.MARKETING,
-                "Auditoria": PerfilUsuario.AUDITORIA,
+                "Administrador":
+                    PerfilUsuario.ADMIN,
+
+                "Gestor":
+                    PerfilUsuario.GESTOR,
+
+                "Dentista":
+                    PerfilUsuario.DENTISTA,
+
+                "Secretária":
+                    PerfilUsuario.SECRETARIA,
+
+                "Auxiliar de Saúde Bucal":
+                    PerfilUsuario.ACD,
+
+                "Contabilidade":
+                    PerfilUsuario.CONTABILIDADE,
+
+                "Marketing":
+                    PerfilUsuario.MARKETING,
+
+                "Auditoria":
+                    PerfilUsuario.AUDITORIA,
 
             }
 
@@ -9530,7 +9747,7 @@ def editar_usuario(request, id):
 
                 perfil.perfil_acesso.nome,
 
-                PerfilUsuario.SECRETARIA,
+                PerfilUsuario.SECRETARIA
 
             )
 
@@ -9538,43 +9755,105 @@ def editar_usuario(request, id):
         # DADOS COMPLEMENTARES
         # =========================================
 
-        perfil.cro = request.POST.get("cro")
-        perfil.cro_uf = request.POST.get("cro_uf")
-        perfil.especialidade = request.POST.get("especialidade")
+        perfil.cro = request.POST.get(
+            "cro"
+        )
+
+        perfil.cro_uf = request.POST.get(
+            "cro_uf"
+        )
+
+        perfil.especialidade = request.POST.get(
+            "especialidade"
+        )
 
         perfil.percentual_comissao = (
-            request.POST.get("percentual_comissao") or 40
+
+            request.POST.get(
+                "percentual_comissao"
+            ) or 40
+
         )
 
         perfil.meta_mensal = (
-            request.POST.get("meta_mensal") or 0
+
+            request.POST.get(
+                "meta_mensal"
+            ) or 0
+
         )
 
-        perfil.telefone = request.POST.get("telefone")
-        perfil.celular = request.POST.get("celular")
+        perfil.telefone = request.POST.get(
+            "telefone"
+        )
 
-        perfil.cpf = request.POST.get("cpf")
-        perfil.rg = request.POST.get("rg")
+        perfil.celular = request.POST.get(
+            "celular"
+        )
+
+        perfil.cpf = request.POST.get(
+            "cpf"
+        )
+
+        perfil.rg = request.POST.get(
+            "rg"
+        )
 
         perfil.data_nascimento = (
-            request.POST.get("data_nascimento") or None
+
+            request.POST.get(
+                "data_nascimento"
+            ) or None
+
         )
 
-        perfil.sexo = request.POST.get("sexo")
+        perfil.sexo = request.POST.get(
+            "sexo"
+        )
 
-        perfil.cep = request.POST.get("cep")
-        perfil.logradouro = request.POST.get("logradouro")
-        perfil.numero = request.POST.get("numero")
-        perfil.complemento = request.POST.get("complemento")
-        perfil.bairro = request.POST.get("bairro")
-        perfil.cidade = request.POST.get("cidade")
-        perfil.uf = request.POST.get("uf")
+        perfil.cep = request.POST.get(
+            "cep"
+        )
+
+        perfil.logradouro = request.POST.get(
+            "logradouro"
+        )
+
+        perfil.numero = request.POST.get(
+            "numero"
+        )
+
+        perfil.complemento = request.POST.get(
+            "complemento"
+        )
+
+        perfil.bairro = request.POST.get(
+            "bairro"
+        )
+
+        perfil.cidade = request.POST.get(
+            "cidade"
+        )
+
+        perfil.uf = request.POST.get(
+            "uf"
+        )
+
+        # =========================================
+        # ARQUIVOS
+        # =========================================
 
         if request.FILES.get("foto"):
-            perfil.foto = request.FILES["foto"]
+
+            perfil.foto = request.FILES[
+                "foto"
+            ]
 
         if request.FILES.get("assinatura"):
-            perfil.assinatura = request.FILES["assinatura"]
+
+            perfil.assinatura = request.FILES[
+                "assinatura"
+            ]
 
         perfil.save()
 
@@ -9585,6 +9864,7 @@ def editar_usuario(request, id):
         if perfil.tipo_usuario in [
 
             PerfilUsuario.DENTISTA,
+
             PerfilUsuario.ACD,
 
         ]:
@@ -9596,9 +9876,14 @@ def editar_usuario(request, id):
                 defaults={
 
                     "nome": usuario.first_name,
+
                     "email": usuario.email,
+
                     "telefone": perfil.celular,
-                    "especialidade": perfil.especialidade,
+
+                    "especialidade":
+                        perfil.especialidade,
+
                     "ativo": True,
 
                 }
@@ -9606,38 +9891,122 @@ def editar_usuario(request, id):
             )
 
         messages.success(
+
             request,
+
             "Usuário atualizado com sucesso."
+
         )
 
-        return redirect("usuarios")
+        return redirect(
+            "usuarios"
+        )
+
+    # =========================================
+    # GET
+    # =========================================
 
     perfis = Perfil.objects.filter(
+
         ativo=True
+
     ).order_by(
+
         "nome"
+
     )
 
     context = {
 
         "usuario": usuario,
+
         "perfil": perfil,
+
         "perfis": perfis,
 
     }
 
     return render(
+
         request,
+
         "accounts/usuario_form.html",
-        context,
+
+        context
+
     )
 
-# ==============================================================
+# =========================================
+# EXCLUIR USUÁRIO
+# =========================================
 
-@login_required
+@login_required(login_url='/')
+@permissao_required("usuarios", "excluir")
+def excluir_usuario(request, id):
+
+    usuario = get_object_or_404(
+        User,
+        id=id
+    )
+
+    # =========================================
+    # NÃO PERMITE EXCLUIR O PRÓPRIO USUÁRIO
+    # =========================================
+
+    if usuario == request.user:
+
+        messages.warning(
+            request,
+            "Você não pode excluir seu próprio usuário."
+        )
+
+        return redirect("usuarios")
+
+    # =========================================
+    # NÃO EXCLUI USUÁRIO ATIVO
+    # =========================================
+
+    if hasattr(usuario, "perfil") and usuario.perfil.ativo:
+
+        messages.warning(
+            request,
+            "Para excluir este usuário, primeiro desative o usuário."
+        )
+
+        return redirect("usuarios")
+
+    # =========================================
+    # EXCLUSÃO
+    # =========================================
+
+    nome_usuario = usuario.first_name or usuario.username
+
+    usuario.delete()
+
+    messages.success(
+        request,
+        f"Usuário {nome_usuario} excluído com sucesso."
+    )
+
+    return redirect("usuarios")
+
+
+# =========================================
+# ALTERAR STATUS DO USUÁRIO
+# =========================================
+
+@login_required(login_url='/')
+@permissao_required("usuarios", "editar")
 def alterar_status_usuario(request, id):
 
-    usuario = get_object_or_404(User, id=id)
+    usuario = get_object_or_404(
+        User,
+        id=id
+    )
+
+    # =========================================
+    # NÃO PERMITE DESATIVAR O PRÓPRIO USUÁRIO
+    # =========================================
 
     if usuario.id == request.user.id:
 
@@ -9648,7 +10017,15 @@ def alterar_status_usuario(request, id):
 
         return redirect('usuarios')
 
+    # =========================================
+    # PERFIL
+    # =========================================
+
     perfil = usuario.perfil
+
+    # =========================================
+    # ALTERAR STATUS
+    # =========================================
 
     perfil.ativo = not perfil.ativo
 
@@ -9672,10 +10049,23 @@ def alterar_status_usuario(request, id):
 
         pass
 
-    messages.success(
-        request,
-        'Status atualizado com sucesso.'
-    )
+    # =========================================
+    # MENSAGEM
+    # =========================================
+
+    if perfil.ativo:
+
+        messages.success(
+            request,
+            'Usuário ativado com sucesso.'
+        )
+
+    else:
+
+        messages.success(
+            request,
+            'Usuário desativado com sucesso.'
+        )
 
     return redirect('usuarios')
 
