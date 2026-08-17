@@ -1511,38 +1511,39 @@ LAYOUT
                 </div>
 
                 <!-- =========================================
-                SUPERIOR
-                ========================================= -->
+     SUPERIOR
+     ========================================= -->
 
-                <div class="arcada">
+<div class="arcada">
 
-                    {% for numero in superiores %}
+    {% for dente in superiores_posicionados %}
 
-                    <div class="dente-box dente-{{ numero }}">
+    <div class="dente-box dente-{{ dente.numero }}">
 
-                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="
+        <img
+            src="{% static 'img/dentes/'|add:dente.numero|add:'.png' %}"
+            class="
                 dente-img
-                posicao-dente-{{ numero }}
+                posicao-dente-{{ dente.numero }}
+                {% if dente.posicao_css != 'normal' %}
+                    posicao-{{ dente.posicao_css }}
+                {% endif %}
+            "
+            data-dente="{{ dente.numero }}"
+            alt="Dente {{ dente.numero }}"
+        >
 
-                {% for item in itens_orcamento %}
-                    {% if item.dente == numero %}
-                        {% if item.posicao_dente and item.posicao_dente != 'normal' %}
-                            posicao-{{ item.posicao_dente }}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            " data-dente="{{ numero }}" alt="Dente {{ numero }}">
+        <div class="procedimentos-dente">
 
-                        <div class="procedimentos-dente">
+            {% for item in itens_orcamento %}
 
-                            {% for item in itens_orcamento %}
+                {% if item.dente == dente.numero %}
 
-                            {% if item.dente == numero %}
+                    {% if item.procedimento.tipo == 'dente' %}
 
-                            {% if item.procedimento.tipo == 'dente' %}
-
-                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
-                                class="
+                        <img
+                            src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                            class="
                                 icone-procedimento-dente
                                 status-{{ item.status }}
                                 posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
@@ -1550,66 +1551,70 @@ LAYOUT
                                 {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
                                     sem-rotacao
                                 {% endif %}
-                            " data-id="{{ item.id }}" data-status="{{ item.status }}"
-                                title="{{ item.procedimento.nome }}">
+                            "
+                            data-id="{{ item.id }}"
+                            data-status="{{ item.status }}"
+                            title="{{ item.procedimento.nome }}"
+                        >
 
-                            {% if item.face %}
+                        {% if item.face %}
 
                             <span class="face-badge status-{{ item.status }}">
                                 {{ item.face }}
                             </span>
 
-                            {% endif %}
+                        {% endif %}
 
-                            {% endif %}
+                    {% endif %}
 
-                            {% endif %}
+                {% endif %}
 
-                            {% endfor %}
+            {% endfor %}
 
-                        </div>
+        </div>
 
-                    </div>
+    </div>
 
-                    {% endfor %}
+    {% endfor %}
 
-                </div>
+</div>
 
 
                 <!-- =========================================
-                INFERIOR
-                ========================================= -->
+     INFERIOR
+     ========================================= -->
 
-                <div class="arcada inferior">
+<div class="arcada inferior">
 
-                    {% for numero in inferiores %}
+    {% for dente in inferiores_posicionados %}
 
-                    <div class="dente-box dente-{{ numero }}">
+    <div class="dente-box dente-{{ dente.numero }}">
 
-                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="
+        <img
+            src="{% static 'img/dentes/'|add:dente.numero|add:'.png' %}"
+            class="
                 dente-img
                 inferior
-                posicao-dente-{{ numero }}
+                posicao-dente-{{ dente.numero }}
+                {% if dente.posicao_css != 'normal' %}
+                    posicao-{{ dente.posicao_css }}
+                {% endif %}
+            "
+            data-dente="{{ dente.numero }}"
+            alt="Dente {{ dente.numero }}"
+        >
 
-                {% for item in itens_orcamento %}
-                    {% if item.dente == numero %}
-                        {% if item.posicao_dente and item.posicao_dente != 'normal' %}
-                            posicao-{{ item.posicao_dente }}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            " data-dente="{{ numero }}" alt="Dente {{ numero }}">
+        <div class="procedimentos-dente">
 
-                        <div class="procedimentos-dente">
+            {% for item in itens_orcamento %}
 
-                            {% for item in itens_orcamento %}
+                {% if item.dente == dente.numero %}
 
-                            {% if item.dente == numero %}
+                    {% if item.procedimento.tipo == 'dente' %}
 
-                            {% if item.procedimento.tipo == 'dente' %}
-
-                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
-                                class="
+                        <img
+                            src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                            class="
                                 icone-procedimento-dente
                                 status-{{ item.status }}
                                 posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
@@ -1617,30 +1622,33 @@ LAYOUT
                                 {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
                                     sem-rotacao
                                 {% endif %}
-                            " data-id="{{ item.id }}" data-status="{{ item.status }}"
-                                title="{{ item.procedimento.nome }}">
+                            "
+                            data-id="{{ item.id }}"
+                            data-status="{{ item.status }}"
+                            title="{{ item.procedimento.nome }}"
+                        >
 
-                            {% if item.face %}
+                        {% if item.face %}
 
                             <span class="face-badge status-{{ item.status }}">
                                 {{ item.face }}
                             </span>
 
-                            {% endif %}
+                        {% endif %}
 
-                            {% endif %}
+                    {% endif %}
 
-                            {% endif %}
+                {% endif %}
 
-                            {% endfor %}
+            {% endfor %}
 
-                        </div>
+        </div>
 
-                    </div>
+    </div>
 
-                    {% endfor %}
+    {% endfor %}
 
-                </div>
+</div>
 
                 <div class="linha-divisao"></div>
 
@@ -1655,43 +1663,40 @@ LAYOUT
 
 
                 <!-- =========================================
-                SUPERIOR
-                ========================================= -->
+     DENTIÇÃO DECÍDUA
+     SUPERIOR
+     ========================================= -->
 
-                <div class="arcada decidua">
+<div class="arcada">
 
-                    {% for numero in dec_superiores %}
+    {% for dente in dec_superiores_posicionados %}
 
-                    <div class="dente-box dente-{{ numero }}">
+    <div class="dente-box dente-{{ dente.numero }}">
 
-                        <!-- DENTE -->
-
-                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="
+        <img
+            src="{% static 'img/dentes/'|add:dente.numero|add:'.png' %}"
+            class="
                 dente-img
-                deciduo
-                posicao-dente-{{ numero }}
+                posicao-dente-{{ dente.numero }}
+                {% if dente.posicao_css != 'normal' %}
+                    posicao-{{ dente.posicao_css }}
+                {% endif %}
+            "
+            data-dente="{{ dente.numero }}"
+            alt="Dente {{ dente.numero }}"
+        >
 
-                {% for item in itens_orcamento %}
-                    {% if item.dente == numero %}
-                        {% if item.posicao_dente and item.posicao_dente != 'normal' %}
-                            posicao-{{ item.posicao_dente }}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            " data-dente="{{ numero }}" alt="Dente {{ numero }}">
+        <div class="procedimentos-dente">
 
-                        <!-- PROCEDIMENTOS -->
+            {% for item in itens_orcamento %}
 
-                        <div class="procedimentos-dente">
+                {% if item.dente == dente.numero %}
 
-                            {% for item in itens_orcamento %}
+                    {% if item.procedimento.tipo == 'dente' %}
 
-                            {% if item.dente == numero %}
-
-                            {% if item.procedimento.tipo == 'dente' %}
-
-                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
-                                class="
+                        <img
+                            src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                            class="
                                 icone-procedimento-dente
                                 status-{{ item.status }}
                                 posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
@@ -1699,71 +1704,71 @@ LAYOUT
                                 {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
                                     sem-rotacao
                                 {% endif %}
-                            " data-id="{{ item.id }}" data-status="{{ item.status }}"
-                                title="{{ item.procedimento.nome }}">
+                            "
+                            data-id="{{ item.id }}"
+                            data-status="{{ item.status }}"
+                            title="{{ item.procedimento.nome }}"
+                        >
 
-                            {% if item.face %}
+                        {% if item.face %}
 
                             <span class="face-badge status-{{ item.status }}">
                                 {{ item.face }}
                             </span>
 
-                            {% endif %}
+                        {% endif %}
 
-                            {% endif %}
+                    {% endif %}
 
-                            {% endif %}
+                {% endif %}
 
-                            {% endfor %}
+            {% endfor %}
 
-                        </div>
+        </div>
 
-                    </div>
+    </div>
 
-                    {% endfor %}
+    {% endfor %}
 
-                </div>
+</div>
 
 
                 <!-- =========================================
-                INFERIOR
-                ========================================= -->
+     DENTIÇÃO DECÍDUA
+     INFERIOR
+     ========================================= -->
 
-                <div class="arcada decidua inferior">
+<div class="arcada inferior">
 
-                    {% for numero in dec_inferiores %}
+    {% for dente in dec_inferiores_posicionados %}
 
-                    <div class="dente-box dente-{{ numero }}">
+    <div class="dente-box dente-{{ dente.numero }}">
 
-                        <!-- DENTE -->
-
-                        <img src="{% static 'img/dentes/'|add:numero|add:'.png' %}" class="
+        <img
+            src="{% static 'img/dentes/'|add:dente.numero|add:'.png' %}"
+            class="
                 dente-img
-                deciduo
                 inferior
-                posicao-dente-{{ numero }}
+                posicao-dente-{{ dente.numero }}
+                {% if dente.posicao_css != 'normal' %}
+                    posicao-{{ dente.posicao_css }}
+                {% endif %}
+            "
+            data-dente="{{ dente.numero }}"
+            alt="Dente {{ dente.numero }}"
+        >
 
-                {% for item in itens_orcamento %}
-                    {% if item.dente == numero %}
-                        {% if item.posicao_dente and item.posicao_dente != 'normal' %}
-                            posicao-{{ item.posicao_dente }}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            " data-dente="{{ numero }}" alt="Dente {{ numero }}">
+        <div class="procedimentos-dente">
 
-                        <!-- PROCEDIMENTOS -->
+            {% for item in itens_orcamento %}
 
-                        <div class="procedimentos-dente">
+                {% if item.dente == dente.numero %}
 
-                            {% for item in itens_orcamento %}
+                    {% if item.procedimento.tipo == 'dente' %}
 
-                            {% if item.dente == numero %}
-
-                            {% if item.procedimento.tipo == 'dente' %}
-
-                            <img src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
-                                class="
+                        <img
+                            src="{% static 'img/procedimentos/mini/' %}{{ item.procedimento.arquivo_icone }}"
+                            class="
                                 icone-procedimento-dente
                                 status-{{ item.status }}
                                 posicao-{{ item.posicao_icone|default:item.procedimento.posicao_icone }}
@@ -1771,30 +1776,33 @@ LAYOUT
                                 {% if item.procedimento.arquivo_icone == 'ausente.png' or item.procedimento.arquivo_icone == 'rx_dente.png' %}
                                     sem-rotacao
                                 {% endif %}
-                            " data-id="{{ item.id }}" data-status="{{ item.status }}"
-                                title="{{ item.procedimento.nome }}">
+                            "
+                            data-id="{{ item.id }}"
+                            data-status="{{ item.status }}"
+                            title="{{ item.procedimento.nome }}"
+                        >
 
-                            {% if item.face %}
+                        {% if item.face %}
 
                             <span class="face-badge status-{{ item.status }}">
                                 {{ item.face }}
                             </span>
 
-                            {% endif %}
+                        {% endif %}
 
-                            {% endif %}
+                    {% endif %}
 
-                            {% endif %}
+                {% endif %}
 
-                            {% endfor %}
+            {% endfor %}
 
-                        </div>
+        </div>
 
-                    </div>
+    </div>
 
-                    {% endfor %}
+    {% endfor %}
 
-                </div>
+</div>
 
  
 <!-- =========================================

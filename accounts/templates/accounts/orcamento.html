@@ -317,175 +317,210 @@ FORMULÁRIO FINANCEIRO
 
     {% csrf_token %}
 
-    <!-- TABELA -->
+    <!-- =========================================
+TABELA
+========================================= -->
 
-    <div class="card border-0 shadow-sm rounded-4">
+<div class="card border-0 shadow-sm rounded-4">
 
-        <div class="card-body p-4">
+```
+<div class="card-body p-4">
 
-            <table class="table align-middle">
+    <table class="table align-middle">
 
-                <thead class="table-light">
+        <thead class="table-light">
 
-                    <tr>
+            <tr>
 
-                        <th>Dente</th>
+                <th>Dente</th>
 
-                        <th>Face</th>
+                <th>Face</th>
 
-                        <th>Procedimento</th>
+                <th>Procedimento</th>
 
-                        <th>Quantidade</th>
+                <th>Quantidade</th>
 
-                        <th>Valor</th>
+                <th>Valor</th>
 
-                        <th>Total</th>
+                <th>Total</th>
 
-                        <th class="text-center">Status</th>
+                <th class="text-center">Status</th>
 
-                        <th class="text-end">Ações</th>
+                <th class="text-end">Ações</th>
 
-                    </tr>
+            </tr>
 
-                </thead>
+        </thead>
 
-                <tbody>
+        <tbody>
 
-                    {% for item in orcamento.itens.all %}
+            {% for item in itens_ativos %}
 
-                    <tr>
+            <tr>
 
-                        <!-- DENTE -->
+                <!-- DENTE -->
 
-                        <td>
+                <td>
 
-                            <span class="badge bg-light text-dark border">
+                    <span class="badge bg-light text-dark border">
 
-                                {{ item.dente|default:"--" }}
+                        {{ item.dente|default:"--" }}
 
-                            </span>
+                    </span>
 
-                        </td>
+                </td>
 
-                        <!-- FACE -->
+                <!-- FACE -->
 
-                        <td>
+                <td>
 
-                            <span class="badge bg-primary rounded-pill px-3">
+                    <span class="badge bg-primary rounded-pill px-3">
 
-                                {{ item.face|default:"--" }}
+                        {{ item.face|default:"--" }}
 
-                            </span>
+                    </span>
 
-                        </td>
+                </td>
 
-                        <!-- PROCEDIMENTO -->
+                <!-- PROCEDIMENTO -->
 
-                        <td>
+                <td>
 
-                            <div class="fw-semibold">
+                    <div class="fw-semibold">
 
-                                {{ item.procedimento.nome }}
+                        {{ item.procedimento.nome }}
 
-                            </div>
+                    </div>
 
-                            <small class="text-muted">
+                    <small class="text-muted">
 
-                                {{ item.procedimento.codigo|default:"Sem código" }}
+                        {{ item.procedimento.codigo|default:"Sem código" }}
 
-                            </small>
+                    </small>
 
-                        </td>
+                </td>
 
-                        <!-- QUANTIDADE -->
+                <!-- QUANTIDADE -->
 
-                        <td>
+                <td>
 
-                            {{ item.quantidade }}
+                    {{ item.quantidade }}
 
-                        </td>
+                </td>
 
-                        <!-- VALOR -->
+                <!-- VALOR -->
 
-                        <td>
+                <td>
 
-                            R$ {{ item.valor_unitario }}
+                    R$ {{ item.valor_unitario }}
 
-                        </td>
+                </td>
 
-                        <!-- TOTAL -->
+                <!-- TOTAL -->
 
-                        <td>
+                <td>
 
-                            <span class="fw-bold text-success">
+                    <span class="fw-bold text-success">
 
-                                R$ {{ item.total }}
+                        R$ {{ item.total }}
 
-                            </span>
+                    </span>
 
-                        </td>
+                </td>
 
-                        <!-- STATUS -->
+                <!-- STATUS -->
 
-                        <td class="text-center">
+                <td class="text-center">
 
-                            <span class="badge bg-warning text-dark rounded-pill px-3">
+                    {% if item.status == "planejado" %}
 
-                                Planejado
+                        <span class="badge bg-warning text-dark rounded-pill px-3">
 
-                            </span>
+                            Planejado
 
-                        </td>
+                        </span>
 
-                                        <!-- AÇÕES -->
+                    {% elif item.status == "andamento" %}
 
-<td class="text-end">
+                        <span class="badge bg-warning text-dark rounded-pill px-3">
 
-    <div class="d-flex justify-content-end gap-2">
+                            Em Andamento
 
-        <!-- EDITAR -->
+                        </span>
 
-        <a href="{% url 'editar_item_orcamento' item.id %}"
-           class="btn btn-sm btn-light border rounded-circle"
-           title="Editar">
+                    {% elif item.status == "realizado" %}
 
-            <i class="fas fa-edit text-primary"></i>
+                        <span class="badge bg-primary rounded-pill px-3">
 
-        </a>
+                            Realizado
 
-        <!-- EXCLUIR -->
+                        </span>
 
-        <a href="{% url 'excluir_item_orcamento' item.id %}"
-           class="btn btn-sm btn-light border rounded-circle"
-           title="Excluir">
+                    {% elif item.status == "existente" %}
 
-            <i class="fas fa-trash text-danger"></i>
+                        <span class="badge bg-secondary rounded-pill px-3">
 
-        </a>
+                            Existente
 
-    </div>
+                        </span>
 
-</td>
+                    {% endif %}
 
-</tr>
+                </td>
 
-{% empty %}
+                <!-- AÇÕES -->
 
-<tr>
+                <td class="text-end">
 
-    <td colspan="8" class="text-center text-muted py-4">
+                    <div class="d-flex justify-content-end gap-2">
 
-        Nenhum item adicionado.
+                        <!-- EDITAR -->
 
-    </td>
+                        <a
+                            href="{% url 'editar_item_orcamento' item.id %}"
+                            class="btn btn-sm btn-light border rounded-circle"
+                            title="Editar">
 
-</tr>
+                            <i class="fas fa-edit text-primary"></i>
 
-{% endfor %}
+                        </a>
 
-</tbody>
+                        <!-- EXCLUIR -->
 
-</table>
+                        <a
+                            href="{% url 'excluir_item_orcamento' item.id %}"
+                            class="btn btn-sm btn-light border rounded-circle"
+                            title="Excluir">
+
+                            <i class="fas fa-trash text-danger"></i>
+
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="8" class="text-center text-muted py-4">
+
+                    <i class="fas fa-info-circle me-2"></i>
+
+                    Nenhum procedimento ativo neste orçamento.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
 
 <!-- ==========================================================
 RESUMO FINANCEIRO

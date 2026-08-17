@@ -1539,9 +1539,11 @@ class Orcamento(models.Model):
             (
                 item.total
                 for item in self.itens.all()
+                if item.status != "cancelado"
             ),
             Decimal("0.00")
         )
+
 
     # =========================================
     # VALOR DO DESCONTO

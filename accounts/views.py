@@ -3743,7 +3743,8 @@ def odontograma(request, id):
 
             return JsonResponse({
                 "sucesso": False,
-                "erro": "Não foi possível localizar o orçamento do tratamento."
+                "erro":
+                    "Não foi possível localizar o orçamento do tratamento."
             }, status=400)
 
         # =====================================
@@ -3820,16 +3821,6 @@ def odontograma(request, id):
             "POSIÇÃO DO ÍCONE:",
             posicao_icone
         )
-
-        # =====================================
-        # IMPORTANTE
-        #
-        # O POSICIONAMENTO DO DENTE NÃO É
-        # SALVO AQUI.
-        #
-        # Ele pertence exclusivamente ao
-        # modelo PosicionamentoDente.
-        # =====================================
 
         # =====================================
         # DEFINE VALOR CONFORME CONVÊNIO
@@ -3968,14 +3959,14 @@ def odontograma(request, id):
     )
 
     # =========================================
-    # POSICIONAMENTOS CLÍNICOS DOS DENTES
+    # POSICIONAMENTOS DOS DENTES
     #
-    # IMPORTANTE:
-    # Estes dados vêm exclusivamente de
-    # PosicionamentoDente.
+    # A posição é buscada diretamente
+    # na tabela PosicionamentoDente.
     #
-    # Não dependem de procedimento,
-    # orçamento ou evolução.
+    # Isso faz com que, ao sair e voltar
+    # para o odontograma, a posição seja
+    # recuperada do banco.
     # =========================================
 
     posicionamentos_dentes = (
@@ -3985,13 +3976,149 @@ def odontograma(request, id):
     )
 
     # =========================================
-    # DICIONÁRIO DE POSIÇÕES
+    # DICIONÁRIO DAS POSIÇÕES
     # =========================================
 
-    posicoes_dentes = {
-        item.dente: item.posicao
-        for item in posicionamentos_dentes
-    }
+    posicoes_dentes = {}
+
+    for item in posicionamentos_dentes:
+
+        posicao = (
+            item.posicao or
+            "normal"
+        ).strip().lower()
+
+        # -------------------------------------
+        # BANCO
+        #
+        # Exemplo:
+        # incluso_mesial
+        # rotacao_45
+        # rotacao_menos_45
+        # -------------------------------------
+
+        posicao_banco = posicao.replace(
+            "-",
+            "_"
+        )
+
+        # -------------------------------------
+        # CSS
+        #
+        # Exemplo:
+        # incluso_mesial
+        #       ↓
+        # incluso-mesial
+        #
+        # rotacao_45
+        #       ↓
+        # rotacao-45
+        # -------------------------------------
+
+        posicao_css = posicao_banco.replace(
+            "_",
+            "-"
+        )
+
+        posicoes_dentes[str(item.dente)] = {
+
+            "banco":
+                posicao_banco,
+
+            "css":
+                posicao_css
+
+        }
+
+    # =========================================
+    # LISTA DE DENTES PERMANENTES
+    # =========================================
+
+    superiores = [
+        "18", "17", "16", "15",
+        "14", "13", "12", "11",
+        "21", "22", "23", "24",
+        "25", "26", "27", "28"
+    ]
+
+    inferiores = [
+        "48", "47", "46", "45",
+        "44", "43", "42", "41",
+        "31", "32", "33", "34",
+        "35", "36", "37", "38"
+    ]
+
+    # =========================================
+    # LISTA DE DENTES DECÍDUOS
+    # =========================================
+
+    dec_superiores = [
+        "55", "54", "53", "52", "51",
+        "61", "62", "63", "64", "65"
+    ]
+
+    dec_inferiores = [
+        "85", "84", "83", "82", "81",
+        "71", "72", "73", "74", "75"
+    ]
+
+    # =========================================
+    # FUNÇÃO AUXILIAR
+    #
+    # Monta os dados de cada dente.
+    #
+    # Se não houver registro no banco,
+    # assume NORMAL.
+    # =========================================
+
+    def preparar_dentes(lista_dentes):
+
+        resultado = []
+
+        for numero in lista_dentes:
+
+            dados_posicao = posicoes_dentes.get(
+                numero,
+                {
+                    "banco": "normal",
+                    "css": "normal"
+                }
+            )
+
+            resultado.append({
+
+                "numero":
+                    numero,
+
+                "posicao":
+                    dados_posicao["banco"],
+
+                "posicao_css":
+                    dados_posicao["css"]
+
+            })
+
+        return resultado
+
+    # =========================================
+    # PREPARA DENTES
+    # =========================================
+
+    superiores_posicionados = preparar_dentes(
+        superiores
+    )
+
+    inferiores_posicionados = preparar_dentes(
+        inferiores
+    )
+
+    dec_superiores_posicionados = preparar_dentes(
+        dec_superiores
+    )
+
+    dec_inferiores_posicionados = preparar_dentes(
+        dec_inferiores
+    )
 
     # =========================================
     # CONTEXTO
@@ -3999,64 +4126,73 @@ def odontograma(request, id):
 
     context = {
 
-        "paciente": paciente,
+        "paciente":
+            paciente,
 
-        "tratamento": tratamento,
+        "tratamento":
+            tratamento,
 
-        "historico_tratamentos": historico_tratamentos,
+        "historico_tratamentos":
+            historico_tratamentos,
 
-        "orcamento": orcamento,
+        "orcamento":
+            orcamento,
 
-        "evolucoes": evolucoes,
+        "evolucoes":
+            evolucoes,
 
-        "itens_orcamento": itens_orcamento,
+        "itens_orcamento":
+            itens_orcamento,
 
-        "procedimentos": procedimentos,
+        "procedimentos":
+            procedimentos,
 
-        "procedimentos_gerais": procedimentos_gerais,
+        "procedimentos_gerais":
+            procedimentos_gerais,
 
         # =====================================
-        # POSICIONAMENTO DOS DENTES
+        # POSICIONAMENTOS
         # =====================================
 
-        "posicoes_dentes": posicoes_dentes,
+        "posicoes_dentes":
+            posicoes_dentes,
+
+        "superiores_posicionados":
+            superiores_posicionados,
+
+        "inferiores_posicionados":
+            inferiores_posicionados,
+
+        "dec_superiores_posicionados":
+            dec_superiores_posicionados,
+
+        "dec_inferiores_posicionados":
+            dec_inferiores_posicionados,
 
         # =====================================
         # DENTES PERMANENTES
         # =====================================
 
-        "superiores": [
-            "18", "17", "16", "15",
-            "14", "13", "12", "11",
-            "21", "22", "23", "24",
-            "25", "26", "27", "28"
-        ],
+        "superiores":
+            superiores,
 
-        "inferiores": [
-            "48", "47", "46", "45",
-            "44", "43", "42", "41",
-            "31", "32", "33", "34",
-            "35", "36", "37", "38"
-        ],
+        "inferiores":
+            inferiores,
 
         # =====================================
         # DENTES DECÍDUOS
         # =====================================
 
-        "dec_superiores": [
-            "55", "54", "53", "52", "51",
-            "61", "62", "63", "64", "65"
-        ],
+        "dec_superiores":
+            dec_superiores,
 
-        "dec_inferiores": [
-            "85", "84", "83", "82", "81",
-            "71", "72", "73", "74", "75"
-        ],
+        "dec_inferiores":
+            dec_inferiores,
 
     }
 
     # =========================================
-    # DEBUG
+    # DEBUG DOS PROCEDIMENTOS
     # =========================================
 
     for item in itens_orcamento:
@@ -4067,9 +4203,28 @@ def odontograma(request, id):
             f"POSICAO_ICONE={item.posicao_icone}"
         )
 
+    # =========================================
+    # DEBUG DOS POSICIONAMENTOS
+    # =========================================
+
     print(
-        "POSICIONAMENTOS DOS DENTES:",
-        posicoes_dentes
+        "========================================="
+    )
+
+    print(
+        "POSICIONAMENTOS DOS DENTES:"
+    )
+
+    for dente, dados in posicoes_dentes.items():
+
+        print(
+            f"DENTE {dente} | "
+            f"BANCO={dados['banco']} | "
+            f"CSS={dados['css']}"
+        )
+
+    print(
+        "========================================="
     )
 
     # =========================================
@@ -13100,7 +13255,10 @@ def cancelar_tratamento(request, tratamento_id):
         id=tratamento_id
     )
 
-    # Evita cancelar duas vezes
+    # =========================================
+    # EVITA CANCELAR DUAS VEZES
+    # =========================================
+
     if tratamento.status == "CANCELADO":
 
         messages.warning(
@@ -13118,29 +13276,48 @@ def cancelar_tratamento(request, tratamento_id):
     # =========================================
 
     tratamento.status = "CANCELADO"
+
     tratamento.data_encerramento = timezone.now().date()
 
     tratamento.save()
 
     # =========================================
-    # CANCELA O ORÇAMENTO DO TRATAMENTO
+    # LOCALIZA TODOS OS ORÇAMENTOS
+    # DESTE TRATAMENTO
     # =========================================
 
-    orcamento = Orcamento.objects.filter(
-        paciente=tratamento.paciente,
-        tratamento=tratamento,
-        status="aprovado"
-    ).order_by("-id").first()
+    orcamentos = Orcamento.objects.filter(
+        tratamento=tratamento
+    )
 
-    if orcamento:
+    # =========================================
+    # CANCELA TODOS OS ORÇAMENTOS
+    # =========================================
 
-        # Cancela o orçamento
+    for orcamento in orcamentos:
+
+        # =====================================
+        # CANCELA TODOS OS ITENS
+        # =====================================
+
+        orcamento.itens.all().update(
+            status="cancelado"
+        )
+
+        # =====================================
+        # CANCELA O ORÇAMENTO
+        # =====================================
+
         orcamento.status = "cancelado"
-        orcamento.save()
 
-        # =========================================
-        # CANCELA AS CONTAS A RECEBER
-        # =========================================
+        orcamento.save(
+            update_fields=["status"]
+        )
+
+        # =====================================
+        # CANCELA CONTAS A RECEBER
+        # PENDENTES OU VENCIDAS
+        # =====================================
 
         ContaReceber.objects.filter(
             orcamento=orcamento,
@@ -13152,16 +13329,19 @@ def cancelar_tratamento(request, tratamento_id):
             status="CANCELADO"
         )
 
+    # =========================================
+    # MENSAGEM
+    # =========================================
+
     messages.success(
         request,
-        "Tratamento, orçamento e contas a receber cancelados com sucesso."
+        "Tratamento, orçamento, procedimentos e contas a receber foram cancelados com sucesso."
     )
 
     return redirect(
         "odontograma",
         id=tratamento.paciente.id
     )
-
 
    
 # =========================================

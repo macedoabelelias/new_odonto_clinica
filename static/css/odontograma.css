@@ -889,7 +889,7 @@ PERMANENTES SUPERIORES
 .dente-23 .posicao-coroa{ top:56px; left:-1px; }
 .dente-23 .posicao-oclusal{ top:12px; left:5px; }
 
-.dente-24 .posicao-raiz{ top:15px; left:-1px; }
+.dente-24 .posicao-raiz{ top:32px; left:-1px; }
 .dente-24 .posicao-centro{ top:42px; left:0px; }
 .dente-24 .posicao-coroa{ top:54px; left:-2px; }
 .dente-24 .posicao-oclusal{ top:12px; left:5px; }
@@ -899,7 +899,7 @@ PERMANENTES SUPERIORES
 .dente-25 .posicao-coroa{ top:58px; left:-2px; }
 .dente-25 .posicao-oclusal{ top:12px; left:5px; }
 
-.dente-26 .posicao-raiz{ top:15px; left:-2px; }
+.dente-26 .posicao-raiz{ top:32px; left:-2px; }
 .dente-26 .posicao-centro{ top:42px; left:-2px; }
 .dente-26 .posicao-coroa{ top:52px; left:-2px; }
 .dente-26 .posicao-oclusal{ top:12px; left:5px; }
@@ -1219,105 +1219,150 @@ RESPONSIVO
 }
 
 /* =========================================
-STATUS VISUAL PREMIUM
-========================================= */
+   STATUS VISUAL PREMIUM
+   ========================================= */
 
-.status-existente{
-    color:#6b7280;
-}
-
-.status-planejado{
-    color:#dc2626;
-}
-
-.status-andamento{
-    color:#16a34a;
-}
-
-.status-realizado{
-    color:#2563eb;
-}
-
-.status-cancelado{
-    color:#7c3aed;
-}
 
 /* =========================================
-ÍCONE BASE
-========================================= */
+   CORES DOS TEXTOS / STATUS
+   ========================================= */
 
-.icone-procedimento-dente{
+.status-existente {
+    color: #6b7280 !important;
+}
 
-    transition:.2s ease;
+.status-planejado {
+    color: #dc2626 !important;
+}
 
+.status-andamento {
+    color: #16a34a !important;
+}
+
+.status-realizado {
+    color: #2563eb !important;
+}
+
+.status-cancelado {
+    color: #7c3aed !important;
 }
 
 
 /* =========================================
-STATUS DOS MINI ÍCONES
-========================================= */
+   ÍCONE BASE
+   ========================================= */
 
-/* PLANEJADO */
+.icone-procedimento-dente {
 
-.icone-procedimento-dente.status-planejado{
+    transition: filter .2s ease, transform .2s ease;
 
-    filter:
-    brightness(0)
-    saturate(100%)
-    invert(18%)
-    sepia(91%)
-    saturate(7481%)
-    hue-rotate(356deg)
-    brightness(101%)
-    contrast(119%);
 }
 
 
-/* EM ANDAMENTO */
+/* =========================================
+   EXISTENTE
+   CINZA
+   ========================================= */
 
-.icone-procedimento-dente.status-andamento{
+/* Classe diretamente no ícone */
+.icone-procedimento-dente.status-existente,
+
+/* Classe no elemento pai */
+.status-existente .icone-procedimento-dente {
 
     filter:
-    brightness(0)
-    saturate(100%)
-    invert(42%)
-    sepia(91%)
-    saturate(479%)
-    hue-rotate(127deg)
-    brightness(95%)
-    contrast(101%);
+        brightness(0)
+        saturate(100%)
+        invert(45%)
+        sepia(5%)
+        saturate(500%)
+        hue-rotate(180deg)
+        brightness(90%)
+        contrast(90%) !important;
 }
 
 
-/* REALIZADO */
+/* =========================================
+   PLANEJADO
+   VERMELHO
+   ========================================= */
 
-.icone-procedimento-dente.status-realizado{
+.icone-procedimento-dente.status-planejado,
+
+.status-planejado .icone-procedimento-dente {
 
     filter:
-    brightness(0)
-    saturate(100%)
-    invert(32%)
-    sepia(97%)
-    saturate(1807%)
-    hue-rotate(206deg)
-    brightness(97%)
-    contrast(101%);
+        brightness(0)
+        saturate(100%)
+        invert(18%)
+        sepia(91%)
+        saturate(7481%)
+        hue-rotate(356deg)
+        brightness(101%)
+        contrast(119%) !important;
 }
 
 
-/* CANCELADO */
+/* =========================================
+   EM ANDAMENTO
+   VERDE
+   ========================================= */
 
-.icone-procedimento-dente.status-cancelado{
+.icone-procedimento-dente.status-andamento,
+
+.status-andamento .icone-procedimento-dente {
 
     filter:
-    brightness(0)
-    saturate(100%)
-    invert(23%)
-    sepia(93%)
-    saturate(2407%)
-    hue-rotate(264deg)
-    brightness(88%)
-    contrast(101%);
+        brightness(0)
+        saturate(100%)
+        invert(42%)
+        sepia(91%)
+        saturate(479%)
+        hue-rotate(127deg)
+        brightness(95%)
+        contrast(101%) !important;
+}
+
+
+/* =========================================
+   REALIZADO
+   AZUL
+   ========================================= */
+
+.icone-procedimento-dente.status-realizado,
+
+.status-realizado .icone-procedimento-dente {
+
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(32%)
+        sepia(97%)
+        saturate(1807%)
+        hue-rotate(206deg)
+        brightness(97%)
+        contrast(101%) !important;
+}
+
+
+/* =========================================
+   CANCELADO
+   ROXO
+   ========================================= */
+
+.icone-procedimento-dente.status-cancelado,
+
+.status-cancelado .icone-procedimento-dente {
+
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(23%)
+        sepia(93%)
+        saturate(2407%)
+        hue-rotate(264deg)
+        brightness(88%)
+        contrast(101%) !important;
 }
 
 /* =========================================
